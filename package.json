@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "icon-resolve": "node ./scripts/iconPathResolve.js"
   },
   "keywords": [],
   "author": "",
