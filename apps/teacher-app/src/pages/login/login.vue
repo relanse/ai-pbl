@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <div class="login-header">
+    <div class="login-header-logo">
       <img :src="LogoImg" alt="logo" class="logo" />
       <h2 class="title">鸿蒙智启管理平台</h2>
     </div>
@@ -65,7 +65,7 @@ const formRules = reactive({
   background: linear-gradient(180deg, #e3f0fe 0%, #f6f9ff 100%);
   align-items: center;
 }
-.login-header {
+.login-header-logo {
   display: flex;
   align-items: center;
   margin-top: 5%;
@@ -100,7 +100,6 @@ const formRules = reactive({
   gap: 10px;
 }
 .login-input {
-  border-radius: 2% solid #d2dce7;
   min-width: 400px;
   min-height: 50px;
   opacity: 1;

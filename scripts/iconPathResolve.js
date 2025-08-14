@@ -9,8 +9,6 @@ const outputFile = path.resolve(__dirname, '../apps/common/components/MyIcon/ico
 
 function getSvgFiles(dir, fileList = []) {
   const files = fs.readdirSync(dir)
-
-  sad
   files.forEach(file => {
     const fullPath = path.join(dir, file)
     const stat = fs.statSync(fullPath)
