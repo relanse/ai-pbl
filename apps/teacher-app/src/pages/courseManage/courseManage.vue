@@ -139,7 +139,9 @@ onMounted(() => {
 .course-table :deep(.el-table__cell) {
   text-align: center;
 }
-
+.course-table :deep(th.el-table__cell) {
+  background-color: #f6f9ff;
+}
 .pagination-container {
   display: flex;
   justify-content: flex-end;

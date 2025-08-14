@@ -170,6 +170,10 @@ const handleSaveSuccess = () => {
   text-align: center;
 }
 
+.student-table :deep(th.el-table__cell) {
+  background-color: #f6f9ff;
+}
+
 .pagination-container {
   display: flex;
   justify-content: flex-end;

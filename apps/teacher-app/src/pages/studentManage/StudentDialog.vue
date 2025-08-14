@@ -16,6 +16,7 @@
       ref="formRef"
       label-position="left"
       label-width="auto"
+      class="student-form"
     >
       <el-row :gutter="20">
         <el-col :span="22">
