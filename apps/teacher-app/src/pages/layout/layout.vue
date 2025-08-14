@@ -7,8 +7,11 @@
           <h2 class="title">鸿蒙智启管理平台</h2>
         </div>
         <div class="layout-header-user">
-          <el-dropdown size="small" split-button>
-            用户名
+          <el-dropdown>
+            <span class="el-dropdown-user">
+              超管12345
+              <el-icon class="el-icon-arrowdown"><ArrowDown /></el-icon>
+            </span>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item>退出登录</el-dropdown-item>
@@ -74,11 +77,15 @@ import {
   ElContainer,
   ElHeader,
   ElDropdown,
+  ElDropdownMenu,
+  ElDropdownItem,
   ElAside,
   ElMain,
   ElMenu,
-  ElMenuItem
+  ElMenuItem,
+  ElIcon
 } from 'element-plus'
+import {ArrowDown} from '@element-plus/icons-vue'
 import {computed} from 'vue'
 import {useRoute} from 'vue-router'
 import LogoImg from '@aipbl/common/assets/logo.png'
@@ -101,8 +108,8 @@ const activeMenu = computed(() => route.path)
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 40px;
-  height: 8%;
+  padding: 0 20px;
+  height: 80px;
 }
 .layout-header-logo {
   display: flex;
@@ -151,5 +158,20 @@ const activeMenu = computed(() => route.path)
   line-height: 100%;
   letter-spacing: 0;
   color: #333;
+}
+.el-dropdown-user {
+  cursor: pointer;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+}
+.el-dropdown-user .el-icon-arrowdown {
+  margin-left: 8px;
+}
+.layout-header-user :deep(.el-dropdown-menu__item) {
+  justify-content: center;
 }
 </style>
