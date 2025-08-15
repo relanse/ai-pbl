@@ -28,6 +28,18 @@ const router = createRouter({
           component: () => import('@/pages/courseManage/courseManage.vue'),
           children: []
         },
+        //课程管理->创建课程
+        {
+          path: 'course-manage/create',
+          name: 'course-create',
+          meta: {
+            title: '新建课程',
+            activeMenu: '/course-manage',
+            parentTitle: '课程管理',
+            parentPath: '/course-manage'
+          },
+          component: () => import('@/pages/courseManage/courseCreate.vue')
+        },
         //项目管理
         {
           path: 'project-manage',

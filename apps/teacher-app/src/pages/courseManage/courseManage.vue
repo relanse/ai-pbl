@@ -9,7 +9,7 @@
           clearable
           :prefix-icon="Search"
         />
-        <el-button type="primary" @click="createDialogVisible = true">
+        <el-button type="primary" @click="navigateToCreateCourse">
           <el-icon><Plus /></el-icon>
           <span>新建课程</span>
         </el-button>
@@ -57,13 +57,18 @@ import {
 } from 'element-plus'
 import {Search, Plus} from '@element-plus/icons-vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import {useRouter} from 'vue-router'
 
-const createDialogVisible = ref(false)
+const router = useRouter()
 const searchQuery = ref('')
 const courseList = ref<any[]>([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
+
+const navigateToCreateCourse = () => {
+  router.push({name: 'course-create'})
+}
 const fetchCourseList = () => {
   const mockData = [
     {
