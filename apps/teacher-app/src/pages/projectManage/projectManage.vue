@@ -10,11 +10,11 @@
           :prefix-icon="Search"
         />
         <div class="header-btn">
-          <el-button type="default">
+          <el-button type="default" @click="viewStudentProjects">
             <el-icon><Plus /></el-icon>
             <span>查看学生项目情况</span>
           </el-button>
-          <el-button type="primary">
+          <el-button type="primary" @click="createProject">
             <el-icon><Plus /></el-icon>
             <span>新建项目</span>
           </el-button>
@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import {ref, onMounted} from 'vue'
+import {useRouter} from 'vue-router'
 import {
   ElConfigProvider,
   ElButton,
@@ -64,11 +65,19 @@ import {
 import {Search, Plus} from '@element-plus/icons-vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
+const router = useRouter()
 const searchQuery = ref('')
 const projectList = ref<any[]>([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
+
+const viewStudentProjects = () => {
+  router.push('/project/student-details')
+}
+const createProject = () => {
+  router.push('/project ')
+}
 const fetchCourseList = () => {
   const mockData = [
     {

@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import LogoImg from '@aipbl/common/assets/logo.png'
 import {ElForm, ElFormItem, ElInput, ElButton} from 'element-plus'
-import {reactive, ref} from 'vue'
+import {reactive} from 'vue'
 import {type LoginRequestType} from '@/types/loginTypes'
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
 
