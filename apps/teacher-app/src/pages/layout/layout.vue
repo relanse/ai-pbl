@@ -7,8 +7,11 @@
           <h2 class="title">鸿蒙智启管理平台</h2>
         </div>
         <div class="layout-header-user">
-          <el-dropdown size="small" split-button>
-            用户名
+          <el-dropdown>
+            <span class="el-dropdown-user">
+              超管12345
+              <el-icon class="el-icon-arrowdown"><ArrowDown /></el-icon>
+            </span>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item>退出登录</el-dropdown-item>
@@ -64,7 +67,29 @@
             </el-menu-item>
           </el-menu>
         </el-aside>
-        <el-main class="layout-main"><RouterView /></el-main>
+        <el-main class="layout-main">
+          <el-breadcrumb
+            :separator-icon="ArrowRight"
+            v-if="breadcrumbItems.length > 1"
+            class="layout-main-header"
+          >
+            <el-breadcrumb-item
+              v-for="(item, index) in breadcrumbItems"
+              :key="item.path"
+            >
+              <a
+                v-if="index < breadcrumbItems.length - 1"
+                @click="handleBreadcrumbClick(item.path)"
+                class="breadcrumb-link"
+              >
+                {{ item.title }}
+              </a>
+              <span v-else class="breadcrumb-current">{{ item.title }}</span>
+            </el-breadcrumb-item>
+          </el-breadcrumb>
+
+          <RouterView />
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -74,20 +99,82 @@ import {
   ElContainer,
   ElHeader,
   ElDropdown,
+  ElDropdownMenu,
+  ElDropdownItem,
   ElAside,
   ElMain,
   ElMenu,
-  ElMenuItem
+  ElMenuItem,
+  ElIcon,
+  ElBreadcrumb,
+  ElBreadcrumbItem
 } from 'element-plus'
+import {ArrowDown, ArrowRight} from '@element-plus/icons-vue'
 import {computed} from 'vue'
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import LogoImg from '@aipbl/common/assets/logo.png'
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
 defineOptions({
   name: 'layoutPages'
 })
 const route = useRoute()
-const activeMenu = computed(() => route.path)
+const router = useRouter()
+/*获取当前页面的所属的根目录"学生管理"|"课程管理"|"项目管理"的路由路径*/
+const activeMenu = computed(() => {
+  const {meta, path} = route
+  if (meta.activeMenu) {
+    return meta.activeMenu as string
+  }
+  return path
+})
+
+const breadcrumbItems = computed(() => {
+  const allRoutes = router.getRoutes()
+
+  const generateBreadcrumbs = (
+    currentRoute: typeof route,
+    crumbs: {title: string; path: string}[] = []
+  ): {title: string; path: string}[] => {
+    if (!currentRoute || !currentRoute.meta) {
+      return crumbs
+    }
+    if (
+      currentRoute.meta.title &&
+      !crumbs.some(c => c.path === currentRoute.path)
+    ) {
+      crumbs.unshift({
+        title: currentRoute.meta.title as string,
+        path: currentRoute.path
+      })
+    }
+
+    let parentPath: string | undefined
+
+    if (currentRoute.meta.parentPath) {
+      parentPath = currentRoute.meta.parentPath as string
+    } else if (currentRoute.meta.activeMenu) {
+      parentPath = currentRoute.meta.activeMenu as string
+    }
+
+    if (parentPath) {
+      const parentRoute = allRoutes.find(r => r.path === parentPath)
+      if (parentRoute) {
+        if (parentRoute.path !== currentRoute.path) {
+          /*防止死循环*/ return generateBreadcrumbs(parentRoute as any, crumbs)
+        }
+      }
+    }
+    return crumbs
+  }
+  //调用函数
+  return generateBreadcrumbs(route)
+})
+
+const handleBreadcrumbClick = (path: string) => {
+  if (path && path !== route.path) {
+    router.push(path)
+  }
+}
 </script>
 <style scoped>
 .common-layout {
@@ -101,8 +188,8 @@ const activeMenu = computed(() => route.path)
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 40px;
-  height: 8%;
+  padding: 0 20px;
+  height: 80px;
 }
 .layout-header-logo {
   display: flex;
@@ -113,7 +200,7 @@ const activeMenu = computed(() => route.path)
   padding: 20px;
 }
 .layout-menu {
-  font-weight: 400;
+  font-weight: 500;
   background: transparent;
   border: none;
 }
@@ -130,6 +217,35 @@ const activeMenu = computed(() => route.path)
 }
 .layout-menu .el-menu-item span {
   margin-left: 10px;
+}
+
+.layout-main-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 18px;
+  font-weight: 500;
+}
+.page-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+.breadcrumb-link {
+  color: #999;
+  cursor: pointer;
+}
+.breadcrumb-link:hover {
+  color: #2262fb;
+}
+.breadcrumb-current {
+  color: #333;
+  font-weight: 500;
+}
+.breadcrumb-separator {
+  margin: 0 4px;
+  color: #999;
 }
 
 .layout-main {
@@ -151,5 +267,20 @@ const activeMenu = computed(() => route.path)
   line-height: 100%;
   letter-spacing: 0;
   color: #333;
+}
+.el-dropdown-user {
+  cursor: pointer;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+}
+.el-dropdown-user .el-icon-arrowdown {
+  margin-left: 8px;
+}
+.layout-header-user :deep(.el-dropdown-menu__item) {
+  justify-content: center;
 }
 </style>
