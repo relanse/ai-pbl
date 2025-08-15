@@ -34,7 +34,7 @@
         <el-table-column prop="name" label="学生姓名" />
         <el-table-column prop="projectName" label="项目名称" width="280px" />
         <el-table-column prop="pushTime" label="提交时间" width="180px" />
-        <el-table-column label="操作" width="120px">
+        <el-table-column label="操作">
           <template #default>
             <el-button type="primary" link @click="toDetails"
               >查看详情</el-button

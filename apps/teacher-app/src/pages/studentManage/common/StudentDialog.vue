@@ -7,7 +7,7 @@
   >
     <template #header>
       <div class="title">
-        <span>新增学生</span>
+        <span>{{ title }}</span>
       </div>
     </template>
     <el-form
@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from 'vue'
+import {reactive, ref, watch} from 'vue'
 import type {FormInstance, FormRules} from 'element-plus'
 import {
   ElButton,
@@ -107,9 +107,13 @@ import {
   ElSelect,
   ElOption
 } from 'element-plus'
-defineProps<{
+
+const props = defineProps<{
   modelValue: boolean
+  title: string
+  student?: any
 }>()
+
 const emit = defineEmits(['update:modelValue', 'saveSuccess'])
 
 const formRef = ref<FormInstance>()
@@ -123,6 +127,23 @@ const form = reactive({
   parentName: '',
   phone: ''
 })
+
+watch(
+  () => props.student,
+  newVal => {
+    if (newVal) {
+      form.account = newVal.id
+      form.studentName = newVal.name
+      form.gender = newVal.gender
+      form.age = newVal.age
+      form.grade = newVal.grade
+      form.school = newVal.school
+      form.parentName = newVal.parentName
+      form.phone = newVal.phone
+    }
+  },
+  {immediate: true} // immediate: true 可以在组件初始化时就执行一次
+)
 
 const rules = reactive<FormRules>({
   account: [{required: true, message: '请输入账号', trigger: 'blur'}],
@@ -138,6 +159,15 @@ const rules = reactive<FormRules>({
 // Handlers
 const handleClose = () => {
   formRef.value?.resetFields()
+  // 重置表单的每个字段
+  form.account = ''
+  form.studentName = ''
+  form.gender = ''
+  form.age = ''
+  form.grade = ''
+  form.school = ''
+  form.parentName = ''
+  form.phone = ''
   emit('update:modelValue', false)
 }
 

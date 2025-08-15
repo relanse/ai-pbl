@@ -14,8 +14,15 @@
           <span>新建学生</span>
         </el-button>
       </div>
-      <CreateStudentDialog
+      <StudentDialog
         v-model="createDialogVisible"
+        title="新建学生"
+        @save-success="handleSaveSuccess"
+      />
+      <StudentDialog
+        v-model="editDialogVisible"
+        :student="editingStudent"
+        title="编辑学生"
         @save-success="handleSaveSuccess"
       />
 
@@ -31,8 +38,10 @@
         <el-table-column prop="createdAt" label="创建时间" width="160px" />
         <el-table-column prop="updatedAt" label="最新编辑时间" width="160px" />
         <el-table-column label="操作">
-          <template #default>
-            <el-button type="primary" link>编辑</el-button>
+          <template #default="scope">
+            <el-button type="primary" link @click="handleEdit(scope.row)"
+              >编辑</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -52,7 +61,7 @@
 
 <script setup lang="ts">
 import {ref, onMounted} from 'vue'
-import CreateStudentDialog from './StudentDialog.vue' // 确保路径正确
+import StudentDialog from './common/StudentDialog.vue' // 确保路径正确
 import {
   ElConfigProvider,
   ElButton,
@@ -66,6 +75,8 @@ import {Search, Plus} from '@element-plus/icons-vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 const createDialogVisible = ref(false)
+const editDialogVisible = ref(false)
+const editingStudent = ref(null)
 const searchQuery = ref('')
 const studentList = ref<any[]>([])
 const currentPage = ref(1)
@@ -142,6 +153,11 @@ const fetchStudentList = () => {
 onMounted(() => {
   fetchStudentList()
 })
+
+const handleEdit = (student: any) => {
+  editingStudent.value = student
+  editDialogVisible.value = true
+}
 
 const handleSaveSuccess = () => {
   console.log('学生已成功保存，可以刷新列表了')

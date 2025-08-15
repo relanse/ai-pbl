@@ -34,9 +34,7 @@ const router = createRouter({
           name: 'course-create',
           meta: {
             title: '新建课程',
-            activeMenu: '/course-manage',
-            parentTitle: '课程管理',
-            parentPath: '/course-manage'
+            activeMenu: '/course-manage'
           },
           component: () => import('@/pages/courseManage/courseCreate.vue')
         },

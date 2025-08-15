@@ -25,11 +25,23 @@
         <el-table-column prop="id" label="项目ID" />
         <el-table-column prop="name" label="项目名称" width="280px" />
         <el-table-column prop="level" label="所属等级课程" />
-        <el-table-column prop="type" label="答题人数" />
+        <el-table-column prop="total" label="答题人数">
+          <template #default="scope">
+            <el-button
+              v-if="scope.row.total > 0"
+              type="primary"
+              link
+              @click="handleViewDetails(scope.row)"
+            >
+              {{ scope.row.total }}
+            </el-button>
+            <span v-else>{{ scope.row.total }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="creator" label="创建人" />
         <el-table-column prop="createTime" label="创建时间" width="160px" />
         <el-table-column prop="updateTime" label="最近编辑时间" width="160px" />
-        <el-table-column label="操作" width="120px">
+        <el-table-column label="操作">
           <template #default>
             <el-button type="primary" link>编辑</el-button>
             <el-button type="danger" link>删除</el-button>
@@ -78,13 +90,18 @@ const viewStudentProjects = () => {
 const createProject = () => {
   router.push('/project ')
 }
+
+const handleViewDetails = (project: any) => {
+  router.push(`/project/student-details`)
+}
+
 const fetchCourseList = () => {
   const mockData = [
     {
       id: '446655441234',
       name: 'L1-3 算法底层逻辑：从线性回归...',
       level: 'L1 基础认知：AI入门',
-      type: '录播',
+      total: 1,
       creator: '超管12345',
       createTime: '2024-11-02 13:22:11',
       updateTime: '2024-11-02 13:22:11'
@@ -93,7 +110,7 @@ const fetchCourseList = () => {
       id: '446655440130',
       name: 'L1-2 监督学习 vs. 无监督学习',
       level: 'L1 基础认知：AI入门',
-      type: '直播',
+      total: 2,
       creator: '超管12345',
       createTime: '2024-11-01 13:22:11',
       updateTime: '2024-11-01 13:22:11'
@@ -102,7 +119,7 @@ const fetchCourseList = () => {
       id: '446655440010',
       name: 'L1-1 人工智能的定义与演化',
       level: 'L1 基础认知：AI入门',
-      type: '录播',
+      total: 13,
       creator: '超管12345',
       createTime: '2024-11-02 13:20:11',
       updateTime: '2024-11-02 13:20:11'
@@ -111,7 +128,7 @@ const fetchCourseList = () => {
       id: '446655440011',
       name: 'L2-1 神经网络的结构与训练原理',
       level: 'L2 能力进阶：深度学习实战',
-      type: '录播',
+      total: 1,
       creator: '超管12345',
       createTime: '2024-11-01 13:22:11',
       updateTime: '2024-11-01 13:22:11'
@@ -120,7 +137,7 @@ const fetchCourseList = () => {
       id: '446655440034',
       name: 'L2-2 CNN：图像识别的核心引擎',
       level: 'L2 能力进阶：深度学习实战',
-      type: '录播',
+      total: 0,
       creator: '超管12345',
       createTime: '2024-11-01 11:22:11',
       updateTime: '2024-11-01 11:22:11'
