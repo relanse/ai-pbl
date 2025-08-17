@@ -1,6 +1,6 @@
 <template>
   <div class="course-create-container">
-    <el-card shadow="never" class="form-card">
+    <el-card shadow="never" class="class-message">
       <template #header>
         <div class="card-header">
           <span>课程信息</span>
@@ -102,11 +102,11 @@ const generateImage = () => {
 .create-course-container {
   padding: 20px;
 }
-.form-card {
-  max-width: 800px;
-  margin: 0 auto;
+.class-message {
+  max-width: 60%;
+  margin: 0;
 }
-.form-card .card-header {
+.class-message .card-header {
   font-size: 18px;
   font-weight: bold;
 }
