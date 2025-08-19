@@ -1,7 +1,7 @@
 import axios, {type AxiosRequestConfig, type AxiosResponse} from 'axios'
 export type Result<T> = {
   code: number
-  message: string
+  msg: string
   data: T
 }
 export const createRequestInstance = ({
