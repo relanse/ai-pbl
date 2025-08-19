@@ -83,6 +83,16 @@
               <el-icon :size="50"><UploadFilled /></el-icon>
             </el-upload>
           </el-form-item>
+          <el-form-item
+            label="腾讯会议"
+            v-else-if="form.type === 'stream'"
+            required
+          >
+            <el-input
+              v-model="form.streamUrl"
+              placeholder="请输入腾讯会议链接"
+            />
+          </el-form-item>
           <el-form-item label="配套项目" required>
             <el-select v-model="form.xiangmuId" placeholder="请选择项目名称" />
           </el-form-item>
@@ -162,6 +172,7 @@ const form = reactive({
   xiangmuId: '',
   name: '',
   type: 'video', // 默认录播
+  streamUrl: '', // 直播视频的URL
   description: '',
   coverUrl: '' // 存储封面图片的URL
 })
@@ -222,7 +233,7 @@ const generateImage = () => {
 }
 .btn-container {
   /* 让按钮容器也撑满父容器宽度，这样才有空间进行内部居中 */
-  width: 60%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
