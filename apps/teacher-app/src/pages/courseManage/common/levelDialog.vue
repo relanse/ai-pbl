@@ -11,7 +11,7 @@
       </div>
     </template>
     <el-button
-      tpye="primary"
+      type="primary"
       @click="createLevelCourseDialog = true"
       class="create-btn"
     >
@@ -155,11 +155,6 @@ const createLevelCourse = () => {
 .create-btn {
   margin-bottom: 15px;
   height: 40px;
-  border-radius: 8px;
-  background-color: #2262fb;
-  /* 修改文字颜色 */
-  --el-button-text-color: #ffffff;
-  font-size: 16px;
 }
 /* 添加一些基本样式以美化外观 */
 :deep(.el-table__header-wrapper th) {

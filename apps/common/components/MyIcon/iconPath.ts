@@ -9,6 +9,7 @@ export const iconPath = {
   studentManage: () => import('../../assets/icons/studentManage.svg'),
   studentManageActive: () =>
     import('../../assets/icons/studentManageActive.svg'),
+  upload: () => import('../../assets/icons/upload.svg'),
   user: () => import('../../assets/icons/user.svg')
 }
 export type iconNamesType = keyof typeof iconPath
