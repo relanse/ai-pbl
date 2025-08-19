@@ -1,7 +1,7 @@
 import axios, {type AxiosRequestConfig, type AxiosResponse} from 'axios'
 export type Result<T> = {
   code: number
-  msg: string
+  message: string
   data: T
 }
 export const createRequestInstance = ({
@@ -9,7 +9,7 @@ export const createRequestInstance = ({
   onUnAuth,
   getToken
 }: {
-  onErrorMessage: (msg: string) => void
+  onErrorMessage: (message: string) => void
   onUnAuth: () => void
   getToken: () => string | undefined
 }) => {
