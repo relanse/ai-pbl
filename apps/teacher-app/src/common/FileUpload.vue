@@ -2,14 +2,11 @@
   <el-upload
     class="file-uploader"
     drag
-    action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
     multiple
     :limit="5"
     :on-exceed="handleExceed"
   >
-    <!-- 使用你的自定义图标组件 -->
     <MyIcon name="upload" class="custom-upload-icon" />
-
     <div class="el-upload__text">
       将文件拖到此区域，或<em>点击上传</em>
       <div class="el-upload__tip">
