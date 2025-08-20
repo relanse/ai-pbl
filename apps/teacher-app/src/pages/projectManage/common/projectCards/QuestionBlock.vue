@@ -1,5 +1,5 @@
 <template>
-  <el-card style="max-width: 70%">
+  <el-card class="custom-card" style="max-width: 70%">
     <template #header>
       <div class="card-header">
         <div class="header-left">
@@ -58,13 +58,14 @@ const currentComponent = computed(() => componentMap[selectedType.value])
 
 <style scoped>
 /* 自定义卡片头部的样式 */
+.custom-card :deep(.el-card__header) {
+  background-color: #f7f9fa;
+}
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f7f9fa;
 }
-
 .header-left {
   display: flex;
   align-items: center;

@@ -20,7 +20,7 @@
           </el-dropdown>
         </div>
       </el-header>
-      <el-container>
+      <el-container class="layout-container">
         <el-aside width="240px" class="layout-aside">
           <el-menu
             class="layout-menu"
@@ -247,13 +247,17 @@ const handleBreadcrumbClick = (path: string) => {
   margin: 0 4px;
   color: #999;
 }
-
+.layout-container {
+  height: calc(100% - 80px);
+}
 .layout-main {
   background: #ffffff;
   border-radius: 12px;
   margin: 0 20px 20px 0;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  overflow-y: auto;
 }
 .logo {
   width: 56px;
