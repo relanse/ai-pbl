@@ -98,7 +98,7 @@
           </el-form-item>
           <el-form-item label="课程小结" required>
             <el-input
-              v-model="form.description"
+              v-model="form.conclusion"
               type="textarea"
               :rows="3"
               placeholder="请输入课程小结"
@@ -159,11 +159,6 @@ import levelDialog from './common/levelDialog.vue'
 const ChooseWhereImageFrom = ref('ai')
 const levelDialogVisible = ref(false)
 
-// 4. 定义步骤条所需的数据
-const courseSteps = ref([
-  {title: '步骤一：课程信息'},
-  {title: '步骤二：课程内容'}
-])
 const activeStep = ref(1) // 当前高亮的步骤
 
 const form = reactive({
@@ -174,6 +169,7 @@ const form = reactive({
   type: 'video', // 默认录播
   streamUrl: '', // 直播视频的URL
   description: '',
+  conclusion: '',
   coverUrl: '' // 存储封面图片的URL
 })
 

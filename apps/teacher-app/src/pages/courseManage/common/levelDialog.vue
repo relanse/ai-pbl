@@ -12,7 +12,7 @@
     </template>
     <el-button
       tpye="primary"
-      @click="createLevelCourseDialog = true"
+      @click="isCreateDialogVisible = true"
       class="create-btn"
     >
       新建等级课程</el-button
@@ -25,7 +25,7 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="0" />
+      <el-table-column type="selection" width="50" align="center" />
       <el-table-column prop="name" label="项目名称" align="center" />
       <el-table-column label="操作" width="100" align="center">
         <template #default="scope">
@@ -44,13 +44,23 @@
       </span>
     </template>
   </el-dialog>
+  <createLevelCourseDialog
+    v-model:visible="isCreateDialogVisible"
+    @confirm="handleCreateConfirm"
+  />
 </template>
 
 <script setup lang="ts">
 // 导入必要的组件和函数
-import {ElDialog, ElButton, ElTable, ElTableColumn} from 'element-plus'
-import type {ElTable as ElTableInstance} from 'element-plus'
+import {
+  ElDialog,
+  ElButton,
+  ElTable,
+  ElTableColumn,
+  ElMessage
+} from 'element-plus'
 import {ref, watch, nextTick} from 'vue'
+import createLevelCourseDialog from './createLevelCourseDialog.vue'
 
 // 定义组件的 props 和 emits
 const props = defineProps<{
@@ -59,7 +69,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:visible', 'confirm'])
-const createLevelCourseDialog = ref(false)
+const isCreateDialogVisible = ref(false)
 // --- 组件内部状态 ---
 
 // 1. 用于 el-table 组件的模板引用
@@ -77,15 +87,6 @@ const tableData = ref([
 ])
 
 // --- 逻辑与事件处理 ---
-
-// 监听弹窗可见性的变化
-watch(
-  () => props.visible,
-  newVal => {
-    // 注意：设置初始选中项的主要逻辑现在位于 onDialogOpen 中
-    // 保留此 watch 以备将来需要根据可见性变化执行其他逻辑
-  }
-)
 
 /**
  * 处理表格的 selection-change 事件，以强制实现单选效果。
@@ -131,7 +132,6 @@ const handleConfirm = () => {
   // 但为简单起见，我们在这里直接关闭。
   emit('update:visible', false)
 }
-
 /**
  * “修改”操作的占位函数。
  */
@@ -140,8 +140,24 @@ const handleModify = (row: any) => {
   // 在这里实现修改逻辑 (例如，打开另一个弹窗)
 }
 
-const createLevelCourse = () => {
-  console.log('创建新的等级课程')
+/**
+ * 5. 新增：处理“新建”弹窗确认事件的回调函数
+ * @param {object} newCourse - 从子弹窗传回来的新课程数据
+ */
+const handleCreateConfirm = (newCourse: {name: string}) => {
+  console.log('接收到新的课程数据:', newCourse)
+
+  // 模拟将新数据添加到列表顶部
+  const newEntry = {
+    id: `new-${Date.now()}`, // 模拟一个唯一的ID
+    name: newCourse.name
+  }
+  tableData.value.unshift(newEntry)
+
+  ElMessage.success('新建成功！')
+
+  // 关闭“新建”弹窗
+  isCreateDialogVisible.value = false
 }
 </script>
 
@@ -164,5 +180,8 @@ const createLevelCourse = () => {
 /* 添加一些基本样式以美化外观 */
 :deep(.el-table__header-wrapper th) {
   background-color: #f5f7fa;
+}
+:deep(.el-table__header-wrapper .el-checkbox) {
+  display: none;
 }
 </style>
