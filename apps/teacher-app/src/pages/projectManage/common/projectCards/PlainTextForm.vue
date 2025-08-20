@@ -1,15 +1,21 @@
 <template>
-  <el-form ref="formRef" :model="textForm" :rules="rules" label-width="auto">
+  <el-form
+    ref="formRef"
+    :model="textForm"
+    :rules="rules"
+    label-width="70px"
+    label-position="left"
+  >
     <el-form-item label="引导话术" prop="guideText">
       <el-input v-model="textForm.guideText" placeholder="请输入" />
     </el-form-item>
 
-    <el-form-item label="插图" prop="illustration">
-      <el-radio-group v-model="textForm.illustration">
-        <el-radio value="aiImage">AI生图</el-radio>
-        <el-radio value="upload">上传文件</el-radio>
-      </el-radio-group>
-      <div class="illustration-content">
+    <el-form-item label="插图" prop="image">
+      <div class="image-container">
+        <el-radio-group v-model="textForm.image">
+          <el-radio value="aiImage">AI生图</el-radio>
+          <el-radio value="upload">上传文件</el-radio>
+        </el-radio-group>
         <component :is="currentComponent"></component>
       </div>
     </el-form-item>
@@ -33,13 +39,13 @@ import AIGenerateImage from '@/common/AIGenerateImage.vue'
 
 interface TextForm {
   guideText: string
-  illustration: 'aiImage' | 'upload'
+  image: 'aiImage' | 'upload'
   isRecord: boolean
 }
 
 const textForm = reactive<TextForm>({
   guideText: '',
-  illustration: 'aiImage', // 默认选中 AI生图
+  image: 'aiImage', // 默认选中 AI生图
   isRecord: true // 默认选中 是
 })
 
@@ -52,20 +58,20 @@ const componentMap = {
   aiImage: AIGenerateImage
 }
 
-const currentComponent = computed(() => componentMap[textForm.illustration])
+const currentComponent = computed(() => componentMap[textForm.image])
 
 const formRef = ref<FormInstance>()
 </script>
 
 <style scoped>
-.illustration-content {
-  margin-top: 10px;
-  width: 100%;
+.image-container {
+  display: flex;
+  flex-direction: column;
 }
-.el-form-item {
-  margin-bottom: 22px;
+.component {
+  width: 300px;
 }
-.el-form[label-position='top'] .el-form-item {
-  margin-bottom: 12px;
+.el-input {
+  width: 300px;
 }
 </style>

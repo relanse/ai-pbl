@@ -1,10 +1,15 @@
 <template>
-  <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+  <el-form
+    ref="formRef"
+    :model="form"
+    :rules="rules"
+    label-width="70px"
+    label-position="left"
+  >
     <el-form-item label="引导话术" prop="guideText">
       <el-input v-model="form.guideText" placeholder="请输入" />
     </el-form-item>
-    <el-form-item>
-      <span>文件上传</span>
+    <el-form-item label="文件上传">
       <FileUpload></FileUpload>
     </el-form-item>
     <el-form-item label="是否记录" prop="isRecord">
@@ -40,4 +45,11 @@ const rules = reactive<FormRules<FileForm>>({
 })
 const formRef = ref<FormInstance>()
 </script>
-<style scoped></style>
+<style scoped>
+.el-input {
+  width: 350px;
+}
+:deep(.el-form-item__label) {
+  font-weight: 500;
+}
+</style>

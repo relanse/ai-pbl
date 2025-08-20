@@ -1,69 +1,66 @@
 <template>
-  <el-config-provider :locale="zhCn">
-    <div>
-      <div class="header-container">
-        <el-input
-          v-model="searchQuery"
-          placeholder="请输入账号/学生姓名/联系电话"
-          class="search-input"
-          clearable
-          :prefix-icon="Search"
-        />
-        <el-button type="primary" @click="createDialogVisible = true">
-          <el-icon><Plus /></el-icon>
-          <span>新建学生</span>
-        </el-button>
-      </div>
-      <StudentDialog
-        v-model="createDialogVisible"
-        title="新建学生"
-        @save-success="handleSaveSuccess"
+  <div>
+    <div class="header-container">
+      <el-input
+        v-model="searchQuery"
+        placeholder="请输入账号/学生姓名/联系电话"
+        class="search-input"
+        clearable
+        :prefix-icon="Search"
       />
-      <StudentDialog
-        v-model="editDialogVisible"
-        :student="editingStudent"
-        title="编辑学生"
-        @save-success="handleSaveSuccess"
-      />
-
-      <el-table :data="studentList" style="width: 100%" class="student-table">
-        <el-table-column prop="id" label="账号" width="280" />
-        <el-table-column prop="name" label="学生姓名" />
-        <el-table-column prop="gender" label="性别" />
-        <el-table-column prop="age" label="年龄" />
-        <el-table-column prop="grade" label="年级" />
-        <el-table-column prop="school" label="学校" />
-        <el-table-column prop="parentName" label="家长姓名" />
-        <el-table-column prop="phone" label="联系电话" />
-        <el-table-column prop="createdAt" label="创建时间" width="160px" />
-        <el-table-column prop="updatedAt" label="最新编辑时间" width="160px" />
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button type="primary" link @click="handleEdit(scope.row)"
-              >编辑</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <el-pagination
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 50]"
-        class="pagination-container"
-      />
+      <el-button type="primary" @click="createDialogVisible = true">
+        <el-icon><Plus /></el-icon>
+        <span>新建学生</span>
+      </el-button>
     </div>
-  </el-config-provider>
+    <StudentDialog
+      v-model="createDialogVisible"
+      title="新建学生"
+      @save-success="handleSaveSuccess"
+    />
+    <StudentDialog
+      v-model="editDialogVisible"
+      :student="editingStudent"
+      title="编辑学生"
+      @save-success="handleSaveSuccess"
+    />
+
+    <el-table :data="studentList" style="width: 100%" class="student-table">
+      <el-table-column prop="id" label="账号" width="280" />
+      <el-table-column prop="name" label="学生姓名" />
+      <el-table-column prop="gender" label="性别" />
+      <el-table-column prop="age" label="年龄" />
+      <el-table-column prop="grade" label="年级" />
+      <el-table-column prop="school" label="学校" />
+      <el-table-column prop="parentName" label="家长姓名" />
+      <el-table-column prop="phone" label="联系电话" />
+      <el-table-column prop="createdAt" label="创建时间" width="160px" />
+      <el-table-column prop="updatedAt" label="最新编辑时间" width="160px" />
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button type="primary" link @click="handleEdit(scope.row)"
+            >编辑</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-pagination
+      background
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :page-sizes="[10, 20, 50]"
+      class="pagination-container"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import {ref, onMounted} from 'vue'
 import StudentDialog from './common/StudentDialog.vue' // 确保路径正确
 import {
-  ElConfigProvider,
   ElButton,
   ElTable,
   ElTableColumn,
@@ -72,7 +69,6 @@ import {
   ElIcon
 } from 'element-plus'
 import {Search, Plus} from '@element-plus/icons-vue'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 const createDialogVisible = ref(false)
 const editDialogVisible = ref(false)

@@ -1,53 +1,50 @@
 <template>
-  <el-config-provider :locale="zhCn">
-    <div>
-      <div class="header-container">
-        <el-input
-          v-model="searchQuery"
-          placeholder="请输入课程名称"
-          class="search-input"
-          clearable
-          :prefix-icon="Search"
-        />
-        <el-button type="primary" @click="navigateToCreateCourse">
-          <el-icon><Plus /></el-icon>
-          <span>新建课程</span>
-        </el-button>
-      </div>
-
-      <el-table :data="courseList" style="width: 100%" class="course-table">
-        <el-table-column prop="id" label="课程ID" />
-        <el-table-column prop="name" label="课程名称" width="280px" />
-        <el-table-column prop="level" label="所属等级课程" />
-        <el-table-column prop="type" label="上课类型" />
-        <el-table-column prop="creator" label="创建人" />
-        <el-table-column prop="createTime" label="创建时间" width="160px" />
-        <el-table-column prop="updateTime" label="最近编辑时间" width="160px" />
-        <el-table-column label="操作">
-          <template #default>
-            <el-button type="primary" link>编辑</el-button>
-            <el-button type="danger" link>删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <el-pagination
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 50]"
-        class="pagination-container"
+  <div>
+    <div class="header-container">
+      <el-input
+        v-model="searchQuery"
+        placeholder="请输入课程名称"
+        class="search-input"
+        clearable
+        :prefix-icon="Search"
       />
+      <el-button type="primary" @click="navigateToCreateCourse">
+        <el-icon><Plus /></el-icon>
+        <span>新建课程</span>
+      </el-button>
     </div>
-  </el-config-provider>
+
+    <el-table :data="courseList" style="width: 100%" class="course-table">
+      <el-table-column prop="id" label="课程ID" />
+      <el-table-column prop="name" label="课程名称" width="280px" />
+      <el-table-column prop="level" label="所属等级课程" />
+      <el-table-column prop="type" label="上课类型" />
+      <el-table-column prop="creator" label="创建人" />
+      <el-table-column prop="createTime" label="创建时间" width="160px" />
+      <el-table-column prop="updateTime" label="最近编辑时间" width="160px" />
+      <el-table-column label="操作">
+        <template #default>
+          <el-button type="primary" link>编辑</el-button>
+          <el-button type="danger" link>删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-pagination
+      background
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :page-sizes="[10, 20, 50]"
+      class="pagination-container"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import {ref, onMounted} from 'vue'
 import {
-  ElConfigProvider,
   ElButton,
   ElTable,
   ElTableColumn,
@@ -56,7 +53,6 @@ import {
   ElIcon
 } from 'element-plus'
 import {Search, Plus} from '@element-plus/icons-vue'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import {useRouter} from 'vue-router'
 
 const router = useRouter()

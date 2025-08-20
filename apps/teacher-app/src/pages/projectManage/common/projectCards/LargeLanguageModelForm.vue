@@ -1,14 +1,19 @@
 <template>
-  <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+  <el-form
+    ref="formRef"
+    :model="form"
+    :rules="rules"
+    label-width="70px"
+    label-position="left"
+  >
     <el-form-item label="引导话术" prop="guideText">
       <el-input v-model="form.guideText" placeholder="请输入" />
     </el-form-item>
 
-    <el-form-item label="内置prompt" prop="prompt">
+    <el-form-item label="内置prompt" prop="prompt" class="prompt-label">
       <el-input v-model="form.prompt" placeholder="请输入" />
     </el-form-item>
-    <div>
-      <span>模型选择</span>
+    <el-form-item label="模型选择">
       <el-select v-model="selectAIModel" placeholder="请选择">
         <el-option
           v-for="item in options"
@@ -17,8 +22,7 @@
           :value="item.value"
         />
       </el-select>
-    </div>
-
+    </el-form-item>
     <el-form-item label="是否记录" prop="isRecord">
       <el-radio-group v-model="form.isRecord">
         <el-radio :value="true">是</el-radio>
@@ -67,14 +71,16 @@ const formRef = ref<FormInstance>()
 </script>
 
 <style scoped>
-.illustration-content {
-  margin-top: 10px;
-  width: 100%;
+.el-input {
+  width: 350px;
 }
-.el-form-item {
-  margin-bottom: 22px;
+.el-select {
+  width: 350px;
 }
-.el-form[label-position='top'] .el-form-item {
-  margin-bottom: 12px;
+.prompt-label:deep(.el-form-item__label) {
+  line-height: normal;
+}
+:deep(.el-form-item__label) {
+  font-weight: 500;
 }
 </style>
