@@ -221,11 +221,17 @@ const generateImage = () => {
   display: flex;
   justify-content: space-between;
 }
+<<<<<<< HEAD
+.form-card {
+  max-width: 800px;
+  margin: 0;
+=======
 .course-create-container {
   width: 60%;
   display: flex;
   flex-direction: column;
   gap: 50px;
+>>>>>>> 163b3a355d860bfe52918fd8a030f34bf5035b82
 }
 .btn-container {
   /* 让按钮容器也撑满父容器宽度，这样才有空间进行内部居中 */

@@ -6,11 +6,17 @@
     </div>
     <div class="login-box">
       <div class="subtitle">账号登录</div>
-      <el-form class="myform" :model="form" :rules="formRules">
+      <el-form
+        ref="loginFormRef"
+        class="myform"
+        :model="form"
+        :rules="formRules"
+        @keyup.enter="handleLogin"
+      >
         <el-form-item>
           <el-input
             class="login-input"
-            v-model="form.username"
+            v-model="form.account"
             placeholder="请输入账号"
             size="large"
           >
@@ -33,29 +39,52 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-button class="login-btn">登录</el-button>
+        <el-button @click="handleLogin" class="login-btn"> 登录 </el-button>
       </el-form>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import LogoImg from '@aipbl/common/assets/logo.png'
-import {ElForm, ElFormItem, ElInput, ElButton} from 'element-plus'
-import {reactive} from 'vue'
+import {
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElButton,
+  FormInstance,
+  ElMessage
+} from 'element-plus'
+import {reactive, ref} from 'vue'
 import {type LoginRequestType} from '@/types/loginTypes'
+import {loginAdminAccount} from '@/api/login'
+import {useLoginStore} from '@/stores/loginStore'
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
-
+import router from '@/router/index'
 defineOptions({
   name: 'loginPage'
 })
+const {setUserInfo} = useLoginStore()
+const loginFormRef = ref<FormInstance>()
 const form = reactive<LoginRequestType>({
-  username: '',
+  account: '',
   password: ''
 })
 const formRules = reactive({
-  usename: [{required: true, message: '请输入账号', trigger: 'blur'}],
+  account: [{required: true, message: '请输入账号', trigger: 'blur'}],
   password: [{required: true, message: '请输入密码', trigger: 'blur'}]
 })
+const handleLogin = async () => {
+  ElMessage.success('正在登录')
+  if (!loginFormRef.value) return
+  const res = await loginAdminAccount({
+    account: form.account,
+    password: form.password
+  })
+  const data = res
+  setUserInfo(data)
+  ElMessage.success('登录成功')
+  router.push('/student-manage')
+}
 </script>
 <style scoped>
 .login-container {

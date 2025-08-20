@@ -88,7 +88,7 @@ const viewStudentProjects = () => {
   router.push('/project/student-details')
 }
 const createProject = () => {
-  router.push('/project ')
+  router.push('/project/create')
 }
 
 const handleViewDetails = (project: any) => {

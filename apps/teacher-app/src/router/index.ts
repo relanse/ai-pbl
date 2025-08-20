@@ -15,8 +15,7 @@ const router = createRouter({
           meta: {
             title: '学生管理'
           },
-          component: () => import('@/pages/studentManage/studentManage.vue'),
-          children: []
+          component: () => import('@/pages/studentManage/studentManage.vue')
         },
         //课程管理
         {
@@ -25,8 +24,7 @@ const router = createRouter({
           meta: {
             title: '课程管理'
           },
-          component: () => import('@/pages/courseManage/courseManage.vue'),
-          children: []
+          component: () => import('@/pages/courseManage/courseManage.vue')
         },
         //课程管理->创建课程
         {
@@ -45,8 +43,7 @@ const router = createRouter({
           meta: {
             title: '项目管理'
           },
-          component: () => import('@/pages/projectManage/projectManage.vue'),
-          children: []
+          component: () => import('@/pages/projectManage/projectManage.vue')
         },
         //项目管理->查看学生项目情况
         {
@@ -69,18 +66,24 @@ const router = createRouter({
             parentTitle: '学生项目情况',
             parentPath: '/project/student-details'
           }
+        },
+        {
+          path: 'project/create',
+          name: 'create-project',
+          component: () => import('@/pages/projectManage/createNewProject.vue'),
+          meta: {
+            title: '新建项目',
+            activeMenu: '/project-manage'
+          }
         }
       ],
-      redirect: '/student-manage'
+      redirect: 'student-manage'
     },
-    //登录
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/pages/login/login.vue'),
-      children: []
+      component: () => import('@/pages/login/login.vue')
     }
   ]
 })
-
 export default router
