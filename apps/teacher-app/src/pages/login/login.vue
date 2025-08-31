@@ -45,7 +45,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import LogoImg from '@aipbl/common/assets/logo.png'
+import LogoImg from '@aipbl/common/assets/Logo.png'
 import {
   ElForm,
   ElFormItem,

@@ -19,14 +19,17 @@
     "@aipbl/common": "workspace:*",
     "@element-plus/icons-vue": "^2.3.2",
     "element-plus": "^2.10.7",
+    "lodash-es": "^4.17.21",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "router": "^2.2.0",
     "vue": "^3.5.18",
+    "vue-draggable-plus": "^0.6.0",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.16.5",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-prettier": "^10.2.0",

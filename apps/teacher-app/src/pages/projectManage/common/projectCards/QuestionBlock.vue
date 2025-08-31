@@ -1,79 +1,103 @@
 <template>
-  <el-card class="custom-card" style="max-width: 60%">
+  <el-card class="custom-card" shadow="never">
     <template #header>
       <div class="card-header">
         <div class="header-left">
           <span>题型</span>
           <el-select
-            v-model="selectedType"
+            v-model="questionType"
             placeholder="请选择"
             style="width: 150px"
           >
             <el-option
-              v-for="item in options"
+              v-for="item in QUESTION_OPTIONS"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             />
           </el-select>
         </div>
-        <el-button link size="large" type="primary">删除</el-button>
+        <el-button link size="large" type="primary" @click="$emit('delete')"
+          >删除</el-button
+        >
       </div>
     </template>
     <div class="card-main">
-      <component :is="currentComponent"></component>
+      <!-- 使用 Suspense 来处理异步组件加载时的过渡状态 -->
+      <Suspense>
+        <component :is="currentComponent" />
+        <template #fallback>
+          <div>加载中...</div>
+        </template>
+      </Suspense>
     </div>
   </el-card>
 </template>
 
 <script setup lang="ts">
-import {ref, computed} from 'vue'
+import {computed, defineAsyncComponent} from 'vue'
 import {ElSelect, ElOption, ElButton, ElCard} from 'element-plus'
 
-// 导入所有可能的表单组件
-import LargeLanguageModelForm from './LargeLanguageModelForm.vue'
-import FileForm from './FileForm.vue'
-import MultipleChoiceForm from './MultipleChoiceForm.vue'
-import PlainTextForm from './PlainTextForm.vue'
-
-// 2. 创建一个题型值到组件的映射
-const componentMap = {
-  llm: LargeLanguageModelForm,
-  file: FileForm,
-  choice: MultipleChoiceForm,
-  text: PlainTextForm
+// --- 优化 1: 使用异步组件实现懒加载 ---
+const COMPONENT_MAP = {
+  llm: defineAsyncComponent(() => import('./LargeLanguageModelForm.vue')),
+  file: defineAsyncComponent(() => import('./FileForm.vue')),
+  choice: defineAsyncComponent(() => import('./MultipleChoiceForm.vue')),
+  text: defineAsyncComponent(() => import('./PlainTextForm.vue'))
 }
-type QuestionType = keyof typeof componentMap
 
-// 1. 定义题型选项
-const selectedType = ref<QuestionType>('llm')
-const options = [
+// --- 优化 2: 将静态常量移到 setup 外或使用大写命名以区分 ---
+const QUESTION_OPTIONS = [
   {value: 'llm', label: '大语言对话'},
   {value: 'file', label: '文件'},
   {value: 'choice', label: '选择题'},
   {value: 'text', label: '纯文本'}
 ]
-const currentComponent = computed(() => componentMap[selectedType.value])
+
+// --- Props 和 Emits 定义 ---
+const props = defineProps<{
+  type: string
+}>()
+const emit = defineEmits(['delete', 'update:type'])
+
+// --- 响应式逻辑 ---
+const questionType = computed({
+  get() {
+    return props.type
+  },
+  set(newValue: string) {
+    emit('update:type', newValue)
+  }
+})
+
+const currentComponent = computed(() => COMPONENT_MAP[questionType.value])
 </script>
 
 <style scoped>
-/* 自定义卡片头部的样式 */
+.custom-card {
+  width: 100%;
+  border: 1px solid #e4e7ed;
+}
+
+/* --- 优化 3: 清理并合并样式规则 --- */
 .custom-card :deep(.el-card__header) {
   background-color: #f7f9fa;
+  padding: 12px 20px; /* 统一内边距 */
 }
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .header-left {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-/* 覆盖 el-card 默认的头部内边距，使其更紧凑 */
-.question-card :deep(.el-card__header) {
-  background-color: #d4d6d9; /* <-- 在这里修改为你想要的颜色 */
+.card-main {
+  padding: 10px; /* 给内容区域一些内边距，避免紧贴边缘 */
 }
 </style>

@@ -19,10 +19,8 @@
 <script setup lang="ts">
 import {ElMessage, ElUpload} from 'element-plus'
 import type {UploadProps} from 'element-plus'
-// 导入你的自定义图标组件
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
 
-// 文件超出个数限制时的钩子
 const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
   ElMessage.warning(
     `当前限制选择 5 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
@@ -40,8 +38,8 @@ const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
   padding: 40px 20px;
   background-color: #fafafa;
   transition: border-color 0.3s;
-
-  /* 使用 Flexbox 来居中内容 */
+  height: 200px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -54,9 +52,9 @@ const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
 
 /* 为你的自定义图标设置样式 */
 .custom-upload-icon {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 16px; /* 图标和文字之间的间距 */
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1px; /* 图标和文字之间的间距 */
 }
 
 .el-upload__text {
@@ -71,7 +69,7 @@ const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
 
 .el-upload__tip {
   text-align: center;
-  margin-top: 16px;
+  margin-top: 1px;
   color: #909399;
   font-size: 12px;
 }

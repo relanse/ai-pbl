@@ -68,10 +68,7 @@ const formRef = ref<FormInstance>()
   display: flex;
   flex-direction: column;
 }
-.component {
-  width: 300px;
-}
 .el-input {
-  width: 300px;
+  width: 350px;
 }
 </style>
