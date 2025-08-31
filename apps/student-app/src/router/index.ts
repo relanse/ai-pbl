@@ -5,7 +5,18 @@ const router = createRouter({
     {
       path: '/',
       name: 'layout',
-      component: () => import('@/pages/Layout.vue')
+      component: () => import('@/pages/Layout.vue'),
+      children: [
+        //课程管理
+        {
+          path: 'course-map',
+          name: 'course',
+          meta: {
+            title: '课程管理'
+          },
+          component: () => import('@/pages/course/courseMap.vue')
+        }
+      ]
     },
     {
       path: '/login',

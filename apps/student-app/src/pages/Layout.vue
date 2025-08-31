@@ -17,7 +17,8 @@
         </div>
       </el-header>
       <el-main class="layout-main">
-        <button @click="testButton">1231</button>
+        <button @click="testButton">返回登录</button>
+        <router-view />
       </el-main>
     </el-container>
   </div>
