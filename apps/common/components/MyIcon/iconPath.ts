@@ -6,8 +6,11 @@ export const iconPath = {
   'projectManage': ()=>import('../../assets/icons/projectManage.svg'),
   'projectManageActive': ()=>import('../../assets/icons/projectManageActive.svg'),
   'radius': ()=>import('../../assets/icons/radius.svg'),
+  'solidLock': ()=>import('../../assets/icons/solidLock.svg'),
   'studentManage': ()=>import('../../assets/icons/studentManage.svg'),
   'studentManageActive': ()=>import('../../assets/icons/studentManageActive.svg'),
+  'telephone': ()=>import('../../assets/icons/telephone.svg'),
+  'unlock': ()=>import('../../assets/icons/unlock.svg'),
   'upload': ()=>import('../../assets/icons/upload.svg'),
   'user': ()=>import('../../assets/icons/user.svg')
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="background-container">
+  <div class="page-wrapper">
     <div class="common-container">
       <div class="cover">
         <img :src="Cover" alt="Cover" />
@@ -15,36 +15,32 @@
         <div class="login-form">
           <el-form v-model="form">
             <el-form-item>
-              <el-input
+              <MyInput
                 class="form-input"
                 v-model="form.account"
                 placeholder="请输入账号"
                 size="large"
+                icon="user"
               >
-                <template #prefix>
-                  <MyIcon name="user" style="width: 25px"> </MyIcon>
-                </template>
-              </el-input>
+              </MyInput>
             </el-form-item>
             <div class="password-container">
               <el-form-item>
-                <el-input
+                <MyInput
                   class="form-input"
                   v-model="form.password"
                   placeholder="请输入密码"
                   size="large"
                   type="password"
+                  icon="solidLock"
                   :show-password="true"
                 >
-                  <template #prefix>
-                    <MyIcon name="lock" style="width: 25px"> </MyIcon>
-                  </template>
-                </el-input>
+                </MyInput>
               </el-form-item>
-              <a href="#" class="password-forget">忘记密码</a>
+              <a href="/password-find" class="password-forget">忘记密码</a>
             </div>
             <el-form-item>
-              <MyButton class="form-btn"> 注册 </MyButton>
+              <MyButton class="form-btn"> 登录 </MyButton>
             </el-form-item>
             <el-form-item class="form-agreement">
               <el-checkbox v-model="form.agreement">
@@ -61,12 +57,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
 import Cover from '@aipbl/common/assets/Cover.png'
 import LogoImg from '@aipbl/common/assets/Logo.png'
-import {ElForm, ElFormItem, ElInput, ElCheckbox} from 'element-plus'
+import {ElForm, ElFormItem, ElCheckbox} from 'element-plus'
 import {ref} from 'vue'
 import MyButton from '@/components/common/MyButton.vue'
+import MyInput from '@/components/common/MyInput.vue'
 defineOptions({
   name: 'LoginPage'
 })
@@ -77,7 +73,7 @@ const form = ref({
 })
 </script>
 <style scoped>
-.background-container {
+.page-wrapper {
   width: 100%;
   height: 100%;
   position: relative;
@@ -155,20 +151,6 @@ const form = ref({
   max-width: 380px;
 }
 
-.form-input {
-  border-radius: 24px;
-  height: 48px;
-}
-.form-input :deep(.el-input__wrapper) {
-  border-radius: 24px;
-  padding: 0 15px;
-  box-shadow: 0 0 0 1px #e0e5ec;
-  background: #eeeeee;
-}
-.form-input :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 1px #95c3f6;
-  background: #f0f6ff;
-}
 .password-container {
   position: relative;
   width: 100%;
