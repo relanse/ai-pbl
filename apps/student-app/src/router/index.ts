@@ -1,17 +1,17 @@
-import {createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router';
-// 定义路由
-const routes: RouteRecordRaw[] = [
-          {
-                    path: '/login',
-                    name: 'login',
-                    component: import('@/pages/login/LoginPage.vue')
-          }
-];
-
-// 创建路由实例
+import {createRouter, createWebHistory} from 'vue-router'
 const router = createRouter({
-          history: createWebHistory(),
-          routes
-});
-
-export default router;
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/',
+      name: 'layout',
+      component: () => import('@/pages/Layout.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/pages/Login/Login.vue')
+    }
+  ]
+})
+export default router

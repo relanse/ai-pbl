@@ -19,6 +19,7 @@
             handle=".handle"
             :animation="150"
             class="draggable-area"
+            ref="questionBlocksWrapperRef"
           >
             <div
               v-for="(block, index) in form.questionBlocks"
@@ -26,6 +27,7 @@
               :key="block.id"
               class="question-block-wrapper"
               @click="activeBlockId = block.id"
+              ref="questionBlocksRefs"
             >
               <el-icon class="handle"><Rank /></el-icon>
               <QuestionBlock
@@ -67,7 +69,7 @@
 
 <script setup lang="ts">
 // 1. 移除了 onMounted, onUnmounted 的导入
-import {reactive, ref, computed, watch} from 'vue'
+import {reactive, ref, computed, watch, onMounted} from 'vue'
 import {VueDraggable} from 'vue-draggable-plus'
 import QuestionBlock from './common/projectCards/QuestionBlock.vue'
 import CardAnchdor from '@/common/CardAnchdor.vue'
@@ -114,11 +116,59 @@ const anchorItems = computed(() => {
     title: typeToTitleMap[block.type] || '未知类型'
   }))
 })
+const questionBlocksWrapperRef = ref<HTMLDivElement>()
+const questionBlocksRefs = ref<HTMLDivElement[]>()
+const questionBlocksOb = ref<IntersectionObserver>()
+const blockInView = ref<number[]>([])
+watch(
+  () => blockInView.value,
+  () => {
+    console.log(blockInView.value)
+    activeBlockId.value = form.questionBlocks?.[blockInView.value[0]]?.id
+  }
+)
+watch(
+  () => [form.questionBlocks, questionBlocksRefs.value],
+  () => {
+    if (questionBlocksOb.value) {
+      questionBlocksOb.value.disconnect()
+    }
+    const ob = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.intersectionRatio <= 0.3) {
+            blockInView.value?.filter(
+              item =>
+                item !==
+                questionBlocksRefs.value?.findIndex(r => r === entry.target)
+            )
+          } else {
+            const idx =
+              questionBlocksRefs.value?.findIndex(
+                item => item === entry.target
+              ) || 0
+            blockInView.value = Array.from(new Set([...blockInView.value, idx]))
+          }
+        })
+      },
+      {threshold: 0.3}
+    )
+    questionBlocksOb.value = ob
+
+    questionBlocksRefs.value?.forEach(blockRef => {
+      ob.observe(blockRef)
+    })
+  },
+  {
+    immediate: true
+  }
+)
 
 // --- 方法定义部分 (无变化) ---
 const addQuestionBlock = () => {
   const newBlock = {id: Date.now(), type: 'llm'}
-  form.questionBlocks.push(newBlock)
+  form.questionBlocks = [...form.questionBlocks, newBlock]
+  // form.questionBlocks.push(newBlock)
   activeBlockId.value = newBlock.id
 }
 const deleteQuestionBlock = (index: number) => {
