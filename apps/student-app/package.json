@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@aipbl/common": "workspace:*",
+    "@element-plus/icons-vue": "^2.3.2",
     "element-plus": "^2.10.7",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",

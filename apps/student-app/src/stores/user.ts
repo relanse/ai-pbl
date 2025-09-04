@@ -5,6 +5,7 @@ export const useUserStore = defineStore(
   'userInfo',
   () => {
     const userState = ref<UserStateType>({
+      userid: '',
       username: '',
       avatarUrl: '',
       token: ''
@@ -13,6 +14,7 @@ export const useUserStore = defineStore(
       userState.value.username = state.username
       userState.value.avatarUrl = state.avatarUrl
       userState.value.token = state.token
+      userState.value.userid = state.userid
     }
 
     return {

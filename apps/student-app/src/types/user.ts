@@ -13,10 +13,11 @@ export type UserInfoType = {
   telephone: number
   grade: Grade
   school: string
-  parents: string
+  parent: string
 }
 
 export type UserStateType = {
+  userid: string
   username: string
   avatarUrl: string
   token: string

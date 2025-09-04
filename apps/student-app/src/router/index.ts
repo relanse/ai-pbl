@@ -5,7 +5,14 @@ const router = createRouter({
     {
       path: '/',
       name: 'layout',
-      component: () => import('@/pages/Layout.vue')
+      component: () => import('@/pages/Layout.vue'),
+      children: [
+        {
+          path: 'user',
+          name: 'user',
+          component: () => import('@/pages/User/UserInfo.vue')
+        }
+      ]
     },
     {
       path: '/login',
@@ -21,6 +28,11 @@ const router = createRouter({
       path: '/password-find/rest',
       name: 'password-rest',
       component: () => import('@/pages/Login/ResetPassword.vue')
+    },
+    {
+      path: '/register/userInfo',
+      name: 'userInfo',
+      component: () => import('@/pages/Login/FillUserInfo.vue')
     }
   ]
 })

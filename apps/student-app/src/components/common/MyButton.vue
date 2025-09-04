@@ -1,20 +1,31 @@
 <template>
   <button class="my-button">
-    <MyIcon name="radius" class="my-button-radius"></MyIcon>
+    <MyIcon :name="icon" class="my-button-radius"></MyIcon>
     <div class="my-button-slot">
       <slot></slot>
     </div>
-    <div class="my-button-background"></div>
+    <div class="my-button-background" :style="{backgroundColor: color}"></div>
   </button>
 </template>
 <script setup lang="ts">
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
+import {iconNamesType} from '@aipbl/common/components/MyIcon/iconPath'
+defineProps({
+  color: {
+    type: String,
+    default: '#63a2fd' // 默认颜色
+  },
+  icon: {
+    type: String as () => iconNamesType,
+    default: 'whiteRadius'
+  }
+})
 </script>
 <style scoped>
 .my-button {
   position: relative;
   border: none;
-  border-radius: 21px;
+  border-radius: 27px;
   padding: 0 10px;
   width: 249px;
   height: 51px;
@@ -38,7 +49,6 @@ import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
   z-index: 1;
 }
 .my-button-background {
-  background-color: #63a2fd;
   position: absolute;
   left: 0;
   top: 0;

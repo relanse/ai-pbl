@@ -6,7 +6,7 @@
           <img :src="LogoImg" alt="logo" class="logo" />
           <h2 class="title">鸿蒙智启管理平台</h2>
         </div>
-        <div class="layout-header-user">
+        <div class="layout-header-user" @click="jumpToUserInfo">
           <el-avatar
             :src="useUserStore().userState.avatarUrl || DefaultAvatar"
             :size="45"
@@ -17,7 +17,7 @@
         </div>
       </el-header>
       <el-main class="layout-main">
-        <button @click="testButton">1231</button>
+        <RouterView></RouterView>
       </el-main>
     </el-container>
   </div>
@@ -28,12 +28,13 @@ import {ElContainer, ElHeader, ElMain, ElAvatar} from 'element-plus'
 import LogoImg from '@aipbl/common/assets/Logo.png'
 import DefaultAvatar from '@aipbl/common/assets/DefaultAvatar.png'
 import {useUserStore} from '@/stores/user'
+import {RouterView} from 'vue-router'
 import router from '@/router/index'
 defineOptions({
   name: 'LayoutPage'
 })
-const testButton = () => {
-  router.push('/login')
+const jumpToUserInfo = () => {
+  router.push('/user')
 }
 </script>
 
@@ -76,6 +77,7 @@ const testButton = () => {
   gap: 15px;
   align-items: center;
   padding-right: 30px;
+  cursor: pointer;
 }
 .username {
   font-size: 20px;
