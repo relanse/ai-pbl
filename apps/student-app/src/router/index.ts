@@ -11,9 +11,6 @@ const router = createRouter({
         {
           path: 'course-map',
           name: 'course',
-          meta: {
-            title: '课程管理'
-          },
           component: () => import('@/pages/course/courseMap.vue')
         }
       ]

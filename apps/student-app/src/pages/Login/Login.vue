@@ -40,7 +40,14 @@
               <a href="/password-find" class="password-forget">忘记密码</a>
             </div>
             <el-form-item>
-              <MyButton class="form-btn"> 登录 </MyButton>
+              <MyButton
+                class="form-btn"
+                width="380px"
+                height="51px"
+                icon-position="left-top"
+              >
+                登录
+              </MyButton>
             </el-form-item>
             <el-form-item class="form-agreement">
               <el-checkbox v-model="form.agreement">

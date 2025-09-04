@@ -9,7 +9,7 @@
         <div class="layout-header-user">
           <el-avatar
             :src="useUserStore().userState.avatarUrl || DefaultAvatar"
-            :size="45"
+            :size="32"
           />
           <span class="username">{{
             useUserStore().userState.username || '用户'
@@ -17,7 +17,12 @@
         </div>
       </el-header>
       <el-main class="layout-main">
-        <button @click="testButton">返回登录</button>
+        <el-button
+          class="return-button"
+          @click="testButton"
+          v-if="router.currentRoute.value.path === '/login'"
+          >返回</el-button
+        >
         <router-view />
       </el-main>
     </el-container>
@@ -25,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import {ElContainer, ElHeader, ElMain, ElAvatar} from 'element-plus'
+import {ElContainer, ElHeader, ElMain, ElAvatar, ElButton} from 'element-plus'
 import LogoImg from '@aipbl/common/assets/Logo.png'
 import DefaultAvatar from '@aipbl/common/assets/DefaultAvatar.png'
 import {useUserStore} from '@/stores/user'
@@ -42,7 +47,6 @@ const testButton = () => {
 .el-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
 .layout-header {
   display: flex;
@@ -76,16 +80,20 @@ const testButton = () => {
   display: flex;
   gap: 15px;
   align-items: center;
-  padding-right: 30px;
+  padding-right: 45px;
 }
 .username {
   font-size: 20px;
   font-weight: 400;
 }
 .layout-main {
-  flex: 1;
+  display: flex;
   background-color: rgb(246, 246, 246);
-  overflow: auto;
-  padding: 20px;
+  height: calc(100vh - 80px);
+  --el-main-padding: 0px;
+}
+.return-button {
+  border: #6696ff solid 0.5px;
+  border-radius: 29px;
 }
 </style>
