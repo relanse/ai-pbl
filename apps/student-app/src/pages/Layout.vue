@@ -9,7 +9,7 @@
         <div class="layout-header-user" @click="jumpToUserInfo">
           <el-avatar
             :src="useUserStore().userState.avatarUrl || DefaultAvatar"
-            :size="45"
+            :size="32"
           />
           <span class="username">{{
             useUserStore().userState.username || '用户'
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import {ElContainer, ElHeader, ElMain, ElAvatar} from 'element-plus'
+import {ElContainer, ElHeader, ElMain, ElAvatar, ElButton} from 'element-plus'
 import LogoImg from '@aipbl/common/assets/Logo.png'
 import DefaultAvatar from '@aipbl/common/assets/DefaultAvatar.png'
 import {useUserStore} from '@/stores/user'
@@ -42,7 +42,6 @@ const jumpToUserInfo = () => {
 .el-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
 .layout-header {
   display: flex;
@@ -84,9 +83,13 @@ const jumpToUserInfo = () => {
   font-weight: 400;
 }
 .layout-main {
-  flex: 1;
+  display: flex;
   background-color: rgb(246, 246, 246);
-  overflow: auto;
-  padding: 20px;
+  height: calc(100vh - 80px);
+  --el-main-padding: 0px;
+}
+.return-button {
+  border: #6696ff solid 0.5px;
+  border-radius: 29px;
 }
 </style>
