@@ -12,7 +12,7 @@
               v-model="form.telephone"
               placeholder="请输入手机号码"
               size="large"
-              icon="telephone"
+              icon="mobilephone"
             >
             </MyInput>
           </el-form-item>
@@ -30,7 +30,10 @@
                   :class="{disabled: countdown > 0}"
                   @click="getCode"
                 >
-                  {{ buttonText }}
+                  <div class="get-code-button-line"></div>
+                  <span>
+                    {{ buttonText }}
+                  </span>
                 </div>
               </template>
             </MyInput>
@@ -104,18 +107,20 @@ const handleToRest = () => {
   transition: all 0.3s;
   display: flex;
   align-items: center;
+  height: 100%;
+}
+.get-code-button-line {
+  height: 40%;
+  width: 0.8px;
+  background: #95c3f6;
+  margin-right: 8px;
+  border-radius: 1px;
 }
 .get-code-button.disabled {
   color: #999;
   cursor: not-allowed;
 }
-.get-code-button::before {
-  content: '';
-  transform: translateX(-1000%);
-  height: 30px; /* 分隔线高度 */
-  width: 1px; /* 分隔线宽度 */
-  background-color: #95c3f6; /* 分隔线颜色 */
-}
+
 .form-btn {
   margin-top: 40px;
 }

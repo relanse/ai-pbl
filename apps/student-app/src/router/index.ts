@@ -7,9 +7,13 @@ const router = createRouter({
       name: 'layout',
       component: () => import('@/pages/Layout.vue'),
       children: [
-        //课程管理
         {
-          path: 'course-map',
+          path: 'user',
+          name: 'user',
+          component: () => import('@/pages/User/UserInfo.vue')
+        },
+        {
+          path: 'course',
           name: 'course',
           component: () => import('@/pages/course/courseMap.vue')
         }
@@ -29,6 +33,11 @@ const router = createRouter({
       path: '/password-find/rest',
       name: 'password-rest',
       component: () => import('@/pages/Login/ResetPassword.vue')
+    },
+    {
+      path: '/register/userInfo',
+      name: 'userInfo',
+      component: () => import('@/pages/Login/FillUserInfo.vue')
     }
   ]
 })

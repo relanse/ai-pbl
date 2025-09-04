@@ -10,8 +10,7 @@
           <MyButton
             v-if="activeButton === button.id"
             :background="button.background"
-            width="100%"
-            height="60px"
+            style="width: 100%; height: 60px"
           >
             {{ button.label }}
           </MyButton>

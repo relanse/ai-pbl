@@ -159,17 +159,16 @@ const form = ref({
 }
 
 .password-container {
-  position: relative;
   width: 100%;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 .password-forget {
-  position: absolute;
-  right: 0;
-  top: 60px;
   font-size: 14px;
   color: #1664ff;
   text-decoration: none;
+  align-self: flex-end;
 }
 .password-forget:hover {
   text-decoration: underline;
@@ -178,7 +177,7 @@ const form = ref({
 .form-btn {
   width: 100%;
   height: 48px;
-  border-radius: 24px;
+  border-radius: 27px;
   font-size: 16px;
   background-color: #4080ff;
   border-color: #4080ff;

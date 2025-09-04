@@ -1,6 +1,6 @@
 <template>
   <button class="my-button" :style="buttonStyle">
-    <MyIcon name="radius" class="my-button-radius" :style="iconStyle"></MyIcon>
+    <MyIcon :name="icon" class="my-button-radius" :style="iconStyle"></MyIcon>
     <div
       :class="[
         writingMode?.includes('horizontal') && 'my-button-slot',
@@ -10,11 +10,11 @@
     >
       <slot></slot>
     </div>
-    <div class="my-button-background"></div>
   </button>
 </template>
 <script setup lang="ts">
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
+import {iconNamesType} from '@aipbl/common/components/MyIcon/iconPath'
 import {computed, useSlots, type PropType, type CSSProperties} from 'vue'
 
 const props = defineProps({
@@ -26,17 +26,13 @@ const props = defineProps({
     type: String as PropType<CSSProperties['writingMode']>,
     default: 'horizontal-tb'
   },
-  width: {
-    type: String,
-    default: '200px'
-  },
-  height: {
-    type: String,
-    default: 'auto'
-  },
   iconPosition: {
     type: String,
     default: 'top-right'
+  },
+  icon: {
+    type: String as () => iconNamesType,
+    default: 'whiteRadius'
   }
 })
 const slots = useSlots()
@@ -44,14 +40,13 @@ const hasDefaultSlot = computed(() => !!slots.default)
 
 const buttonStyle = computed(() => ({
   background: props.background,
-  width: props.width,
-  height: props.height,
   padding: hasDefaultSlot.value ? '0 10px' : '0'
 }))
 
 const slotStyle = computed(() => ({
   writingMode: props.writingMode
 }))
+// 计算图标位置和旋转角度
 const iconStyle = computed(() => {
   const styles: {[key: string]: string} = {}
   const offset = '8px'

@@ -1,39 +1,34 @@
 <template>
-  <el-input
-    class="my-input"
+  <el-select
+    class="my-select"
     v-bind="$attrs"
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <!-- 自定义前缀图标插槽 -->
+    <!-- 自定义前缀图标 -->
     <template #prefix v-if="icon">
-      <MyIcon :name="icon" class="input-icon" />
+      <MyIcon :name="icon" class="select-icon" />
     </template>
-
-    <!-- 保留原有的所有插槽 -->
-    <template v-for="(_, name) in $slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData" />
-    </template>
-  </el-input>
+    <slot></slot>
+  </el-select>
 </template>
 
 <script setup lang="ts">
-import {ElInput} from 'element-plus'
+import {ElSelect} from 'element-plus'
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
 import {iconNamesType} from '@aipbl/common/components/MyIcon/iconPath'
+
 defineOptions({
-  name: 'MyInput',
+  name: 'MySelect',
   inheritAttrs: false
 })
 
 // 定义组件的属性
 const props = defineProps({
-  // 继承 el-input 的 modelValue
   modelValue: {
-    type: [String, Number],
+    type: [String, Number, Array, Object, Boolean],
     default: ''
   },
-  // 自定义图标名称
   icon: {
     type: String as () => iconNamesType,
     default: ''
@@ -45,22 +40,24 @@ defineEmits(['update:modelValue'])
 </script>
 
 <style scoped>
-.my-input {
-  height: 48px;
+.my-select {
+  width: 100%;
 }
-
-.my-input :deep(.el-input__wrapper) {
+.my-select :deep(.el-select__wrapper) {
   border-radius: 24px;
+  height: 48px;
   padding: 0 15px;
   box-shadow: 0 0 0 1px #e0e5ec;
   background: #eeeeee;
 }
-.my-input :deep(.el-input__wrapper.is-focus) {
+
+.my-select :deep(.el-select__wrapper.is-focused) {
   box-shadow: 0 0 0 1px #95c3f6;
   background: #f0f6ff;
 }
-.input-icon {
+.select-icon {
   width: 24px;
   height: 24px;
+  color: #909399;
 }
 </style>
