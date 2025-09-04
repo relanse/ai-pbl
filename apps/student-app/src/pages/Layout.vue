@@ -9,7 +9,7 @@
         <div class="layout-header-user" @click="jumpToUserInfo">
           <el-avatar
             :src="useUserStore().userState.avatarUrl || DefaultAvatar"
-            :size="32"
+            :size="45"
           />
           <span class="username">{{
             useUserStore().userState.username || '用户'
@@ -24,12 +24,13 @@
 </template>
 
 <script setup lang="ts">
-import {ElContainer, ElHeader, ElMain, ElAvatar, ElButton} from 'element-plus'
+import {ElContainer, ElHeader, ElMain, ElAvatar} from 'element-plus'
 import LogoImg from '@aipbl/common/assets/Logo.png'
 import DefaultAvatar from '@aipbl/common/assets/DefaultAvatar.png'
 import {useUserStore} from '@/stores/user'
 import {RouterView} from 'vue-router'
 import router from '@/router/index'
+import MyButton from '@/components/common/MyButton.vue'
 defineOptions({
   name: 'LayoutPage'
 })

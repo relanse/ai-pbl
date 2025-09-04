@@ -17,7 +17,8 @@ const router = createRouter({
           name: 'course',
           component: () => import('@/pages/course/courseMap.vue')
         }
-      ]
+      ],
+      redirect: '/course'
     },
     {
       path: '/login',
