@@ -13,11 +13,12 @@ const router = createRouter({
           component: () => import('@/pages/User/UserInfo.vue')
         },
         {
-          path: 'course-map',
+          path: 'course',
           name: 'course',
           component: () => import('@/pages/course/courseMap.vue')
         }
-      ]
+      ],
+      redirect: '/course'
     },
     {
       path: '/login',
