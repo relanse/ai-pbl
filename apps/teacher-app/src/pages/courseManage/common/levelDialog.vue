@@ -59,7 +59,7 @@ import {
   ElTableColumn,
   ElMessage
 } from 'element-plus'
-import {ref, watch, nextTick} from 'vue'
+import {ref, nextTick} from 'vue'
 import createLevelCourseDialog from './createLevelCourseDialog.vue'
 
 // 定义组件的 props 和 emits
