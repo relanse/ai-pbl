@@ -224,6 +224,8 @@ const userGrade = [
 </script>
 <style scoped>
 .user-aside .el-button {
+  margin-left: 20px;
+  margin-top: 20px;
   font-size: 16px;
   color: #026bff;
   border: #6696ff solid 0.5px;
@@ -232,17 +234,18 @@ const userGrade = [
   position: relative;
   display: flex;
   flex-direction: column;
-  max-width: 800px;
+  max-width: 1000px;
   max-height: 650px;
-  margin: 0 1%;
-  width: 90vh; /* 在小屏幕上留出边距 */
+  margin-top: 20px;
+  margin-left: 20px;
+  width: 100%; /* 在小屏幕上留出边距 */
   height: 90vh; /* 高度不超过视口的90% */
   overflow: hidden;
   border-radius: 24px; /* 四角圆角 */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
   background: linear-gradient(
     180deg,
-    #649ffe 0% 30%,
+    #649ffe 0% 29%,
     #ffffff 30% 80%,
     #e7f0ff 100%
   );
@@ -306,7 +309,7 @@ const userGrade = [
   margin: 50px auto;
 }
 .user-main .el-form-item {
-  width: 300px;
+  width: 380px;
   padding: 0 15px;
 }
 

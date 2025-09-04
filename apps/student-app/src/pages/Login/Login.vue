@@ -40,14 +40,7 @@
               <a href="/password-find" class="password-forget">忘记密码</a>
             </div>
             <el-form-item>
-              <MyButton
-                class="form-btn"
-                width="380px"
-                height="51px"
-                icon-position="left-top"
-              >
-                登录
-              </MyButton>
+              <MyButton class="form-btn"> 登录 </MyButton>
             </el-form-item>
             <el-form-item class="form-agreement">
               <el-checkbox v-model="form.agreement">
@@ -177,19 +170,7 @@ const form = ref({
 .form-btn {
   width: 100%;
   height: 48px;
-  border-radius: 27px;
-  font-size: 16px;
-  background-color: #4080ff;
-  border-color: #4080ff;
   margin-top: 60px;
-  box-shadow: 0 6px 12px rgba(64, 128, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.form-btn:hover {
-  background-color: #3a73e9;
-  border-color: #3a73e9;
-  box-shadow: 0 8px 15px rgba(58, 115, 233, 0.4);
 }
 .form-agreement {
   font-size: 14px;
