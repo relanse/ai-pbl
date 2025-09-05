@@ -68,10 +68,9 @@
 </template>
 
 <script setup lang="ts">
-// 1. 移除了 onMounted, onUnmounted 的导入
-import {reactive, ref, computed, watch, onMounted} from 'vue'
+import {reactive, ref, computed, watch} from 'vue'
 import {VueDraggable} from 'vue-draggable-plus'
-import QuestionBlock from './common/projectCards/QuestionBlock.vue'
+import QuestionBlock from '@/pages/projectManage/projectCards/QuestionBlock.vue'
 import CardAnchdor from '@/common/CardAnchdor.vue'
 
 import {

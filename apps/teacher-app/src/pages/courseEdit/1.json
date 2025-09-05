@@ -1,0 +1,151 @@
+{
+  "courseName": "AI 应用课",
+  "version": "1.0.0",
+  "meta": {
+    "author": "nas",
+    "createdAt": "2025-09-05T12:00:00Z",
+    "updatedAt": "2025-09-05T12:30:00Z"
+  },
+  "pages": [
+    {
+      "pageId": 1,
+      "templateType": "connection",
+      "data": {
+        "prompt": "点击左右两边的卡片进行连线，思考AI应用模拟了人类的哪种能力",
+        "leftColumn": {
+          "title": "AI应用实例",
+          "cards": [
+            {
+              "id": "l1",
+              "img": "https://element-plus.org/images/element-plus-logo.svg",
+              "title": "语音助手",
+              "tag": "听懂说话"
+            },
+            {
+              "id": "l2",
+              "img": "https://element-plus.org/images/element-plus-logo.svg",
+              "title": "照片识别",
+              "tag": "认出物体"
+            },
+            {
+              "id": "l3",
+              "img": "https://element-plus.org/images/element-plus-logo.svg",
+              "title": "语音助手",
+              "tag": "转换语言"
+            },
+            {
+              "id": "l4",
+              "img": "https://element-plus.org/images/element-plus-logo.svg",
+              "title": "语音助手",
+              "tag": "个性推荐"
+            }
+          ]
+        },
+        "rightColumn": {
+          "title": "对应人类能力",
+          "cards": [
+            {"id": "r1", "title": "听觉能力"},
+            {"id": "r2", "title": "视觉能力"},
+            {"id": "r3", "title": "语言能力"},
+            {"id": "r4", "title": "记忆能力"}
+          ]
+        },
+        "matches": [
+          {
+            "leftId": "l1",
+            "rightId": "r1",
+            "message": "正确！语言助手模仿了听觉能力。"
+          },
+          {
+            "leftId": "l2",
+            "rightId": "r2",
+            "message": "正确！照片识别依赖视觉能力。"
+          },
+          {
+            "leftId": "l3",
+            "rightId": "r3",
+            "message": "正确！翻译工具依赖语言能力。"
+          },
+          {
+            "leftId": "l4",
+            "rightId": "r4",
+            "message": "正确！推荐系统依赖记忆能力。"
+          }
+        ],
+        "defaultWrongMessage": "匹配错误"
+      }
+    },
+    {
+      "pageId": 2,
+      "templateType": "memoryCards",
+      "data": {
+        "prompt": "翻开卡片找到配对！",
+        "cards": [
+          {
+            "id": "c1",
+            "pairId": "p1",
+            "type": "image",
+            "content": "https://element-plus.org/images/element-plus-logo.svg"
+          },
+          {"id": "c2", "pairId": "p1", "type": "text", "content": "car"},
+          {
+            "id": "c3",
+            "pairId": "p2",
+            "type": "image",
+            "content": "https://element-plus.org/images/element-plus-logo.svg"
+          },
+          {"id": "c4", "pairId": "p2", "type": "text", "content": "robot"},
+          {
+            "id": "c5",
+            "pairId": "p3",
+            "type": "image",
+            "content": "https://element-plus.org/images/element-plus-logo.svg"
+          },
+          {"id": "c6", "pairId": "p3", "type": "text", "content": "airplane"},
+          {
+            "id": "c7",
+            "pairId": "p4",
+            "type": "image",
+            "content": "https://element-plus.org/images/element-plus-logo.svg"
+          },
+          {"id": "c8", "pairId": "p4", "type": "text", "content": "keyboard"}
+        ],
+        "matchSuccessMessage": "你真棒！",
+        "matchFailMessage": "匹配错误, 再试试哦"
+      }
+    },
+    {
+      "pageId": 3,
+      "templateType": "definition",
+      "data": {
+        "prompt": "什么是人工智能？",
+        "mainContent": {
+          "image": "https://element-plus.org/images/element-plus-logo-small.svg",
+          "title": "简单定义",
+          "description": "普通电器只能开关, AI设备能理解和思考"
+        },
+        "featureCards": [
+          {
+            "id": "f1",
+            "image": "https://element-plus.org/images/element-plus-logo.svg",
+            "title": "会思考",
+            "description": "能理解你说的话"
+          },
+          {
+            "id": "f2",
+            "image": "https://element-plus.org/images/element-plus-logo.svg",
+            "title": "会学习",
+            "description": "比人类更快处理信息"
+          },
+          {
+            "id": "f3",
+            "image": "https://element-plus.org/images/element-plus-logo.svg",
+            "title": "辅助人类",
+            "description": "帮助我们更好的工作生活"
+          }
+        ],
+        "summary": "简单说, AI就是超级聪明的电脑助手！"
+      }
+    }
+  ]
+}

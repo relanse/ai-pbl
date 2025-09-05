@@ -1,6 +1,16 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/*.ts", "src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": [
+    "src/*.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "../common/components/CourseTemplate/ConnectionTemplate.vue",
+    "../common/util/templateDefaults.ts",
+    "../common/util/EditableImage.vue",
+    "../common/util/EditableText.vue"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
