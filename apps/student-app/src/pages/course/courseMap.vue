@@ -1,38 +1,6 @@
 <template>
   <div class="course-map-wrapper">
-    <div class="sidebar">
-      <div class="sidebar-menu">
-        <el-menu
-          class="layout-menu"
-          router
-          :default-active="$route.path"
-          text-color="#64a0fd"
-          active-text-color="#ffffff"
-          background-color="#e7f0ff"
-          active-background-color="linear-gradient(to right, #6696ff, #63a2fd)"
-        >
-          <el-menu-item
-            v-for="button in sidebarButtons"
-            :key="button.id"
-            :index="button.path"
-            class="sidebar-menu-item"
-            ><MyIcon :name="button.id" style="padding-right: 10px"></MyIcon>
-            {{ button.label }}
-            <MyIcon
-              name="whiteRadius"
-              class="radius-icon"
-              style="
-                position: absolute;
-                right: 8px;
-                top: 8px;
-                transform: rotateY(180deg);
-              "
-              v-if="$route.path === button.path"
-            />
-          </el-menu-item>
-        </el-menu>
-      </div>
-    </div>
+    <CommonAside class="sidebar" />
     <div class="course-map-maintainer">
       <span>我的课程</span>
       <el-card
@@ -75,7 +43,7 @@ import {ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElCard, ElMenu, ElMenuItem} from 'element-plus'
 import MyButton from '@/components/common/MyButton.vue'
-import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
+import CommonAside from '@/components/common/CommonAside.vue'
 import type {iconNamesType} from '@aipbl/common/components/MyIcon/iconPath'
 interface SidebarButton {
   id: iconNamesType
@@ -144,35 +112,6 @@ const goToCourseMainPage = (id: number) => {
   width: 100%;
   height: 100%;
   background-color: #f6f6f6;
-}
-.sidebar {
-  width: 180px;
-  flex-shrink: 0; /* 防止侧边栏被压缩 */
-  background-color: #e7f0ff;
-  height: 100%;
-  overflow-y: auto; /* 如果侧边栏内容也可能超长，让其内部滚动 */
-}
-.layout-menu {
-  border: none;
-  display: flex;
-  flex-direction: column;
-}
-.sidebar-menu-item {
-  position: relative;
-  margin: 10px 20px;
-  border-radius: 8px;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-}
-.sidebar-menu-item.is-active {
-  position: relative;
-  background-color: #6696ff;
-  border-radius: 27px;
-  width: 140px;
-  height: 56px;
-  font-size: 16px;
-  cursor: pointer;
 }
 .course-map-maintainer {
   display: flex;

@@ -37,6 +37,8 @@
 <script setup lang="ts">
 // 依赖导入区
 import {ref} from 'vue'
+import {ElMenu, ElMenuItem} from 'element-plus'
+import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
 import type {iconNamesType} from '@aipbl/common/components/MyIcon/iconPath'
 
 interface SidebarButton {
