@@ -18,14 +18,14 @@ const router = createRouter({
           component: () => import('@/pages/course/courseMap.vue')
         },
         {
-          path: 'course/video',
-          name: 'video',
-          component: () => import('@/pages/course/courseVideo.vue')
+          path: 'course/all/:id',
+          name: 'course-mainpage',
+          component: () => import('@/pages/course/courseMainpage.vue')
         },
         {
-          path: 'test',
-          name: 'test',
-          component: () => import('@/pages/courseTemplate/test.vue')
+          path: 'course/detail/:id',
+          name: 'course-detail',
+          component: () => import('@/pages/course/courseDetail.vue')
         }
       ],
       redirect: '/course'

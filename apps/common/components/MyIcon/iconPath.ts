@@ -1,27 +1,31 @@
 // 自动生成，请勿手动修改
 export const iconPath = {
-  age: () => import('../../assets/icons/age.svg'),
-  blueRadius: () => import('../../assets/icons/blueRadius.svg'),
-  courseLock: () => import('../../assets/icons/courseLock.svg'),
-  courseManage: () => import('../../assets/icons/courseManage.svg'),
-  courseManageActive: () => import('../../assets/icons/courseManageActive.svg'),
-  gender: () => import('../../assets/icons/gender.svg'),
-  grade: () => import('../../assets/icons/grade.svg'),
-  lock: () => import('../../assets/icons/lock.svg'),
-  mobilephone: () => import('../../assets/icons/mobilephone.svg'),
-  parent: () => import('../../assets/icons/parent.svg'),
-  projectManage: () => import('../../assets/icons/projectManage.svg'),
-  projectManageActive: () =>
-    import('../../assets/icons/projectManageActive.svg'),
-  school: () => import('../../assets/icons/school.svg'),
-  solidLock: () => import('../../assets/icons/solidLock.svg'),
-  studentManage: () => import('../../assets/icons/studentManage.svg'),
-  studentManageActive: () =>
-    import('../../assets/icons/studentManageActive.svg'),
-  telephone: () => import('../../assets/icons/telephone.svg'),
-  unlock: () => import('../../assets/icons/unlock.svg'),
-  upload: () => import('../../assets/icons/upload.svg'),
-  user: () => import('../../assets/icons/user.svg'),
-  whiteRadius: () => import('../../assets/icons/whiteRadius.svg')
-}
-export type iconNamesType = keyof typeof iconPath
+  'age': ()=>import('../../assets/icons/age.svg'),
+  'backArrow': ()=>import('../../assets/icons/backArrow.svg'),
+  'blueRadius': ()=>import('../../assets/icons/blueRadius.svg'),
+  'certificate': ()=>import('../../assets/icons/certificate.svg'),
+  'course': ()=>import('../../assets/icons/course.svg'),
+  'courseContent': ()=>import('../../assets/icons/courseContent.svg'),
+  'courseLock': ()=>import('../../assets/icons/courseLock.svg'),
+  'courseManage': ()=>import('../../assets/icons/courseManage.svg'),
+  'courseManageActive': ()=>import('../../assets/icons/courseManageActive.svg'),
+  'gender': ()=>import('../../assets/icons/gender.svg'),
+  'grade': ()=>import('../../assets/icons/grade.svg'),
+  'levelTest': ()=>import('../../assets/icons/levelTest.svg'),
+  'lock': ()=>import('../../assets/icons/lock.svg'),
+  'mobilephone': ()=>import('../../assets/icons/mobilephone.svg'),
+  'parent': ()=>import('../../assets/icons/parent.svg'),
+  'projectManage': ()=>import('../../assets/icons/projectManage.svg'),
+  'projectManageActive': ()=>import('../../assets/icons/projectManageActive.svg'),
+  'school': ()=>import('../../assets/icons/school.svg'),
+  'solidLock': ()=>import('../../assets/icons/solidLock.svg'),
+  'studentManage': ()=>import('../../assets/icons/studentManage.svg'),
+  'studentManageActive': ()=>import('../../assets/icons/studentManageActive.svg'),
+  'telephone': ()=>import('../../assets/icons/telephone.svg'),
+  'unlock': ()=>import('../../assets/icons/unlock.svg'),
+  'upload': ()=>import('../../assets/icons/upload.svg'),
+  'user': ()=>import('../../assets/icons/user.svg'),
+  'VmyClass': ()=>import('../../assets/icons/VmyClass.svg'),
+  'whiteRadius': ()=>import('../../assets/icons/whiteRadius.svg')
+};
+export type iconNamesType = keyof typeof iconPath;
