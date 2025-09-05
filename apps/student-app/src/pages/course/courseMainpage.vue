@@ -1,14 +1,14 @@
 <template>
-  <div class="course-detail-wrapper">
+  <div class="course-mainpage-wrapper">
     <BackButton class="back-button" to="/course" />
-    <div class="course-detail-maintainer">
-      <div class="course-detail-header">
+    <div class="course-mainpage-maintainer">
+      <div class="course-mainpage-header">
         <MyIcon name="VmyClass" /><span
           style="font-size: 24px; font-weight: bold"
           >我的课程</span
         >
       </div>
-      <div class="course-detail-content">
+      <div class="course-mainpage-content">
         <div
           v-for="course in courseLevelData?.courses"
           :key="course.id"
@@ -17,7 +17,9 @@
           <div class="course-image-background">
             <div class="image-backing"></div>
             <img :src="course.image" alt="Course Image" />
-            <button class="start-button">开始学习</button>
+            <button class="start-button" @click="goToCourseDetail(course.id)">
+              开始学习
+            </button>
           </div>
           <div class="course-info">
             <h3 style="font-size: 16px; color: #333333; font-weight: bold">
@@ -62,7 +64,7 @@
 <script setup lang="ts">
 // 依赖导入区
 import {ref, onMounted} from 'vue'
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import BackButton from '@/components/common/BackButton.vue'
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
 // 子课程的数据结构
@@ -81,6 +83,7 @@ interface CourseLevel {
 }
 // 变量声明区
 const route = useRoute()
+const router = useRouter()
 
 // 模拟的完整课程数据库
 
@@ -108,6 +111,41 @@ const courseLevelsDatabase: CourseLevel[] = [
       {
         id: 103,
         title: '课程三：创意绘画',
+        description: '探索如何使用AI进行简单的创意绘画。',
+        image:
+          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
+      },
+      {
+        id: 104,
+        title: '课程四：创意绘画',
+        description: '探索如何使用AI进行简单的创意绘画。',
+        image:
+          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
+      },
+      {
+        id: 105,
+        title: '课程五：创意绘画',
+        description: '探索如何使用AI进行简单的创意绘画。',
+        image:
+          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
+      },
+      {
+        id: 106,
+        title: '课程六：创意绘画',
+        description: '探索如何使用AI进行简单的创意绘画。',
+        image:
+          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
+      },
+      {
+        id: 107,
+        title: '课程七：创意绘画',
+        description: '探索如何使用AI进行简单的创意绘画。',
+        image:
+          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
+      },
+      {
+        id: 108,
+        title: '课程八：创意绘画',
         description: '探索如何使用AI进行简单的创意绘画。',
         image:
           'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
@@ -149,10 +187,13 @@ onMounted(() => {
     }
   }
 })
+const goToCourseDetail = (courseId: number) => {
+  router.push(`/course/detail/${courseId}`)
+}
 </script>
 
 <style scoped>
-.course-detail-wrapper {
+.course-mainpage-wrapper {
   display: flex;
   width: 100%;
   height: calc(100% - 20px);
@@ -163,7 +204,7 @@ onMounted(() => {
 .back-button {
   margin: 16px;
 }
-.course-detail-maintainer {
+.course-mainpage-maintainer {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -171,12 +212,12 @@ onMounted(() => {
   gap: 20px;
   overflow-y: auto;
 }
-.course-detail-header {
+.course-mainpage-header {
   margin-top: 16px;
   display: flex;
   gap: 12px;
 }
-.course-detail-content {
+.course-mainpage-content {
   height: 100%;
   display: flex;
   gap: 24px;
