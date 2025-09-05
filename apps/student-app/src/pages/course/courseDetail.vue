@@ -1,274 +1,163 @@
 <template>
-  <div class="course-detail-wrapper">
-    <BackButton class="back-button" />
-    <div class="course-detail-maintainer">
-      <div class="course-detail-header">
-        <MyIcon name="VmyClass" /><span
-          style="font-size: 24px; font-weight: bold"
-          >我的课程</span
-        >
+  <div class="page-container">
+    <!-- 主内容区域，我们将在这里创建背景 -->
+    <div class="video-section-wrapper">
+      <!-- 1. 这是所有背景元素的容器 -->
+      <div class="background-elements">
+        <!-- 播放器背后那个大的、倾斜的模糊方块 -->
+        <div class="background-main-blob"></div>
+        <!-- 左侧的蓝色圆形光晕 -->
+        <div class="background-circle-blue"></div>
+        <!-- 右上角的黄色图钉状光晕 -->
+        <div class="background-pin-yellow"></div>
       </div>
-      <div class="course-detail-content">
-        <div
-          v-for="course in courseLevelData?.courses"
-          :key="course.id"
-          class="course-card"
-        >
-          <div class="course-image-background">
-            <div class="image-backing"></div>
-            <img :src="course.image" alt="Course Image" />
-            <button class="start-button">开始学习</button>
-          </div>
-          <div class="course-info">
-            <h3 style="font-size: 16px; color: #333333; font-weight: bold">
-              {{ course.title }}
-            </h3>
-            <p style="font-size: 14px; margin: 8px 0; color: #666666">
-              {{ course.description }}
-            </p>
-            <div
-              class="course-edition"
-              style="margin-top: auto; margin-bottom: 4px"
-            >
-              <div
-                style="
-                  display: flex;
-                  align-items: center;
-                  gap: 4px;
-                  padding-right: 12px;
-                "
-              >
-                <!-- TODO：给herf添加链接 -->
-                <MyIcon name="courseContent" style="width: 16px" />
-                <a href="#" class="clickable-text" @click.prevent>课程内容</a>
-              </div>
-              <div style="display: flex; align-items: center; gap: 4px">
-                <circle class="grey-dot" />
-                <a href="#" class="clickable-text" @click.prevent
-                  >设定角色身份</a
-                ><circle class="grey-dot" />
-                <a href="#" class="clickable-text" @click.prevent
-                  >给出身份细节</a
-                >
-              </div>
-            </div>
-          </div>
+
+      <!-- 2. 这是前景内容：假装的视频播放器 -->
+      <div class="mock-video-player">
+        <div class="play-button"></div>
+        <div class="controls">
+          <span>00:23</span>
+          <div class="progress-bar"></div>
+          <span>1.0x</span>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-// 依赖导入区
-import {ref, onMounted} from 'vue'
-import {useRoute} from 'vue-router'
-import BackButton from '@/components/common/BackButton.vue'
-import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
-// 子课程的数据结构
-interface SubCourse {
-  id: number
-  title: string
-  description: string
-  image: string
-}
-
-// 课程等级的数据结构
-interface CourseLevel {
-  id: number
-  title: string
-  courses: SubCourse[]
-}
-// 变量声明区
-const route = useRoute()
-
-// 模拟的完整课程数据库
-
-const courseLevelData = ref<CourseLevel | null>(null)
-const courseLevelsDatabase: CourseLevel[] = [
-  {
-    id: 1,
-    title: 'L1.认知基础',
-    courses: [
-      {
-        id: 101,
-        title: '课程一：初识AI',
-        description:
-          '这是“初识AI”的简介，带你了解人工智能的基本概念。这是“初识AI”的简介，带你了解人工智能的基本概念。这是“初识AI”的简介，带你了解人工智能的基本概念。这是“初识AI”的简介，带你了解人工智能的基本概念。',
-        image:
-          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
-      },
-      {
-        id: 102,
-        title: '课程二：简单指令',
-        description: '学习如何向AI下达清晰、简单的指令。',
-        image:
-          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
-      },
-      {
-        id: 103,
-        title: '课程三：创意绘画',
-        description: '探索如何使用AI进行简单的创意绘画。',
-        image:
-          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
-      }
-    ]
-  },
-  {
-    id: 2,
-    title: 'L2.专项训练',
-    courses: [
-      {
-        id: 201,
-        title: '课程一：逻辑思维',
-        description: '通过AI挑战，锻炼和提升你的逻辑思维能力。',
-        image:
-          'https://via.placeholder.com/400x225.png/6696ff/ffffff?text=Logic'
-      },
-      {
-        id: 202,
-        title: '课程二：数据分析',
-        description: '学习如何利用AI工具对数据进行初步分析。',
-        image: 'https://via.placeholder.com/400x225.png/63a2fd/ffffff?text=Data'
-      }
-    ]
-  }
-]
-
-// 逻辑处理区
-onMounted(() => {
-  const courseId = Number(route.params.id)
-  if (!isNaN(courseId)) {
-    const foundCourse = courseLevelsDatabase.find(
-      level => level.id === courseId
-    )
-    if (foundCourse) {
-      courseLevelData.value = foundCourse
-    } else {
-      console.error('未找到对应的课程等级')
-    }
-  }
-})
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
-.course-detail-wrapper {
+/* 页面整体背景，让效果更明显 */
+.page-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: calc(100% - 20px);
-  background-color: #f6f6f6;
-  margin: 20px;
-  margin-bottom: 0px;
+  min-height: 100vh;
+  background-color: #f0f2f5; /* 类似图片中的浅灰色背景 */
+  padding: 20px;
+  box-sizing: border-box;
 }
-.back-button {
-  margin: 16px;
+
+/* 视频区域的总容器，关键在于 position: relative */
+.video-section-wrapper {
+  position: relative; /* 这是关键！子元素的 absolute 定位会相对于它 */
+  width: 100%;
+  max-width: 800px; /* 限制最大宽度，让布局更好看 */
+  z-index: 1; /* 保证它在背景元素之上 */
 }
-.course-detail-maintainer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  gap: 20px;
-  overflow-y: auto;
-}
-.course-detail-header {
-  margin-top: 16px;
-  display: flex;
-  gap: 12px;
-}
-.course-detail-content {
-  height: 100%;
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  align-content: flex-start;
-}
-.course-card {
-  width: 400px;
-  height: 170px;
-  display: flex;
-  gap: 12px;
-  border: 1px solid #ffffff;
-  border-radius: 16px;
-  background-color: #ffffff;
-}
-.course-info {
-  display: flex;
-  flex-direction: column;
-  margin: 12px;
-  margin-left: 0;
-}
-.course-info > p {
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* 显示的行数 */
-  line-clamp: 3; /* 标准属性 */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.course-image-background {
-  position: relative;
-  height: 150px;
-  width: 100px;
-  border-radius: 16px;
-  margin: 12px;
-  margin-right: 16px;
-}
-.image-backing {
+
+/* 所有背景元素的容器 */
+.background-elements {
   position: absolute;
-  height: 150px;
-  width: 100px;
-  border-radius: 16px;
-  background: linear-gradient(to bottom, #eaf6ff, #ffffff);
-  box-shadow: 2px 0px 4px rgba(141, 173, 255, 0.33); /* #8DADFF at 33% opacity */
   top: 0;
-  left: 5px;
-  z-index: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* 背景元素在自己的层级 */
 }
-.course-image-background > img {
-  position: relative;
-  z-index: 1;
-  height: 150px;
-  width: 100px;
-  border-radius: 16px;
-  object-fit: cover;
-  aspect-ratio: 2/3;
-}
-.start-button {
+
+/* 
+ * 这是核心样式 
+ */
+
+/* 播放器背后那个大的、倾斜的模糊方块 */
+.background-main-blob {
   position: absolute;
-  z-index: 2;
-  background-color: #007bff;
-  height: 28px;
-  width: 75px;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  bottom: 10px; /* 10px from the bottom */
-  left: 12px; /* 12px from the left */
+  top: -50px;
+  left: -80px;
+  width: 60%;
+  height: 100%;
+  background-color: #5d8cff;
+  border-radius: 30px;
+  opacity: 0.8;
+  filter: blur(80px); /* 超大模糊值，形成柔和背景 */
+  transform: rotate(-15deg); /* 倾斜效果 */
+  z-index: -2; /* 确保在最底层 */
 }
-.course-edition {
+
+/* 左侧的蓝色圆形光晕 */
+.background-circle-blue {
+  position: absolute;
+  top: 20%;
+  left: -100px;
+  width: 200px;
+  height: 200px;
+  background-color: #8cb0ff;
+  border-radius: 50%; /* 正圆形 */
+  filter: blur(100px); /* 同样用大模糊值 */
+  z-index: -1;
+}
+
+/* 右上角的黄色图钉状光晕 */
+.background-pin-yellow {
+  position: absolute;
+  top: -80px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background-color: #ffd76a;
+  border-radius: 50%;
+  filter: blur(70px);
+  z-index: -1;
+}
+
+/* 
+ * 以下是模拟播放器的样式，与背景实现无关，仅为展示效果 
+ */
+.mock-video-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* 保持16:9的视频比例 */
+  background-color: #2c3e50;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* 隐藏超出边界的子元素 */
+  z-index: 2; /* 确保播放器在最上层 */
+}
+
+.play-button {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.play-button::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 30px solid white;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  margin-left: 10px;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  color: white;
   display: flex;
   align-items: center;
+  gap: 15px;
+  font-family: sans-serif;
 }
-.grey-dot {
-  background-color: #999999;
-  border: 2px solid var(--bg1);
-  border-radius: 50%;
-  height: 2px;
-  right: 0;
-  width: 2px;
-}
-.clickable-text {
-  color: #666666;
-  font-size: 12px;
-  text-decoration: none; /* 移除下划线 */
-  cursor: pointer;
-  transition: color 0.2s linear;
-}
-.clickable-text:hover {
-  color: #007bff; /* 悬停时变色 */
+
+.progress-bar {
+  flex-grow: 1;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
 }
 </style>

@@ -56,7 +56,10 @@
           >
             <h1 style="color: #333333">课程介绍</h1>
             <span>{{ course.description }}</span>
-            <MyButton class="entry-button" @click="goToCourseDetail(course.id)">
+            <MyButton
+              class="entry-button"
+              @click="goToCourseMainPage(course.id)"
+            >
               <span style="font-size: 16px; color: #ffffff">查看更多</span>
             </MyButton>
           </div>
@@ -130,8 +133,8 @@ const sidebarButtons = ref<SidebarButton[]>([
   }
 ])
 // 逻辑处理区
-const goToCourseDetail = (id: number) => {
-  router.push(`/course/detail/${id}`)
+const goToCourseMainPage = (id: number) => {
+  router.push(`/course/all/${id}`)
 }
 </script>
 

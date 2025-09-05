@@ -18,6 +18,11 @@ const router = createRouter({
           component: () => import('@/pages/course/courseMap.vue')
         },
         {
+          path: 'course/all/:id',
+          name: 'course-mainpage',
+          component: () => import('@/pages/course/courseMainpage.vue')
+        },
+        {
           path: 'course/detail/:id',
           name: 'course-detail',
           component: () => import('@/pages/course/courseDetail.vue')
