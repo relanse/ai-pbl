@@ -6,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'layout',
-      component: () => import('@/pages/layout/layout.vue'),
+      component: () => import('@/pages/layout.vue'),
       children: [
         //学生管理
         {
@@ -82,7 +82,12 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/pages/login/login.vue')
+      component: () => import('@/pages/login.vue')
+    },
+    {
+      path: '/edit',
+      name: 'edit',
+      component: () => import('@/pages/courseEdit/courseEdit.vue')
     }
   ]
 })

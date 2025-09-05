@@ -3,7 +3,9 @@
     <el-container>
       <el-aside width="200px">
         <div class="user-aside">
-          <el-button round :icon="ArrowLeftBold" size="large"> 返回</el-button>
+          <el-button @click="goBack" round :icon="ArrowLeftBold" size="large">
+            返回
+          </el-button>
         </div>
       </el-aside>
       <el-main class="user-wrapped">
@@ -141,8 +143,9 @@
             color="transparent"
             icon="blueRadius"
             style="color: #6598fe; border: 2px solid #63a2fd"
-            >取消</MyButton
           >
+            取消
+          </MyButton>
           <MyButton @click="saveChanges">保存</MyButton>
         </div>
       </el-main>
@@ -169,6 +172,11 @@ import MyInput from '@/components/common/MyInput.vue'
 import MySelect from '@/components/common/MySelect.vue'
 import {Grade, type UserInfoType} from '@/types/user'
 import {ref} from 'vue'
+import {useRouter} from 'vue-router'
+const router = useRouter()
+const goBack = () => {
+  router.back()
+}
 const isEditing = ref(false)
 const form = ref<UserInfoType>({
   name: '张明',

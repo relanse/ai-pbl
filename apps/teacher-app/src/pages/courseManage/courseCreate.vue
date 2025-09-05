@@ -154,7 +154,7 @@ import {
 } from 'element-plus'
 import {ref, reactive, onMounted, onUnmounted} from 'vue'
 import {UploadFilled} from '@element-plus/icons-vue'
-import levelDialog from './common/levelDialog.vue'
+import levelDialog from './createLevelCourseDialog.vue'
 
 const ChooseWhereImageFrom = ref('ai')
 const levelDialogVisible = ref(false)

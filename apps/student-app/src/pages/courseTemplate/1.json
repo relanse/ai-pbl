@@ -1,0 +1,63 @@
+{
+  "name": "connectionTemplate",
+  "version": "1.0.0",
+  "leftOption": {
+    "title": "AI应用实例",
+    "card": [
+      {
+        "id": 1,
+        "content": "语言助手",
+        "tag": "听懂说话",
+        "img": "/img/1.png"
+      },
+      {
+        "id": 2,
+        "content": "照片识别",
+        "tag": "认出物体",
+        "img": "/img/1.png"
+      },
+      {
+        "id": 3,
+        "content": "翻译工具",
+        "tag": "转换语言",
+        "img": "/img/1.png"
+      },
+      {
+        "id": 4,
+        "content": "推荐系统",
+        "tag": "个性推荐",
+        "img": "/img/1.png"
+      }
+    ]
+  },
+  "rightOption": {
+    "title": "对应人类能力",
+    "card": [
+      {
+        "id": 1,
+        "content": "听觉能力"
+      },
+      {
+        "id": 2,
+        "content": "视觉能力"
+      },
+      {
+        "id": 3,
+        "content": "语言能力"
+      },
+      {
+        "id": 4,
+        "content": "记忆能力"
+      }
+    ]
+  },
+  "match": {
+    "rules": [
+      {"leftId": 1, "rightId": 1, "message": "正确！语言助手模仿了听觉能力。"},
+      {"leftId": 2, "rightId": 2, "message": "正确！照片识别依赖视觉能力。"},
+      {"leftId": 3, "rightId": 3, "message": "正确！翻译工具依赖语言能力。"},
+      {"leftId": 4, "rightId": 4, "message": "正确！推荐系统依赖记忆能力。"}
+    ],
+    "wrongMessage": "匹配错误，请再试一次！"
+  }
+}

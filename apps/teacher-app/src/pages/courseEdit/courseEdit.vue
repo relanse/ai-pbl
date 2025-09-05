@@ -1,0 +1,359 @@
+<template>
+  <div>
+    <el-container class="edit-container">
+      <!-- ======================================================= -->
+      <!-- ======================侧边预览区======================== -->
+      <!-- ======================================================= -->
+      <el-aside width="250px" class="edit-page">
+        <h3>课程页面</h3>
+        <!-- 使用 draggable 组件包裹列表 -->
+        <draggable
+          v-model="courseData.pages"
+          item-key="uniqueId"
+          class="page-list"
+          ghost-class="ghost"
+          @end="onDragEnd"
+        >
+          <template #item="{element: page, index}">
+            <div
+              class="page-thumbnail"
+              :class="{active: index === selectedPageIndex}"
+              @click="selectPage(index)"
+            >
+              <div class="thumbnail-header">
+                <span>页面 {{ index + 1 }}</span>
+                <el-button
+                  type="danger"
+                  :icon="Delete"
+                  circle
+                  size="default"
+                  @click.stop="deletePage(index)"
+                />
+              </div>
+              <small>{{ getTemplateName(page.templateType) }}</small>
+            </div>
+          </template>
+        </draggable>
+        <el-button
+          class="add-page-btn"
+          type="primary"
+          @click="addPageDialogVisible = true"
+          :icon="Plus"
+          long
+        >
+          增加页面
+        </el-button>
+      </el-aside>
+
+      <!-- ======================================================= -->
+      <!-- ==================顶部工具栏和编辑区==================== -->
+      <!-- ======================================================= -->
+      <el-main>
+        <div v-if="selectedPage" class="main-editor-content">
+          <!-- 顶部工具栏 -->
+          <div class="toolbar">
+            <el-form-item label="页面模板:" class="template-selector">
+              <el-select
+                :model-value="selectedPage.templateType"
+                placeholder="切换页面模板"
+                @change="handleTemplateChange"
+                :disabled="!isEdit"
+                style="width: 100px"
+              >
+                <el-option
+                  v-for="item in templateOpt"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <div class="action-buttons">
+              <el-button
+                @click="isEdit = !isEdit"
+                :type="isEdit ? 'primary' : 'danger'"
+              >
+                {{ isEdit ? '预览交互' : '返回编辑 ' }}
+              </el-button>
+              <el-button type="success" @click="submitCourse">
+                提交课程
+              </el-button>
+            </div>
+          </div>
+          <!-- 动态模板渲染区 -->
+          <div class="template-display-area">
+            <component
+              :is="templateComponent"
+              v-if="templateComponent"
+              v-model:data="selectedPage.data"
+              :is-editing="isEdit"
+            />
+          </div>
+        </div>
+        <el-empty v-else description="请从左侧选择一个页面，或新增一个页面" />
+      </el-main>
+    </el-container>
+    <!--创建新页面el-dialog对话框-->
+    <AddPageDialog v-model="addPageDialogVisible" @confirm="confirmAddPage" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import {ref, reactive, computed, defineAsyncComponent} from 'vue'
+// 1. 导入 draggable
+import draggable from 'vuedraggable'
+import {
+  ElContainer,
+  ElAside,
+  ElMain,
+  ElButton,
+  ElSelect,
+  ElOption,
+  ElEmpty,
+  ElMessage,
+  ElMessageBox,
+  ElFormItem
+} from 'element-plus'
+import {Delete, Plus} from '@element-plus/icons-vue'
+import {getTemplateDefaultData} from '@aipbl/common/util/templateDefaults' //导入编辑完成后给后端的json格式
+import {templateOpt} from './courseTemplateOpt'
+import AddPageDialog from './AddPageDialog.vue'
+// 异步加载模板组件，提高初始加载性能
+const ConnectionTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/ConnectionTemplate.vue')
+)
+
+// 2. 更新数据结构类型
+const courseData = reactive<{
+  courseName: string
+  version: string
+  meta: object
+  pages: {uniqueId: number; pageId: number; templateType: string; data: any}[]
+}>({
+  courseName: 'AI 应用课',
+  version: '1.0.0',
+  meta: {
+    author: 'nas',
+    createdAt: '2025-09-05T12:00:00Z',
+    updatedAt: '2025-09-05T12:30:00Z'
+  },
+  pages: []
+})
+
+const selectedPageIndex = ref<number | null>(
+  courseData.pages.length > 0 ? 0 : null
+)
+
+const isEdit = ref(true) // 控制编辑/预览模式，true = 编辑
+const addPageDialogVisible = ref(false)
+
+// --- 模板组件映射 ---
+const templateMap: {[key: string]: any} = {
+  connection: ConnectionTemplate
+}
+
+const selectedPage = computed(() => {
+  const index = selectedPageIndex.value
+  if (index !== null && index >= 0 && index < courseData.pages.length) {
+    // 这里的逻辑不变
+    return courseData.pages[index]
+  }
+  return null
+})
+
+const templateComponent = computed(() => {
+  if (!selectedPage.value) return null //如果预览页无页面则不渲染
+  return templateMap[selectedPage.value.templateType] || null
+})
+
+const selectPage = (index: number) => {
+  selectedPageIndex.value = index
+}
+
+// 3. 新增一个函数，用于重新排序 pageId
+const reorderPageIds = () => {
+  courseData.pages.forEach((page, index) => {
+    page.pageId = index + 1
+  })
+}
+
+const onDragEnd = () => {
+  // 拖拽结束后，数组顺序已变，此时重新生成所有 pageId
+  reorderPageIds()
+
+  // 保持高亮框正确的逻辑不变，但需要用 uniqueId 来查找
+  if (selectedPage.value) {
+    const newIndex = courseData.pages.findIndex(
+      p => p.uniqueId === selectedPage.value?.uniqueId
+    )
+    if (newIndex !== -1) {
+      selectedPageIndex.value = newIndex
+    }
+  }
+}
+
+const deletePage = (index: number) => {
+  ElMessageBox.confirm(
+    `确定要删除 "页面 ${index + 1}" 吗? 此操作无法撤销。`,
+    '警告',
+    {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  )
+    .then(() => {
+      courseData.pages.splice(index, 1)
+      // 5. 删除后也要重新排序 pageId
+      reorderPageIds()
+
+      // 更新选中项的逻辑不变
+      if (selectedPageIndex.value === index) {
+        selectedPageIndex.value = courseData.pages.length > 0 ? 0 : null
+      } else if (
+        selectedPageIndex.value !== null &&
+        selectedPageIndex.value > index
+      ) {
+        selectedPageIndex.value--
+      }
+      ElMessage({type: 'success', message: '删除成功'})
+    })
+    .catch(() => {
+      // 用户取消操作
+    })
+}
+
+const handleTemplateChange = (newType: string) => {
+  // 如果选择的新模板和当前模板相同，则不执行任何操作
+  if (!selectedPage.value || newType === selectedPage.value.templateType) {
+    return
+  }
+  ElMessageBox.confirm('切换模板将会丢失当前页面的所有内容，确定吗?', '警告', {
+    type: 'warning'
+  })
+    .then(() => {
+      // 用户确认后，才真正修改数据
+      if (selectedPage.value) {
+        selectedPage.value.templateType = newType
+        selectedPage.value.data = getTemplateDefaultData(newType)
+      }
+    })
+    .catch(() => {
+      // 用户取消，什么也不用做，因为数据从未被改变
+      ElMessage.info('已取消切换')
+    })
+}
+
+const confirmAddPage = (templateType: string) => {
+  const newPage = {
+    // 6. 创建时，uniqueId 用于内部追踪，pageId 用于排序
+    uniqueId: Date.now(), // 使用时间戳确保唯一性
+    pageId: courseData.pages.length + 1, // 新页面的 pageId 就是当前长度+1
+    templateType: templateType,
+    data: getTemplateDefaultData(templateType)
+  }
+  courseData.pages.push(newPage)
+  selectPage(courseData.pages.length - 1)
+  addPageDialogVisible.value = false
+}
+
+const getTemplateName = (type: string): string => {
+  return (
+    {
+      connection: '连一连',
+      memoryCards: '记忆卡片',
+      definition: '定义'
+    }[type] || '未知模板'
+  )
+}
+
+const submitCourse = () => {
+  isEdit.value = true // 确保所有数据都是可编辑状态
+  const finalJson = JSON.stringify(courseData, null, 2) // 格式化JSON
+  console.log('--------- 最终生成的课程JSON ---------')
+  console.log(finalJson)
+  console.log('------------------------------------')
+  ElMessage.success('提交成功')
+}
+</script>
+
+<style scoped>
+.edit-container {
+  height: 100vh;
+}
+
+/* 预览栏样式 */
+.edit-page {
+  background-color: #f5f7fa;
+  border-right: 1px solid #e4e7ed;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+.edit-page h3 {
+  margin-top: 0;
+  color: #303133;
+  text-align: center;
+}
+.page-list {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+/* 5. 为拖拽占位符添加样式 */
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+.page-thumbnail {
+  border: 1px solid #dcdfe6;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #fff;
+  transition: all 0.3s;
+}
+.page-thumbnail:hover {
+  border-color: #c0c4cc;
+}
+.page-thumbnail.active {
+  border-color: #409eff;
+  box-shadow: 0 0 8px rgba(64, 158, 255, 0.5);
+}
+.thumbnail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.page-thumbnail small {
+  color: #909399;
+}
+.add-page-btn {
+  width: 100%;
+  margin-top: 15px;
+}
+
+/* 中间主编辑区样式 */
+.main-editor-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 5%;
+  flex-shrink: 0;
+}
+.template-selector {
+  margin-bottom: 0;
+}
+.template-display-area {
+  margin-top: 20px;
+  flex-grow: 1;
+  overflow-y: auto; /* 如果模板内容过高，允许滚动 */
+}
+</style>

@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import {ref, onMounted} from 'vue'
-import StudentDialog from './common/StudentDialog.vue' // 确保路径正确
+import StudentDialog from './StudentDialog.vue' // 确保路径正确
 import {
   ElButton,
   ElTable,
