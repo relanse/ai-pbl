@@ -5,11 +5,55 @@
       <div class="course-detail-header">
         <MyIcon name="VmyClass" /><span
           style="font-size: 24px; font-weight: bold"
-          >课程详情</span
+          >我的课程</span
         >
       </div>
       <div class="course-detail-content">
-        <div v-for="course in courseLevelData?.courses" :key="course.id"></div>
+        <div
+          v-for="course in courseLevelData?.courses"
+          :key="course.id"
+          class="course-card"
+        >
+          <div class="course-image-background">
+            <div class="image-backing"></div>
+            <img :src="course.image" alt="Course Image" />
+            <button class="start-button">开始学习</button>
+          </div>
+          <div class="course-info">
+            <h3 style="font-size: 16px; color: #333333; font-weight: bold">
+              {{ course.title }}
+            </h3>
+            <p style="font-size: 14px; margin: 8px 0; color: #666666">
+              {{ course.description }}
+            </p>
+            <div
+              class="course-edition"
+              style="margin-top: auto; margin-bottom: 4px"
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 4px;
+                  padding-right: 12px;
+                "
+              >
+                <!-- TODO：给herf添加链接 -->
+                <MyIcon name="courseContent" style="width: 16px" />
+                <a href="#" class="clickable-text" @click.prevent>课程内容</a>
+              </div>
+              <div style="display: flex; align-items: center; gap: 4px">
+                <circle class="grey-dot" />
+                <a href="#" class="clickable-text" @click.prevent
+                  >设定角色身份</a
+                ><circle class="grey-dot" />
+                <a href="#" class="clickable-text" @click.prevent
+                  >给出身份细节</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -17,7 +61,7 @@
 
 <script setup lang="ts">
 // 依赖导入区
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 import {useRoute} from 'vue-router'
 import BackButton from '@/components/common/BackButton.vue'
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
@@ -36,6 +80,7 @@ interface CourseLevel {
   courses: SubCourse[]
 }
 // 变量声明区
+const route = useRoute()
 
 // 模拟的完整课程数据库
 
@@ -48,23 +93,24 @@ const courseLevelsDatabase: CourseLevel[] = [
       {
         id: 101,
         title: '课程一：初识AI',
-        description: '这是“初识AI”的简介，带你了解人工智能的基本概念。',
+        description:
+          '这是“初识AI”的简介，带你了解人工智能的基本概念。这是“初识AI”的简介，带你了解人工智能的基本概念。这是“初识AI”的简介，带你了解人工智能的基本概念。这是“初识AI”的简介，带你了解人工智能的基本概念。',
         image:
-          'https://via.placeholder.com/400x225.png/6696ff/ffffff?text=AI+Basics'
+          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
       },
       {
         id: 102,
         title: '课程二：简单指令',
         description: '学习如何向AI下达清晰、简单的指令。',
         image:
-          'https://via.placeholder.com/400x225.png/63a2fd/ffffff?text=Commands'
+          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
       },
       {
         id: 103,
         title: '课程三：创意绘画',
         description: '探索如何使用AI进行简单的创意绘画。',
         image:
-          'https://via.placeholder.com/400x225.png/e7f0ff/000000?text=Drawing'
+          'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
       }
     ]
   },
@@ -90,6 +136,19 @@ const courseLevelsDatabase: CourseLevel[] = [
 ]
 
 // 逻辑处理区
+onMounted(() => {
+  const courseId = Number(route.params.id)
+  if (!isNaN(courseId)) {
+    const foundCourse = courseLevelsDatabase.find(
+      level => level.id === courseId
+    )
+    if (foundCourse) {
+      courseLevelData.value = foundCourse
+    } else {
+      console.error('未找到对应的课程等级')
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -102,7 +161,7 @@ const courseLevelsDatabase: CourseLevel[] = [
   margin-bottom: 0px;
 }
 .back-button {
-  margin: 16px 20px;
+  margin: 16px;
 }
 .course-detail-maintainer {
   flex: 1;
@@ -115,10 +174,101 @@ const courseLevelsDatabase: CourseLevel[] = [
 .course-detail-header {
   margin-top: 16px;
   display: flex;
+  gap: 12px;
 }
 .course-detail-content {
   height: 100%;
   display: flex;
+  gap: 24px;
   flex-wrap: wrap;
+  align-content: flex-start;
+}
+.course-card {
+  width: 400px;
+  height: 170px;
+  display: flex;
+  gap: 12px;
+  border: 1px solid #ffffff;
+  border-radius: 16px;
+  background-color: #ffffff;
+}
+.course-info {
+  display: flex;
+  flex-direction: column;
+  margin: 12px;
+  margin-left: 0;
+}
+.course-info > p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 显示的行数 */
+  line-clamp: 3; /* 标准属性 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.course-image-background {
+  position: relative;
+  height: 150px;
+  width: 100px;
+  border-radius: 16px;
+  margin: 12px;
+  margin-right: 16px;
+}
+.image-backing {
+  position: absolute;
+  height: 150px;
+  width: 100px;
+  border-radius: 16px;
+  background: linear-gradient(to bottom, #eaf6ff, #ffffff);
+  box-shadow: 2px 0px 4px rgba(141, 173, 255, 0.33); /* #8DADFF at 33% opacity */
+  top: 0;
+  left: 5px;
+  z-index: 0;
+}
+.course-image-background > img {
+  position: relative;
+  z-index: 1;
+  height: 150px;
+  width: 100px;
+  border-radius: 16px;
+  object-fit: cover;
+  aspect-ratio: 2/3;
+}
+.start-button {
+  position: absolute;
+  z-index: 2;
+  background-color: #007bff;
+  height: 28px;
+  width: 75px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  bottom: 10px; /* 10px from the bottom */
+  left: 12px; /* 12px from the left */
+}
+.course-edition {
+  display: flex;
+  align-items: center;
+}
+.grey-dot {
+  background-color: #999999;
+  border: 2px solid var(--bg1);
+  border-radius: 50%;
+  height: 2px;
+  right: 0;
+  width: 2px;
+}
+.clickable-text {
+  color: #666666;
+  font-size: 12px;
+  text-decoration: none; /* 移除下划线 */
+  cursor: pointer;
+  transition: color 0.2s linear;
+}
+.clickable-text:hover {
+  color: #007bff; /* 悬停时变色 */
 }
 </style>

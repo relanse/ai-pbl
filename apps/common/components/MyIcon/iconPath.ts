@@ -5,6 +5,7 @@ export const iconPath = {
   'blueRadius': ()=>import('../../assets/icons/blueRadius.svg'),
   'certificate': ()=>import('../../assets/icons/certificate.svg'),
   'course': ()=>import('../../assets/icons/course.svg'),
+  'courseContent': ()=>import('../../assets/icons/courseContent.svg'),
   'courseLock': ()=>import('../../assets/icons/courseLock.svg'),
   'courseManage': ()=>import('../../assets/icons/courseManage.svg'),
   'courseManageActive': ()=>import('../../assets/icons/courseManageActive.svg'),

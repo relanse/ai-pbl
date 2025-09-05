@@ -21,7 +21,13 @@
             <MyIcon
               name="whiteRadius"
               class="radius-icon"
-              style="position: absolute; right: 10px; top: 18px"
+              style="
+                position: absolute;
+                right: 8px;
+                top: 8px;
+                transform: rotateY(180deg);
+              "
+              v-if="$route.path === button.path"
             />
           </el-menu-item>
         </el-menu>
@@ -63,7 +69,7 @@
 <script setup lang="ts">
 // 依赖导入区
 import {ref} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
+import {useRouter} from 'vue-router'
 import {ElCard, ElMenu, ElMenuItem} from 'element-plus'
 import MyButton from '@/components/common/MyButton.vue'
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
@@ -74,7 +80,6 @@ interface SidebarButton {
   path: string
 }
 // 变量声明区
-const route = useRoute()
 const router = useRouter()
 const courseList = ref([
   {
@@ -159,13 +164,11 @@ const goToCourseDetail = (id: number) => {
 }
 .sidebar-menu-item.is-active {
   position: relative;
-  border: 2px solid #6696ff;
   background-color: #6696ff;
   border-radius: 27px;
   width: 140px;
   height: 56px;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
   cursor: pointer;
 }
 .course-map-maintainer {
@@ -242,6 +245,7 @@ const goToCourseDetail = (id: number) => {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 4; /* 您可以修改这个数字来控制显示的行数 */
+  line-clamp: 4; /* 标准属性 */
   -webkit-box-orient: vertical;
   line-height: 1.5; /* 调整行高以获得更好的视觉效果 */
 }
