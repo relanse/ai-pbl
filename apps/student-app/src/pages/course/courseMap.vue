@@ -2,25 +2,29 @@
   <div class="course-map-wrapper">
     <div class="sidebar">
       <div class="sidebar-menu">
-        <div
-          v-for="button in sidebarButtons"
-          :key="button.id"
-          class="sidebar-button"
-          @click="activeButton = button.id"
+        <el-menu
+          class="layout-menu"
+          router
+          :default-active="$route.path"
+          text-color="#64a0fd"
+          active-text-color="#ffffff"
+          background-color="#e7f0ff"
+          active-background-color="linear-gradient(to right, #6696ff, #63a2fd)"
         >
-          <MyButton
-            :background="
-              activeButton === button.id ? button.background : '#e7f0ff'
-            "
-            :class="{
-              'active-sidebar-button': activeButton === button.id,
-              'inactive-sidebar-button': activeButton !== button.id
-            }"
-            style="width: 100%; height: 60px"
-          >
+          <el-menu-item
+            v-for="button in sidebarButtons"
+            :key="button.id"
+            :index="button.path"
+            class="sidebar-menu-item"
+            ><MyIcon :name="button.id" style="padding-right: 10px"></MyIcon>
             {{ button.label }}
-          </MyButton>
-        </div>
+            <MyIcon
+              name="whiteRadius"
+              class="radius-icon"
+              style="position: absolute; right: 10px; top: 18px"
+            />
+          </el-menu-item>
+        </el-menu>
       </div>
     </div>
     <div class="course-map-maintainer">
@@ -46,14 +50,7 @@
           >
             <h1 style="color: #333333">课程介绍</h1>
             <span>{{ course.description }}</span>
-            <MyButton
-              class="entry-button"
-              @click="
-                () => {
-                  console.log('查看更多课程')
-                }
-              "
-            >
+            <MyButton class="entry-button" @click="goToCourseDetail(course.id)">
               <span style="font-size: 16px; color: #ffffff">查看更多</span>
             </MyButton>
           </div>
@@ -66,10 +63,19 @@
 <script setup lang="ts">
 // 依赖导入区
 import {ref} from 'vue'
-import {ElCard} from 'element-plus'
-import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
+import {useRoute, useRouter} from 'vue-router'
+import {ElCard, ElMenu, ElMenuItem} from 'element-plus'
 import MyButton from '@/components/common/MyButton.vue'
+import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
+import type {iconNamesType} from '@aipbl/common/components/MyIcon/iconPath'
+interface SidebarButton {
+  id: iconNamesType
+  label: string
+  path: string
+}
 // 变量声明区
+const route = useRoute()
+const router = useRouter()
 const courseList = ref([
   {
     id: 1,
@@ -90,34 +96,38 @@ const courseList = ref([
     id: 3,
     title: 'L3.综合应用',
     description: '欢迎来到新手的世界打开你的新旅程吧~',
-    courses: []
+    image:
+      'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
   },
   {
     id: 4,
     title: 'L4.进阶挑战',
     description: '欢迎来到新手的世界打开你的新旅程吧~',
-    courses: []
+    image:
+      'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
   }
 ])
-const activeButton = ref('my-course')
-const sidebarButtons = ref([
+const sidebarButtons = ref<SidebarButton[]>([
   {
-    id: 'my-course',
+    id: 'course',
     label: '我的课程',
-    background: 'linear-gradient(to right, #6696FF, #63A2FD)'
+    path: '/course' // 添加 path 属性
   },
   {
-    id: 'my-certificate',
-    label: '全部课程',
-    background: 'linear-gradient(to right, #6696FF, #63A2FD)'
+    id: 'certificate',
+    label: '我的证书',
+    path: '/certificate' //TODO: 示例路径，您需要创建对应路由
   },
   {
-    id: 'favorites',
-    label: '收藏夹',
-    background: 'linear-gradient(to right, #6696FF, #63A2FD)'
+    id: 'levelTest',
+    label: '等级考试',
+    path: '/levelTest' //TODO: 示例路径，您需要创建对应路由
   }
 ])
 // 逻辑处理区
+const goToCourseDetail = (id: number) => {
+  router.push(`/course/detail/${id}`)
+}
 </script>
 
 <style scoped>
@@ -134,8 +144,29 @@ const sidebarButtons = ref([
   height: 100%;
   overflow-y: auto; /* 如果侧边栏内容也可能超长，让其内部滚动 */
 }
-.sidebar-button {
-  margin: 16px;
+.layout-menu {
+  border: none;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-menu-item {
+  position: relative;
+  margin: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+}
+.sidebar-menu-item.is-active {
+  position: relative;
+  border: 2px solid #6696ff;
+  background-color: #6696ff;
+  border-radius: 27px;
+  width: 140px;
+  height: 56px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
 }
 .course-map-maintainer {
   display: flex;
@@ -197,6 +228,7 @@ const sidebarButtons = ref([
   border-radius: 32px;
   display: flex;
   height: 200px;
+  overflow: hidden;
 }
 .course-map-content > img {
   object-fit: cover; /* 防止图片拉伸变形 */
@@ -204,11 +236,12 @@ const sidebarButtons = ref([
 }
 .course-description > span {
   font-weight: normal;
+  color: #666666;
   /* 以下是实现多行文本截断的关键代码 */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 6; /* 您可以修改这个数字来控制显示的行数 */
+  -webkit-line-clamp: 4; /* 您可以修改这个数字来控制显示的行数 */
   -webkit-box-orient: vertical;
   line-height: 1.5; /* 调整行高以获得更好的视觉效果 */
 }

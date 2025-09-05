@@ -30,7 +30,6 @@ import DefaultAvatar from '@aipbl/common/assets/DefaultAvatar.png'
 import {useUserStore} from '@/stores/user'
 import {RouterView} from 'vue-router'
 import router from '@/router/index'
-import MyButton from '@/components/common/MyButton.vue'
 defineOptions({
   name: 'LayoutPage'
 })

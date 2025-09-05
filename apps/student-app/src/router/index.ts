@@ -16,6 +16,11 @@ const router = createRouter({
           path: 'course',
           name: 'course',
           component: () => import('@/pages/course/courseMap.vue')
+        },
+        {
+          path: 'course/detail/:id',
+          name: 'course-detail',
+          component: () => import('@/pages/course/courseDetail.vue')
         }
       ],
       redirect: '/course'

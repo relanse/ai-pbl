@@ -1,8 +1,10 @@
 // 自动生成，请勿手动修改
 export const iconPath = {
   'age': ()=>import('../../assets/icons/age.svg'),
+  'backArrow': ()=>import('../../assets/icons/backArrow.svg'),
   'blueRadius': ()=>import('../../assets/icons/blueRadius.svg'),
   'certificate': ()=>import('../../assets/icons/certificate.svg'),
+  'course': ()=>import('../../assets/icons/course.svg'),
   'courseLock': ()=>import('../../assets/icons/courseLock.svg'),
   'courseManage': ()=>import('../../assets/icons/courseManage.svg'),
   'courseManageActive': ()=>import('../../assets/icons/courseManageActive.svg'),
@@ -11,7 +13,6 @@ export const iconPath = {
   'levelTest': ()=>import('../../assets/icons/levelTest.svg'),
   'lock': ()=>import('../../assets/icons/lock.svg'),
   'mobilephone': ()=>import('../../assets/icons/mobilephone.svg'),
-  'myClass': ()=>import('../../assets/icons/myClass.svg'),
   'parent': ()=>import('../../assets/icons/parent.svg'),
   'projectManage': ()=>import('../../assets/icons/projectManage.svg'),
   'projectManageActive': ()=>import('../../assets/icons/projectManageActive.svg'),
@@ -23,6 +24,7 @@ export const iconPath = {
   'unlock': ()=>import('../../assets/icons/unlock.svg'),
   'upload': ()=>import('../../assets/icons/upload.svg'),
   'user': ()=>import('../../assets/icons/user.svg'),
+  'VmyClass': ()=>import('../../assets/icons/VmyClass.svg'),
   'whiteRadius': ()=>import('../../assets/icons/whiteRadius.svg')
 };
 export type iconNamesType = keyof typeof iconPath;
