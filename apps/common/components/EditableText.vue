@@ -9,6 +9,8 @@
       @keyup.enter="handleBlur"
       :type="textarea ? 'textarea' : 'text'"
       :autosize="textarea"
+      :placeholder="placeholder || '请输入内容'"
+      clearable
     />
     <div v-else class="display-text">
       <slot>{{ currentValue }}</slot>
@@ -23,6 +25,7 @@ import {ElInput} from 'element-plus'
 const props = defineProps<{
   isEditing: boolean // 从父组件接收是否处于全局编辑状态
   textarea?: boolean // 是否使用多行文本框
+  placeholder?: string // 占位符文本
 }>()
 
 const currentValue = defineModel<string>() // 使用 v-model 双向绑定

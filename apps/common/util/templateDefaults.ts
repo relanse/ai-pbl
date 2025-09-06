@@ -13,9 +13,9 @@ export const getTemplateDefaultData = (templateType: string) => {
         title: '请输入标题',
         subtitle: '请输入副标题',
         options: [
-          {id: 'A', text: '请输入选项内容'},
-          {id: 'B', text: '请输入选项内容'},
-          {id: 'C', text: '请输入选项内容'}
+          {id: 'A', text: ''},
+          {id: 'B', text: ''},
+          {id: 'C', text: ''}
         ],
         correctAnswer: 'A'
       }
