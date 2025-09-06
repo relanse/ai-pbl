@@ -82,12 +82,8 @@
           </div>
           <!-- 动态模板渲染区 -->
           <div class="template-display-area">
-            <component
-              :is="templateComponent"
-              v-if="templateComponent"
-              v-model:data="selectedPage.data"
-              :is-editing="isEdit"
-            />
+            <component :is="templateComponent" v-if="templateComponent" />
+            <!-- 4. 不再需要手动传递 is-editing prop -->
           </div>
         </div>
         <el-empty v-else description="请从左侧选择一个页面，或新增一个页面" />
@@ -99,8 +95,14 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed, defineAsyncComponent} from 'vue'
-// 1. 导入 draggable
+import {
+  ref,
+  reactive,
+  computed,
+  defineAsyncComponent,
+  provide // 1. 导入 provide
+} from 'vue'
+import {CourseTemplateProviderKey} from '@aipbl/common/components/CourseTemplate/provider' // 2. 导入 Key
 import draggable from 'vuedraggable'
 import {
   ElContainer,
@@ -115,24 +117,17 @@ import {
   ElFormItem
 } from 'element-plus'
 import {Delete, Plus} from '@element-plus/icons-vue'
-import {getTemplateDefaultData} from '@aipbl/common/util/templateDefaults' //导入编辑完成后给后端的json格式
+import {getTemplateDefaultData} from '@aipbl/common/components/CourseTemplate/templateDefaults' //导入编辑完成后给后端的json格式
+import {CourseDataType} from '@aipbl/common/components/CourseTemplate/type'
 import {templateOpt} from './courseTemplateOpt'
 import AddPageDialog from './AddPageDialog.vue'
 // 异步加载模板组件，提高初始加载性能
 const ConnectionTemplate = defineAsyncComponent(
   () => import('@aipbl/common/components/CourseTemplate/ConnectionTemplate.vue')
 )
-// 新增：异步加载选择题模板
-const ChoicesTemplate = defineAsyncComponent(
-  () => import('@aipbl/common/components/CourseTemplate/ChoicesTemplate.vue')
-)
-// 2. 更新数据结构类型
-const courseData = reactive<{
-  courseName: string
-  version: string
-  meta: object
-  pages: {uniqueId: number; pageId: number; templateType: string; data: any}[]
-}>({
+
+//数据结构
+const courseData = ref<CourseDataType<any>>({
   courseName: 'AI 应用课',
   version: '1.0.0',
   meta: {
@@ -144,27 +139,37 @@ const courseData = reactive<{
 })
 
 const selectedPageIndex = ref<number | null>(
-  courseData.pages.length > 0 ? 0 : null
+  courseData.value.pages.length > 0 ? 0 : null
 )
 
 const isEdit = ref(true) // 控制编辑/预览模式，true = 编辑
+
+provide(CourseTemplateProviderKey, {
+  isEdit,
+  courseData,
+  selectedPageIndex
+})
+
 const addPageDialogVisible = ref(false)
 
 // --- 模板组件映射 ---
 const templateMap: {[key: string]: any} = {
-  connection: ConnectionTemplate,
-  choices: ChoicesTemplate
-  // 未来可以继续添加新的模板映射
+  connection: ConnectionTemplate
 }
 
 const selectedPage = computed(() => {
   const index = selectedPageIndex.value
-  if (index !== null && index >= 0 && index < courseData.pages.length) {
-    // 这里的逻辑不变
-    return courseData.pages[index]
+  if (index !== null && index >= 0 && index < courseData.value.pages.length) {
+    return courseData.value.pages[index]
   }
   return null
 })
+// const selectedPageData = computed({
+//   get: () => selectedPage.value?.data,
+//   set: val => {
+//     if (selectedPage.value) selectedPage.value.data = val
+//   }
+// })
 
 const templateComponent = computed(() => {
   if (!selectedPage.value) return null //如果预览页无页面则不渲染
@@ -175,9 +180,9 @@ const selectPage = (index: number) => {
   selectedPageIndex.value = index
 }
 
-// 3. 新增一个函数，用于重新排序 pageId
+//用于重新排序 pageId
 const reorderPageIds = () => {
-  courseData.pages.forEach((page, index) => {
+  courseData.value.pages.forEach((page, index) => {
     page.pageId = index + 1
   })
 }
@@ -188,7 +193,7 @@ const onDragEnd = () => {
 
   // 保持高亮框正确的逻辑不变，但需要用 uniqueId 来查找
   if (selectedPage.value) {
-    const newIndex = courseData.pages.findIndex(
+    const newIndex = courseData.value.pages.findIndex(
       p => p.uniqueId === selectedPage.value?.uniqueId
     )
     if (newIndex !== -1) {
@@ -208,13 +213,13 @@ const deletePage = (index: number) => {
     }
   )
     .then(() => {
-      courseData.pages.splice(index, 1)
+      courseData.value.pages.splice(index, 1)
       // 5. 删除后也要重新排序 pageId
       reorderPageIds()
 
       // 更新选中项的逻辑不变
       if (selectedPageIndex.value === index) {
-        selectedPageIndex.value = courseData.pages.length > 0 ? 0 : null
+        selectedPageIndex.value = courseData.value.pages.length > 0 ? 0 : null
       } else if (
         selectedPageIndex.value !== null &&
         selectedPageIndex.value > index
@@ -253,12 +258,12 @@ const confirmAddPage = (templateType: string) => {
   const newPage = {
     // 6. 创建时，uniqueId 用于内部追踪，pageId 用于排序
     uniqueId: Date.now(), // 使用时间戳确保唯一性
-    pageId: courseData.pages.length + 1, // 新页面的 pageId 就是当前长度+1
+    pageId: courseData.value.pages.length + 1, // 新页面的 pageId 就是当前长度+1
     templateType: templateType,
     data: getTemplateDefaultData(templateType)
   }
-  courseData.pages.push(newPage)
-  selectPage(courseData.pages.length - 1)
+  courseData.value.pages.push(newPage)
+  selectPage(courseData.value.pages.length - 1)
   addPageDialogVisible.value = false
 }
 
@@ -266,7 +271,6 @@ const getTemplateName = (type: string): string => {
   return (
     {
       connection: '连一连',
-      choices: '选择题',
       memoryCards: '记忆卡片',
       definition: '定义'
     }[type] || '未知模板'
@@ -275,7 +279,7 @@ const getTemplateName = (type: string): string => {
 
 const submitCourse = () => {
   isEdit.value = true // 确保所有数据都是可编辑状态
-  const finalJson = JSON.stringify(courseData, null, 2) // 格式化JSON
+  const finalJson = JSON.stringify(courseData.value, null, 2) // 格式化JSON
   console.log('--------- 最终生成的课程JSON ---------')
   console.log(finalJson)
   console.log('------------------------------------')

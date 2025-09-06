@@ -1,6 +1,12 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.vue"],
+  "include": [
+    "**/*.ts",
+    "**/*.d.ts",
+    "**/*.tsx",
+    "**/*.vue",
+    "../teacher-app/src/pages/courseEdit/templateDefaults.ts"
+  ],
   "compilerOptions": {
     "baseUrl": "."
   }

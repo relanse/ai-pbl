@@ -7,9 +7,9 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "../common/components/CourseTemplate/ConnectionTemplate.vue",
-    "../common/util/templateDefaults.ts",
-    "../common/util/EditableImage.vue",
-    "../common/util/EditableText.vue"
+    "src/pages/courseEdit/templateDefaults.ts",
+    "../common/components/CourseTemplate/EditableImage.vue",
+    "../common/components/CourseTemplate/EditableText.vue"
   ],
   "compilerOptions": {
     "baseUrl": ".",
