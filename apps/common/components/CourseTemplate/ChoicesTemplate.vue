@@ -1,16 +1,11 @@
 <template>
-  <div class="choices-question-wrappper">
-    <!-- 顶部提示 -->
-    <div class="robot-prompt">
-      <EditableText :is-editing="isEditing" v-model="data.prompt" />
-    </div>
+  <div class="choices-question-wrapper">
+    <!-- TODO:小机器人的组件，等sbj上传 -->
+    <div class="robot-prompt"><MyButton /></div>
 
     <!-- 主内容区 -->
-    <div class="main-content">
-      <span style="font-size: 32px; font-weight: bold; padding: 10px"
-        >知识检测</span
-      >
-      <div class="choices-question-info">
+    <el-card class="choices-question-card" shadow="never">
+      <template #header>
         <EditableText
           :is-editing="props.isEditing"
           v-model="data.title"
@@ -20,13 +15,7 @@
             color: '#333333'
           }"
         />
-        <EditableText
-          :is-editing="props.isEditing"
-          v-model="data.subtitle"
-          :text-style="{fontSize: '16px', color: '#666666'}"
-        />
-      </div>
-
+      </template>
       <!-- Display Mode -->
       <ElRadioGroup
         v-if="!props.isEditing"
@@ -61,7 +50,7 @@
           >添加选项</MyButton
         >
       </div>
-    </div>
+    </el-card>
     <!-- 提交按钮 -->
     <div class="footer">
       <MyButton v-if="!props.isEditing" class="submit-button"
@@ -73,17 +62,15 @@
 
 <script setup lang="ts">
 import {ref, defineProps} from 'vue'
-import {ElInput, ElRadio, ElRadioGroup, ElMessage} from 'element-plus'
+import {ElInput, ElRadio, ElRadioGroup, ElMessage, ElCard} from 'element-plus'
 import MyButton from '../../../student-app/src/components/common/MyButton.vue'
 import type {PropType} from 'vue'
 import EditableText from '../EditableText.vue'
-import RobotImg from '../../assets/robot.png'
 
 // Defines the structure for a question
 interface Question {
   prompt: string
   title: string
-  subtitle: string
   options: {id: string; text: string}[]
   correctAnswer: string
 }
@@ -101,7 +88,6 @@ const data = defineModel('data', {
   default: () => ({
     prompt: '请你仔细阅读题目，选出你认为最合适的答案。',
     title: '下面哪个最准确地描述了人工智能？',
-    subtitle: '根据刚才学习的内容选择答案',
     options: [
       {id: 'A', text: '能够和人类一样思考和学习的计算机程序'},
       {id: 'B', text: '只能执行预设指令的机器人'},
@@ -138,91 +124,29 @@ const removeOption = (index: number) => {
 </script>
 
 <style scoped>
-.choices-question-wrappper {
-  height: 100%;
-  background-color: #f0f8ff;
-  border-radius: 20px;
-  padding: 24px;
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.robot-prompt {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
+.choices-question-wrapper {
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-.main-content {
-  flex-grow: 1;
-  background-color: white;
-  padding: 30px;
-  border-radius: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
 }
-.choices-question-info {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  gap: 10px;
-  font-size: 20px;
-  background-color: #f9fafb;
-  border-radius: 10px;
-}
-.choices-question-info :deep(.editable-text-wrapper) {
-  width: fit-content;
-}
-.choices-option {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-.choices-option-item {
+.choices-question-card {
   width: 95%;
-  margin: 0px !important;
-  padding: 15px;
-  border: 1px solid #dcdcdc;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease-in-out;
+  border-radius: 32px;
+  border: 5px solid #649ffe;
 }
-.choices-option-item:hover {
-  border-color: #409eff;
-  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.2);
+.choices-question-card :deep(.el-card__header) {
+  background-color: #649ffe;
+  border-bottom: none;
 }
-.choices-option-item.is-checked {
-  border-color: #409eff;
-  background-color: #ecf5ff;
-}
-.edit-options-list {
+.editable-text-wrapper {
+  cursor: text;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-.edit-option-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  transition: all 0.2s ease-in-out;
-}
-.edit-option-item.is-correct-answer {
-  border-color: #409eff;
-  background-color: #ecf5ff;
+  height: 100%;
+  font-family: 'HuXiaoBo-NanShen';
+  font-size: 32px;
+  color: #ffffff;
 }
 .footer {
   display: flex;
