@@ -26,12 +26,6 @@ const router = createRouter({
           path: 'course/detail/:id',
           name: 'course-detail',
           component: () => import('@/pages/course/courseDetail.vue')
-        },
-        {
-          path: 'courseEdit/choicesQuestion',
-          name: 'choicesQuestion',
-          component: () =>
-            import('@/pages/courseEdit/template/choicesQuestion.vue')
         }
       ],
       redirect: '/course'

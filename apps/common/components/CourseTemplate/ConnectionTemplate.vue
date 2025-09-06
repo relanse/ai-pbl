@@ -135,8 +135,8 @@ import {
   defineModel,
   nextTick
 } from 'vue'
-import EditableText from '../../util/EditableText.vue'
-import EditableImage from '../../util/EditableImage.vue'
+import EditableText from '../EditableText.vue'
+import EditableImage from '../EditableImage.vue'
 import RobotImg from '../../assets/robot.png'
 const props = defineProps<{isEditing: boolean}>()
 const data = defineModel('data')

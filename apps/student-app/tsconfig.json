@@ -6,7 +6,7 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue"
-  ],
+, "../common/components/CourseTemplate/choicesTemplate.vue"  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

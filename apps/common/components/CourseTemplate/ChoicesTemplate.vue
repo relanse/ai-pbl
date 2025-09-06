@@ -1,13 +1,5 @@
 <template>
   <div class="choices-question-wrappper">
-    <!-- TEMPORARY: Button to toggle edit mode for testing -->
-    <MyButton
-      @click="toggleEditMode"
-      style="position: absolute; top: 20px; right: 20px; z-index: 99"
-    >
-      {{ isEditing ? '取消编辑' : '进入编辑' }}
-    </MyButton>
-
     <ElCard class="choices-question-card" shadow="never">
       <template #header>
         <span style="font-size: 32px; font-weight: bold; padding: 10px"
@@ -15,7 +7,7 @@
         >
         <div class="choices-question-info">
           <!-- Display Mode -->
-          <template v-if="!isEditing">
+          <template v-if="!props.isEditing">
             <span style="font-size: 24px; font-weight: bold; color: #333333">{{
               data.title
             }}</span>
@@ -36,7 +28,7 @@
 
       <!-- Display Mode -->
       <ElRadioGroup
-        v-if="!isEditing"
+        v-if="!props.isEditing"
         v-model="userAnswer"
         class="choices-option"
       >
@@ -61,20 +53,17 @@
             option.id
           }}</ElRadio>
           <ElInput v-model="option.text" placeholder="请输入选项内容" />
-          <MyButton @click="removeOption(index)" type="danger">删除</MyButton>
+          <MyButton @click="removeOption(index)">删除</MyButton>
         </div>
-        <MyButton @click="addOption" type="primary" plain>添加选项</MyButton>
+        <MyButton @click="addOption" v-if="editableData.options.length < 4"
+          >添加选项</MyButton
+        >
       </div>
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <MyButton v-if="!isEditing" class="submit-button">提交答案</MyButton>
-        <MyButton
-          v-else
-          @click="saveChanges"
-          type="success"
-          class="submit-button"
-          >保存更改</MyButton
+        <MyButton v-if="!props.isEditing" class="submit-button"
+          >提交答案</MyButton
         >
       </div>
     </ElCard>
@@ -82,9 +71,9 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch} from 'vue'
+import {ref, watch, defineProps} from 'vue'
 import {ElCard, ElInput, ElRadio, ElRadioGroup} from 'element-plus'
-import MyButton from '@/components//common/MyButton.vue'
+import MyButton from '../../../student-app/src/components/common/MyButton.vue'
 import type {PropType} from 'vue'
 
 // Defines the structure for a question
@@ -96,6 +85,13 @@ interface Question {
 }
 
 // This allows the component to be used with v-model:data
+const props = defineProps({
+  isEditing: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const data = defineModel('data', {
   type: Object as PropType<Question>,
   default: () => ({
@@ -110,22 +106,19 @@ const data = defineModel('data', {
   })
 })
 
-// --- TEMPORARY FOR TESTING ---
-const isEditing = ref(false)
-// This will hold a deep copy of the data for editing
 const editableData = ref<Question>(JSON.parse(JSON.stringify(data.value)))
 
-// Function to enter/exit edit mode
-const toggleEditMode = () => {
-  isEditing.value = !isEditing.value
-}
-
 // When edit mode is entered, create a fresh copy of the data
-watch(isEditing, isEditingNow => {
-  if (isEditingNow) {
-    editableData.value = JSON.parse(JSON.stringify(data.value))
-  }
-})
+watch(
+  () => props.isEditing,
+  isEditingNow => {
+    // [!code focus]
+    if (isEditingNow) {
+      editableData.value = JSON.parse(JSON.stringify(data.value))
+    }
+  },
+  {immediate: true}
+)
 // --- END TEMPORARY ---
 
 const userAnswer = ref('')
@@ -149,12 +142,6 @@ const removeOption = (index: number) => {
   editableData.value.options.forEach((option, i) => {
     option.id = String.fromCharCode(65 + i)
   })
-}
-
-const saveChanges = () => {
-  if (!editableData.value) return
-  data.value = editableData.value // This updates the v-model
-  isEditing.value = false // Exit edit mode
 }
 </script>
 

@@ -8,7 +8,7 @@
     "icon-resolve": "node ./scripts/iconPathResolve.js",
     "dev:teacher": "pnpm --filter teacher-app dev --port 5173",
     "dev:student": "pnpm --filter student-app dev --port 8080",
-    "dev:all": "concurrently \"npm:dev:teacher\" \"npm:dev:student\""
+    "dev:all": "concurrently \"pnpm:dev:teacher\" \"pnpm:dev:student\""
   },
   "keywords": [],
   "author": "",

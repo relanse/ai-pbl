@@ -122,7 +122,10 @@ import AddPageDialog from './AddPageDialog.vue'
 const ConnectionTemplate = defineAsyncComponent(
   () => import('@aipbl/common/components/CourseTemplate/ConnectionTemplate.vue')
 )
-
+// 新增：异步加载选择题模板
+const ChoicesTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/ChoicesTemplate.vue')
+)
 // 2. 更新数据结构类型
 const courseData = reactive<{
   courseName: string
@@ -149,7 +152,9 @@ const addPageDialogVisible = ref(false)
 
 // --- 模板组件映射 ---
 const templateMap: {[key: string]: any} = {
-  connection: ConnectionTemplate
+  connection: ConnectionTemplate,
+  choices: ChoicesTemplate
+  // 未来可以继续添加新的模板映射
 }
 
 const selectedPage = computed(() => {
@@ -261,6 +266,7 @@ const getTemplateName = (type: string): string => {
   return (
     {
       connection: '连一连',
+      choices: '选择题',
       memoryCards: '记忆卡片',
       definition: '定义'
     }[type] || '未知模板'

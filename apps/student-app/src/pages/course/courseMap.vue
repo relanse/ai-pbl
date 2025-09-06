@@ -166,6 +166,7 @@ const goToCourseMainPage = (id: number) => {
   border-radius: 2px;
 }
 .course-map-content {
+  min-width: 400px;
   position: relative;
   padding: 16px;
   font-size: 16px;
