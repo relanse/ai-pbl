@@ -6,7 +6,8 @@
       alt="可编辑图片"
       class="image-display"
     />
-    <div v-if="isEditing" class="overlay">
+    <!-- v-if 会自动解包 isEditing 这个 ref -->
+    <div v-if="isEdit" class="overlay">
       <span>点击更换</span>
     </div>
     <input
@@ -20,11 +21,22 @@
 </template>
 
 <script setup lang="ts">
-import {ref, defineProps, defineModel} from 'vue'
+import {ref, defineModel, inject} from 'vue'
+import {
+  CourseTemplateProviderKey,
+  CourseTemplateProviderDefaultValue
+} from './provider'
 
-const props = defineProps<{
-  isEditing: boolean
-}>()
+// 2. 移除 props 定义
+// const props = defineProps<{
+//   isEditing: boolean
+// }>()
+
+// 3. 注入 isEditing 状态
+const {isEdit} = inject(
+  CourseTemplateProviderKey,
+  CourseTemplateProviderDefaultValue
+)
 
 const imageUrl = defineModel<string>() // v-model
 
@@ -32,7 +44,8 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const defaultImage = 'https://via.placeholder.com/100' // 默认占位图
 
 const triggerUpload = () => {
-  if (!props.isEditing) return
+  // 4. 使用注入的 isEditing.value
+  if (!isEdit.value) return
   fileInput.value?.click()
 }
 
@@ -53,7 +66,8 @@ const handleFileChange = (event: Event) => {
 <style scoped>
 .editable-image-wrapper {
   position: relative;
-  cursor: pointer;
+  /* 仅在全局可编辑时显示手型指针 */
+  cursor: v-bind("isEdit ? 'pointer' : 'default'");
   width: 100px; /* 根据需要调整 */
   height: 100px;
   border-radius: 8px;
@@ -78,7 +92,8 @@ const handleFileChange = (event: Event) => {
   opacity: 0;
   transition: opacity 0.3s;
 }
+/* 仅在全局可编辑时，悬浮才显示遮罩 */
 .editable-image-wrapper:hover .overlay {
-  opacity: 1;
+  opacity: v-bind('isEdit ? 1 : 0');
 }
 </style>

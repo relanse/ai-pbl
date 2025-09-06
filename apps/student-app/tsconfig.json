@@ -5,7 +5,8 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "../teacher-app/src/pages/courseEdit/templateDefaults.ts"
   ],
   "compilerOptions": {
     "baseUrl": ".",
