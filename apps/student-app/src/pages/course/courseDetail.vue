@@ -1,11 +1,14 @@
 <template>
-  <div class="course-detail-wrapper"></div>
+  <div class="course-detail-wrapper">
+    <BackButton />
+  </div>
 </template>
 
 <script setup lang="ts">
 // 依赖导入区
 import {onMounted} from 'vue'
 import {useRoute} from 'vue-router'
+import BackButton from '@/components/common/BackButton.vue'
 // 变量声明区
 const route = useRoute()
 // 生命周期钩子区
