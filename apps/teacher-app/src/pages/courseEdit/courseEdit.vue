@@ -8,7 +8,6 @@
         <VueDraggable
           v-model="courseData.pages"
           class="page-list"
-          @start="onStart"
           @end="onEnd"
           ghostClass="ghost"
         >
@@ -169,22 +168,8 @@ const selectPage = (index: number) => {
   selectedPageIndex.value = index
 }
 
-const onEnd = () => {
-  console.log('拖拽结束')
-  const draggedPageUid = selectedPage.value?.uniqueId
-
-  // 2. 如果确实有一个页面被选中并拖拽了
-  if (draggedPageUid) {
-    // 3. 在已经被 vuedraggable 重新排序的 pages 数组中，找到这个 uniqueId 的新索引
-    const newIndex = courseData.value.pages.findIndex(
-      p => p.uniqueId === draggedPageUid
-    )
-
-    // 4. 如果找到了，就更新 selectedPageIndex，让高亮光标“跟过去”
-    if (newIndex !== -1) {
-      selectedPageIndex.value = newIndex
-    }
-  }
+const onEnd = (event: any) => {
+  selectedPageIndex.value = event.newIndex
 }
 //用于重新排序 pageId
 const reorderPageIds = () => {
@@ -192,7 +177,6 @@ const reorderPageIds = () => {
     page.pageId = index + 1
   })
 }
-const updateSelectedPageIndex = () => {}
 
 const deletePage = (index: number) => {
   ElMessageBox.confirm(
@@ -205,17 +189,10 @@ const deletePage = (index: number) => {
     }
   )
     .then(() => {
-      courseData.value.pages.splice(index, 1)
-
-      // 更新选中项的逻辑不变
-      if (selectedPageIndex.value === index) {
-        selectedPageIndex.value = courseData.value.pages.length > 0 ? 0 : null
-      } else if (
-        selectedPageIndex.value !== null &&
-        selectedPageIndex.value > index
-      ) {
-        selectedPageIndex.value--
+      if (selectedPageIndex.value == index && index - 1 >= 0) {
+        selectedPageIndex.value = index - 1
       }
+      courseData.value.pages.splice(index, 1)
       ElMessage({type: 'success', message: '删除成功'})
     })
     .catch(() => {
@@ -326,14 +303,15 @@ const submitCourse = () => {
 .fade-leave-active {
   transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
 }
-
-.fade-enter-from,
+.fade-enter-from {
+  opacity: 0.1;
+  transform: translateY(100px);
+}
 .fade-leave-to {
   opacity: 0;
-  transform: scaleY(0.01) translate(30px, 0);
+  transform: scaleY(0.01) translate(200px, 0);
 }
-
-.fade-leave-active {
+.fade-leave-active .fade-enter-active {
   position: absolute;
 }
 
@@ -344,9 +322,11 @@ const submitCourse = () => {
   font-weight: bold;
   margin-bottom: 5px;
 }
+
 .page-thumbnail small {
   color: #909399;
 }
+/* 增加新页面按钮样式 */
 .add-page-btn {
   width: 100%;
   margin-top: 15px;
