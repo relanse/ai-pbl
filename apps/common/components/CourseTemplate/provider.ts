@@ -1,4 +1,4 @@
-import {ref, type InjectionKey, type Reactive, type Ref} from 'vue'
+import {ref, type InjectionKey, type Ref} from 'vue'
 export type CourseTemplateProvider = {
   isEdit: Ref<boolean>
   courseData: Ref<{

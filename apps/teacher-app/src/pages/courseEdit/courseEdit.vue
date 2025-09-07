@@ -1,23 +1,23 @@
 <template>
   <div>
     <el-container class="edit-container">
-      <!-- ======================================================= -->
-      <!-- ======================侧边预览区======================== -->
-      <!-- ======================================================= -->
+      <!-- 侧边预览区 -->
       <el-aside width="250px" class="edit-page">
         <h3>课程页面</h3>
-        <!-- 使用 draggable 组件包裹列表 -->
-        <draggable
+        <!--可拖拽课程页面预览-->
+        <VueDraggable
           v-model="courseData.pages"
-          item-key="uniqueId"
           class="page-list"
-          ghost-class="ghost"
-          @end="onDragEnd"
+          @start="onStart"
+          @end="onEnd"
+          ghostClass="ghost"
         >
-          <template #item="{element: page, index}">
+          <TransitionGroup type="transition" name="fade">
             <div
+              v-for="(page, index) in courseData.pages"
+              :key="page.uniqueId"
               class="page-thumbnail"
-              :class="{active: index === selectedPageIndex}"
+              :class="{active: index == selectedPageIndex}"
               @click="selectPage(index)"
             >
               <div class="thumbnail-header">
@@ -26,14 +26,14 @@
                   type="danger"
                   :icon="Delete"
                   circle
-                  size="default"
                   @click.stop="deletePage(index)"
                 />
               </div>
               <small>{{ getTemplateName(page.templateType) }}</small>
             </div>
-          </template>
-        </draggable>
+          </TransitionGroup>
+        </VueDraggable>
+
         <el-button
           class="add-page-btn"
           type="primary"
@@ -44,10 +44,7 @@
           增加页面
         </el-button>
       </el-aside>
-
-      <!-- ======================================================= -->
-      <!-- ==================顶部工具栏和编辑区==================== -->
-      <!-- ======================================================= -->
+      <!--顶部工具栏和编辑区-->
       <el-main>
         <div v-if="selectedPage" class="main-editor-content">
           <!-- 顶部工具栏 -->
@@ -80,10 +77,8 @@
               </el-button>
             </div>
           </div>
-          <!-- 动态模板渲染区 -->
           <div class="template-display-area">
             <component :is="templateComponent" v-if="templateComponent" />
-            <!-- 4. 不再需要手动传递 is-editing prop -->
           </div>
         </div>
         <el-empty v-else description="请从左侧选择一个页面，或新增一个页面" />
@@ -97,13 +92,12 @@
 <script setup lang="ts">
 import {
   ref,
-  reactive,
   computed,
   defineAsyncComponent,
   provide // 1. 导入 provide
 } from 'vue'
 import {CourseTemplateProviderKey} from '@aipbl/common/components/CourseTemplate/provider' // 2. 导入 Key
-import draggable from 'vuedraggable'
+import {VueDraggable} from 'vue-draggable-plus'
 import {
   ElContainer,
   ElAside,
@@ -120,6 +114,7 @@ import {Delete, Plus} from '@element-plus/icons-vue'
 import {getTemplateDefaultData} from '@aipbl/common/components/CourseTemplate/templateDefaults' //导入编辑完成后给后端的json格式
 import {CourseDataType} from '@aipbl/common/components/CourseTemplate/type'
 import {templateOpt} from './courseTemplateOpt'
+import {v4 as uuidv4} from 'uuid'
 import AddPageDialog from './AddPageDialog.vue'
 // 异步加载模板组件，提高初始加载性能
 const ConnectionTemplate = defineAsyncComponent(
@@ -132,8 +127,8 @@ const courseData = ref<CourseDataType<any>>({
   version: '1.0.0',
   meta: {
     author: 'nas',
-    createdAt: '2025-09-05T12:00:00Z',
-    updatedAt: '2025-09-05T12:30:00Z'
+    createTime: '',
+    updateTime: ''
   },
   pages: []
 })
@@ -159,48 +154,45 @@ const templateMap: {[key: string]: any} = {
 
 const selectedPage = computed(() => {
   const index = selectedPageIndex.value
-  if (index !== null && index >= 0 && index < courseData.value.pages.length) {
+  if (index !== null) {
     return courseData.value.pages[index]
   }
   return null
 })
-// const selectedPageData = computed({
-//   get: () => selectedPage.value?.data,
-//   set: val => {
-//     if (selectedPage.value) selectedPage.value.data = val
-//   }
-// })
-
 const templateComponent = computed(() => {
-  if (!selectedPage.value) return null //如果预览页无页面则不渲染
-  return templateMap[selectedPage.value.templateType] || null
+  if (!selectedPage.value) return null
+  return templateMap[selectedPage.value.templateType]
 })
 
 const selectPage = (index: number) => {
+  console.log(selectedPageIndex.value)
   selectedPageIndex.value = index
 }
 
+const onEnd = () => {
+  console.log('拖拽结束')
+  const draggedPageUid = selectedPage.value?.uniqueId
+
+  // 2. 如果确实有一个页面被选中并拖拽了
+  if (draggedPageUid) {
+    // 3. 在已经被 vuedraggable 重新排序的 pages 数组中，找到这个 uniqueId 的新索引
+    const newIndex = courseData.value.pages.findIndex(
+      p => p.uniqueId === draggedPageUid
+    )
+
+    // 4. 如果找到了，就更新 selectedPageIndex，让高亮光标“跟过去”
+    if (newIndex !== -1) {
+      selectedPageIndex.value = newIndex
+    }
+  }
+}
 //用于重新排序 pageId
 const reorderPageIds = () => {
   courseData.value.pages.forEach((page, index) => {
     page.pageId = index + 1
   })
 }
-
-const onDragEnd = () => {
-  // 拖拽结束后，数组顺序已变，此时重新生成所有 pageId
-  reorderPageIds()
-
-  // 保持高亮框正确的逻辑不变，但需要用 uniqueId 来查找
-  if (selectedPage.value) {
-    const newIndex = courseData.value.pages.findIndex(
-      p => p.uniqueId === selectedPage.value?.uniqueId
-    )
-    if (newIndex !== -1) {
-      selectedPageIndex.value = newIndex
-    }
-  }
-}
+const updateSelectedPageIndex = () => {}
 
 const deletePage = (index: number) => {
   ElMessageBox.confirm(
@@ -214,8 +206,6 @@ const deletePage = (index: number) => {
   )
     .then(() => {
       courseData.value.pages.splice(index, 1)
-      // 5. 删除后也要重新排序 pageId
-      reorderPageIds()
 
       // 更新选中项的逻辑不变
       if (selectedPageIndex.value === index) {
@@ -242,14 +232,12 @@ const handleTemplateChange = (newType: string) => {
     type: 'warning'
   })
     .then(() => {
-      // 用户确认后，才真正修改数据
       if (selectedPage.value) {
         selectedPage.value.templateType = newType
         selectedPage.value.data = getTemplateDefaultData(newType)
       }
     })
     .catch(() => {
-      // 用户取消，什么也不用做，因为数据从未被改变
       ElMessage.info('已取消切换')
     })
 }
@@ -257,7 +245,7 @@ const handleTemplateChange = (newType: string) => {
 const confirmAddPage = (templateType: string) => {
   const newPage = {
     // 6. 创建时，uniqueId 用于内部追踪，pageId 用于排序
-    uniqueId: Date.now(), // 使用时间戳确保唯一性
+    uniqueId: uuidv4(),
     pageId: courseData.value.pages.length + 1, // 新页面的 pageId 就是当前长度+1
     templateType: templateType,
     data: getTemplateDefaultData(templateType)
@@ -278,10 +266,12 @@ const getTemplateName = (type: string): string => {
 }
 
 const submitCourse = () => {
-  isEdit.value = true // 确保所有数据都是可编辑状态
-  const finalJson = JSON.stringify(courseData.value, null, 2) // 格式化JSON
+  reorderPageIds()
+  courseData.value.meta.createTime = new Date().toISOString()
+  courseData.value.meta.updateTime = new Date().toISOString()
+  const CourseJson = JSON.stringify(courseData.value, null, 2) // 格式化JSON
   console.log('--------- 最终生成的课程JSON ---------')
-  console.log(finalJson)
+  console.log(CourseJson)
   console.log('------------------------------------')
   ElMessage.success('提交成功')
 }
@@ -309,11 +299,7 @@ const submitCourse = () => {
   flex-grow: 1;
   overflow-y: auto;
 }
-/* 5. 为拖拽占位符添加样式 */
-.ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
-}
+
 .page-thumbnail {
   border: 1px solid #dcdfe6;
   padding: 15px;
@@ -330,6 +316,27 @@ const submitCourse = () => {
   border-color: #409eff;
   box-shadow: 0 0 8px rgba(64, 158, 255, 0.5);
 }
+/*拖拽组件动画效果 */
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scaleY(0.01) translate(30px, 0);
+}
+
+.fade-leave-active {
+  position: absolute;
+}
+
 .thumbnail-header {
   display: flex;
   justify-content: space-between;

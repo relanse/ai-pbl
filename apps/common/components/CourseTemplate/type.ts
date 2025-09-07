@@ -1,7 +1,7 @@
 export type CourseDataType<T extends keyof CourseTemplateMap> = {
   courseName: string
   version: string
-  meta: object
+  meta: {author: string; createTime: string; updateTime: string}
   pages: {
     uniqueId: number
     pageId: number
