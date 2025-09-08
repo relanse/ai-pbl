@@ -81,8 +81,8 @@ import {ElInput, ElRadio, ElRadioGroup, ElMessage} from 'element-plus'
 import backgroundGirl from '../../assets/backgrounds/backgroundGirl.png'
 import backgroundSun from '../../assets/backgrounds/backgroundSun.png'
 import MyButton from '../../../student-app/src/components/common/MyButton.vue'
-import EditableText from './EditableText.vue'
-import RobotPrompt from './RobotPrompt.vue'
+import EditableText from './components/EditableText.vue'
+import RobotPrompt from './components/RobotPrompt.vue'
 import {
   CourseTemplateProviderDefaultValue,
   CourseTemplateProviderKey
