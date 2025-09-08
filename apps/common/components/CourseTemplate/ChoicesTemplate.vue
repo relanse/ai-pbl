@@ -9,8 +9,8 @@
           :is-editing="isEdit"
           v-model="data.title"
           style="
-            position: absolute;
-            top: 5%;
+            height: 100px;
+            width: 70%;
             color: #ffffff;
             font-size: clamp(18px, 3vw, 28px);
           "
@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, inject, computed, onMounted, watch} from 'vue'
+import {ref, inject, computed} from 'vue'
 import {ElInput, ElRadio, ElRadioGroup, ElMessage} from 'element-plus'
 import backgroundGirl from '../../assets/backgrounds/backgroundGirl.png'
 import backgroundSun from '../../assets/backgrounds/backgroundSun.png'
@@ -89,7 +89,6 @@ import {
 } from './provider'
 import {getTemplateDefaultData} from './templateDefaults'
 import {CourseChoicesType} from './type'
-import {v4 as uuidv4} from 'uuid'
 const {isEdit, courseData, selectedPageIndex} = inject(
   CourseTemplateProviderKey,
   CourseTemplateProviderDefaultValue
@@ -150,6 +149,7 @@ const removeOption = (index: number) => {
   flex-direction: column;
   align-items: center;
   width: 95%;
+  max-height: 600px;
   border-radius: 32px;
   aspect-ratio: 3 / 2;
   border: 5px solid #649ffe;
@@ -163,6 +163,7 @@ const removeOption = (index: number) => {
   align-items: center;
   background-color: #649ffe;
   box-sizing: border-box;
+  justify-content: space-around;
 }
 .template-card-body {
   width: 100%;
@@ -172,7 +173,7 @@ const removeOption = (index: number) => {
   justify-content: space-around; /* 优化布局 */
 }
 .template-card-body > img {
-  width: 35%; /* 图片宽度相对于父容器 */
+  width: 25%; /* 图片宽度相对于父容器 */
   height: auto; /* 高度自适应 */
   padding: 16px;
 }

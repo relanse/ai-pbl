@@ -43,10 +43,10 @@ export const getTemplateDefaultData = (templateType: string) => {
         subtitle: '将动物拖到正确的类别',
         itemmean: '动物',
         items: [
-          {id: uuidv4(), title: '老虎', color: '#FFDDC1'},
-          {id: uuidv4(), title: '老鹰', color: '#D4F0F0'},
-          {id: uuidv4(), title: '鲸鱼', color: '#FFDDC1'},
-          {id: uuidv4(), title: '麻雀', color: '#D4F0F0'}
+          {id: uuidv4(), title: '老虎', color: '#649FFE'},
+          {id: uuidv4(), title: '老鹰', color: '#FF9401'},
+          {id: uuidv4(), title: '鲸鱼', color: '#6EE188'},
+          {id: uuidv4(), title: '麻雀', color: '#A9A7FB'}
         ],
         targetmean: '动物类别',
         targets: [
