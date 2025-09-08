@@ -1,11 +1,17 @@
-import {ta} from 'element-plus/es/locales.mjs'
+import FindTemplateDefaultBg from '../../assets/backgrounds/findTemplate.png'
+import {
+  CourseConnectionType,
+  CourseFindType,
+  CourseChoicesType,
+  CourseDragType
+} from './type'
 import {v4 as uuidv4} from 'uuid'
 
 export const getTemplateDefaultData = (templateType: string) => {
   const newId = uuidv4()
   switch (templateType) {
     case 'connection':
-      return {
+      return <CourseConnectionType>{
         prompt: '点击左右两边的卡片进行连线，思考AI应用模拟了人类的哪种能力',
         leftColumn: {
           title: 'AI应用实例',
@@ -26,7 +32,7 @@ export const getTemplateDefaultData = (templateType: string) => {
         wrongMsg: '答错了,再试试吧'
       }
     case 'choices':
-      return {
+      return <CourseChoicesType>{
         prompt: '小测试来了！',
         title: '下面哪个最准确地描述了人工智能?',
         options: [
@@ -37,7 +43,7 @@ export const getTemplateDefaultData = (templateType: string) => {
         correctAnswer: 'B'
       }
     case 'drag':
-      return {
+      return <CourseDragType>{
         prompt: '请将左侧的卡片拖拽到右侧对应的分类中。',
         title: '动物分类',
         subtitle: '将动物拖到正确的类别',
@@ -63,6 +69,12 @@ export const getTemplateDefaultData = (templateType: string) => {
             correctItems: ['老鹰', '麻雀']
           }
         ]
+      }
+    case 'find':
+      return <CourseFindType>{
+        prompt: '找一找下面有什么用到ai的物品',
+        backgroundImg: FindTemplateDefaultBg,
+        items: []
       }
     default:
       return {}

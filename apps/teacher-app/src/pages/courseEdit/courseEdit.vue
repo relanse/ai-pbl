@@ -120,6 +120,9 @@ const ChoicesTemplate = defineAsyncComponent(
 const DragTemplate = defineAsyncComponent(
   () => import('@aipbl/common/components/CourseTemplate/DragTemplate.vue')
 )
+const FindTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/FindTemplate.vue')
+)
 
 //数据结构
 const courseData = ref<CourseDataType<any>>({
@@ -151,7 +154,8 @@ const addPageDialogVisible = ref(false)
 const templateMap: {[key: string]: any} = {
   connection: ConnectionTemplate,
   choices: ChoicesTemplate,
-  drag: DragTemplate
+  drag: DragTemplate,
+  find: FindTemplate
 }
 
 const selectedPage = computed(() => {
@@ -242,6 +246,7 @@ const getTemplateName = (type: string): string => {
       choices: '选一选',
       drag: '拖一拖',
       memoryCards: '记忆卡片',
+      find: '找一找',
       definition: '定义'
     }[type] || '未知模板'
   )

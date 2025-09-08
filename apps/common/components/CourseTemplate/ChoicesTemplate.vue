@@ -9,10 +9,10 @@
           :is-editing="isEdit"
           v-model="data.title"
           style="
-            position: absolute;
-            top: 5%;
             color: #ffffff;
             font-size: clamp(18px, 3vw, 28px);
+            height: 100px;
+            text-align: center;
           "
         />
         <img
@@ -149,14 +149,15 @@ const removeOption = (index: number) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 95%;
+  max-height: 600px;
+  width: 1000px;
   border-radius: 32px;
   aspect-ratio: 3 / 2;
   border: 5px solid #649ffe;
   overflow: hidden;
 }
 .template-card-header {
-  height: 25%;
+  height: 20%;
   width: 100%;
   position: relative;
   display: flex;

@@ -117,7 +117,6 @@
 </template>
 
 <script setup lang="ts">
-import {nextTick} from 'vue'
 import {ElButton} from 'element-plus'
 import {Plus} from '@element-plus/icons-vue'
 import {computed, inject, ref} from 'vue'
@@ -238,9 +237,6 @@ const addCard = () => {
   }
   data.value.leftColumn.cards.push(newLeftCard)
   data.value.rightColumn.cards.push(newRightCard)
-  nextTick(() => {
-    fixedLines.value.push({leftId: newId, rightId: newId})
-  })
 }
 // 删除一组卡片
 const removeCard = (index: number, id: string) => {
