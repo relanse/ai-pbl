@@ -8,7 +8,7 @@
     "src/**/*.vue",
     "../common/components/CourseTemplate/ConnectionTemplate.vue",
     "src/pages/courseEdit/templateDefaults.ts",
-    "../common/components/CourseTemplate/EditableImage.vue",
+    "../common/components/CourseTemplate/components/EditableImage.vue",
     "../common/components/CourseTemplate/EditableText.vue"
   ],
   "compilerOptions": {

@@ -5,7 +5,7 @@ export type CourseTemplateProvider = {
     courseName: string
     version: string
     meta: object
-    pages: {uniqueId: number; pageId: number; templateType: string; data: any}[]
+    pages: {uniqueId: string; pageId: number; templateType: string; data: any}[]
   }>
   selectedPageIndex: Ref<number | null>
 }

@@ -24,7 +24,7 @@ import {ElInput} from 'element-plus'
 import {
   CourseTemplateProviderDefaultValue,
   CourseTemplateProviderKey
-} from './provider'
+} from '../provider'
 
 // 2. 从 props 中移除
 const props = defineProps<{

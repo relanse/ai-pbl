@@ -89,12 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  defineAsyncComponent,
-  provide // 1. 导入 provide
-} from 'vue'
+import {ref, computed, defineAsyncComponent, provide} from 'vue'
 import {CourseTemplateProviderKey} from '@aipbl/common/components/CourseTemplate/provider' // 2. 导入 Key
 import {VueDraggable} from 'vue-draggable-plus'
 import {
@@ -302,17 +297,15 @@ const submitCourse = () => {
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+  position: absolute;
 }
 .fade-enter-from {
-  opacity: 0.1;
-  transform: translateY(100px);
+  opacity: 0;
+  transform: scaleY(0.01) translate(-200px, 0);
 }
 .fade-leave-to {
   opacity: 0;
   transform: scaleY(0.01) translate(200px, 0);
-}
-.fade-leave-active .fade-enter-active {
-  position: absolute;
 }
 
 .thumbnail-header {

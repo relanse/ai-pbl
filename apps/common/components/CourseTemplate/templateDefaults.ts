@@ -22,7 +22,7 @@ export const getTemplateDefaultData = (templateType: string) => {
           title: '对应人类能力',
           cards: [{id: newId, content: '听觉能力'}]
         },
-        wrongMsg: ''
+        wrongMsg: '答错了,再试试吧'
       }
     default:
       return {}

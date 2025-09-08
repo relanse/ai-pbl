@@ -25,7 +25,7 @@ import {ref, defineModel, inject} from 'vue'
 import {
   CourseTemplateProviderKey,
   CourseTemplateProviderDefaultValue
-} from './provider'
+} from '../provider'
 
 // 2. 移除 props 定义
 // const props = defineProps<{

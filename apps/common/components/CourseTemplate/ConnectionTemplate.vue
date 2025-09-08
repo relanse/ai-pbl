@@ -12,25 +12,25 @@
 
       <!-- 主内容区域，分为两栏 -->
       <div class="main-content">
-        <!-- 左侧栏 -->
+        <!-- 左侧卡片 -->
         <div class="column">
           <div
             v-for="(card, index) in data.leftColumn.cards"
             :key="card.id"
             class="card card-left"
+            :data-leftid="card.id"
+            @click="handleLeftClick(card.id)"
+            :class="{'card-error': errorLeftId === card.id}"
             :style="{backgroundColor: card.color}"
           >
-            <div class="card-icon-background">
-              <EditableImage class="card-icon" v-model="card.img" />
-            </div>
-
+            <EditableImage class="card-icon" v-model="card.img" />
             <div class="card-text">
               <EditableText class="card-title" v-model="card.content" />
               <EditableText class="card-tag" v-model="card.tag" />
             </div>
             <el-button
               v-if="isEdit"
-              @click="removeCard(index)"
+              @click="removeCard(index, data.rightColumn.cards[index].id)"
               class="delete-btn"
               type="danger"
               size="small"
@@ -40,23 +40,60 @@
           </div>
         </div>
 
-        <!-- 右侧栏 -->
+        <!-- 右侧卡片 -->
         <div class="column">
           <div
             v-for="card in data.rightColumn.cards"
             :key="card.id"
             class="card card-right"
+            :data-rightid="card.id"
+            @click="handelRightClick(card.id)"
+            :class="{'card-error': errorRightId === card.id}"
           >
             <EditableText class="card-title" v-model="card.content" />
-            <!-- 删除按钮已移至左侧卡片，保持同步删除 -->
           </div>
         </div>
       </div>
 
+      <!-- 连线svg -->
+      <svg class="rope-svg" width="100%" height="100%">
+        >
+        <!-- 编辑模式：渲染所有绳子 -->
+        <template v-if="isEdit">
+          <path
+            v-for="card in data.leftColumn.cards"
+            :key="card.id"
+            :d="getRopePath(card.id, card.id)"
+            stroke="#409eff"
+            :stroke-width="4"
+            fill="none"
+          />
+        </template>
+        <!-- 预览模式：渲染用户已连的绳子和正在拖动的绳子 -->
+        <template v-else>
+          <path
+            stroke="#409eff"
+            v-for="line in fixedLines"
+            :key="line.leftId + '-' + line.rightId"
+            :d="getRopePath(line.leftId, line.rightId)"
+            :stroke-width="4"
+            fill="none"
+          />
+          <!-- 拖动中的绳子 -->
+          <path
+            v-if="dragging"
+            :d="getRopePath(dragStartLeftId, null, mousePos)"
+            stroke="#e6a23c"
+            stroke-width="4"
+            fill="none"
+          />
+        </template>
+      </svg>
+
       <!-- 底部同步增加按钮 -->
       <div
         v-if="isEdit && data.leftColumn.cards.length < 4"
-        class="footer-actions"
+        class="footer-container"
       >
         <el-button
           @click="addCard"
@@ -73,18 +110,19 @@
 </template>
 
 <script setup lang="ts">
+import {nextTick} from 'vue'
 import {ElButton} from 'element-plus'
 import {Plus} from '@element-plus/icons-vue'
-import {computed, defineModel, inject, onMounted, ref, watch} from 'vue'
-import EditableText from './EditableText.vue'
-import EditableImage from './EditableImage.vue'
-import RobotPrompt from './RobotPrompt.vue'
+import {computed, inject, ref} from 'vue'
+import EditableText from './components/EditableText.vue'
+import EditableImage from './components/EditableImage.vue'
+import RobotPrompt from './components/RobotPrompt.vue'
 import {
   CourseTemplateProviderDefaultValue,
   CourseTemplateProviderKey
 } from './provider'
 import {getTemplateDefaultData} from './templateDefaults'
-import {CourseConnectionType, CourseDataType} from './type'
+import {CourseConnectionType} from './type'
 import {v4 as uuidv4} from 'uuid'
 const {isEdit, courseData, selectedPageIndex} = inject(
   CourseTemplateProviderKey,
@@ -92,7 +130,7 @@ const {isEdit, courseData, selectedPageIndex} = inject(
 )
 const data = computed({
   get: () => {
-    if (selectedPageIndex.value !== null) {
+    if (selectedPageIndex.value) {
       return courseData.value.pages[selectedPageIndex.value]
         .data as CourseConnectionType
     }
@@ -107,16 +145,77 @@ const data = computed({
 
 // --- 颜色循环数组 ---
 const cardColors = ['#a0c4ff', '#ffd6a0', '#b2f7b2', '#d8b4fe']
+// 绳子动画交互逻辑
+const fixedLines = ref<{leftId: string; rightId: string}[]>([])
+const dragging = ref(false)
+const dragStartLeftId = ref<string | null>(null)
+const mousePos = ref({x: 0, y: 0})
+const errorLeftId = ref<string | null>(null)
+const errorRightId = ref<string | null>(null)
+
+const onMouseMove = (e: MouseEvent) => {
+  mousePos.value = {x: e.clientX, y: e.clientY}
+}
+const handleLeftClick = (leftId: string) => {
+  if (!isEdit.value) {
+    dragging.value = true
+    dragStartLeftId.value = leftId
+    window.addEventListener('mousemove', onMouseMove)
+  }
+}
+const handelRightClick = (rightId: string) => {
+  if (dragging.value && dragStartLeftId.value) {
+    if (dragStartLeftId.value == rightId) {
+      fixedLines.value.push({leftId: dragStartLeftId.value, rightId: rightId})
+    } else {
+      errorLeftId.value = dragStartLeftId.value
+      errorRightId.value = rightId
+      setTimeout(() => {
+        errorLeftId.value = null
+        errorRightId.value = null
+      }, 1200)
+    }
+  }
+  dragging.value = false
+  dragStartLeftId.value = null
+  window.removeEventListener('mousemove', onMouseMove)
+}
+
+const getRopePath = (
+  leftId: string | null,
+  rightId: string | null,
+  mouse?: {x: number; y: number}
+) => {
+  const leftEl = document.querySelector(`[data-leftid="${leftId}"]`)
+  const rightEl = rightId
+    ? document.querySelector(`[data-rightid="${rightId}"]`)
+    : null
+  const svgRect = document.querySelector('.rope-svg')?.getBoundingClientRect()
+  if (!leftEl || !svgRect) return ''
+  const leftRect = leftEl.getBoundingClientRect()
+  const x1 = leftRect.right - svgRect.left
+  const y1 = leftRect.top + leftRect.height / 2 - svgRect.top
+  let x2, y2
+  if (rightEl) {
+    const rightRect = rightEl.getBoundingClientRect()
+    x2 = rightRect.left - svgRect.left
+    y2 = rightRect.top + rightRect.height / 2 - svgRect.top
+  } else if (mouse) {
+    x2 = mouse.x - svgRect.left
+    y2 = mouse.y - svgRect.top
+  } else {
+    return ''
+  }
+  // 只画一条直线
+  return `M${x1},${y1} L${x2},${y2}`
+}
 
 // --- 添加/删除卡片的逻辑 ---
 const addCard = () => {
   // 根据当前卡片数量决定下一个颜色
   const nextColorIndex = data.value.leftColumn.cards.length % cardColors.length
   const newColor = cardColors[nextColorIndex]
-
-  // 使用时间戳确保 ID 唯一
   const newId = uuidv4()
-
   const newLeftCard = {
     id: newId,
     content: '新选项',
@@ -126,17 +225,19 @@ const addCard = () => {
   }
   const newRightCard = {
     id: newId,
-    content: '新答案',
-    color: '#eaf2ff'
+    content: '新答案'
   }
+  nextTick()
   data.value.leftColumn.cards.push(newLeftCard)
   data.value.rightColumn.cards.push(newRightCard)
+  fixedLines.value.push({leftId: newId, rightId: newId})
+  nextTick()
 }
-
-const removeCard = (index: number) => {
-  // 同步删除左右两侧对应索引的卡片
+// 删除一组卡片
+const removeCard = (index: number, id: string) => {
   data.value.leftColumn.cards.splice(index, 1)
   data.value.rightColumn.cards.splice(index, 1)
+  fixedLines.value = fixedLines.value.filter(line => line.leftId !== id)
 }
 </script>
 
@@ -149,6 +250,7 @@ const removeCard = (index: number) => {
   background-color: #f7f9fc;
 }
 .bordered-container {
+  position: relative;
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 20px;
@@ -180,19 +282,15 @@ const removeCard = (index: number) => {
   flex-direction: column;
   gap: 15px;
 }
+/* 卡片图片背景 */
 .card-icon-background {
-  width: 70px;
-  height: 70px;
-  background-color: #6698ff;
-  border: 3px solid #dbeaff;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
-  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+  border-radius: inherit;
+  background-color: #555;
+  overflow: hidden;
 }
+/* 卡片样式 */
 .card {
   border-radius: 16px;
   padding: 15px;
@@ -210,9 +308,8 @@ const removeCard = (index: number) => {
   height: 70px;
 }
 .card-icon {
-  width: 50px;
-  height: 50px;
-  flex-shrink: 0; /* 防止图标被压缩 */
+  width: 100px;
+  height: 100%;
 }
 .card-text {
   display: flex;
@@ -233,6 +330,12 @@ const removeCard = (index: number) => {
   justify-content: center;
   font-weight: 500;
   height: 70px;
+  text-align: center;
+}
+/* 卡片匹配错误样式 */
+.card-error {
+  box-shadow: 0 0 8px 2px #f56c6c;
+  border: 1px solid #f56c6c;
 }
 .delete-btn {
   position: absolute;
@@ -244,7 +347,15 @@ const removeCard = (index: number) => {
 .card:hover .delete-btn {
   opacity: 1; /* 鼠标悬浮在卡片上时显示删除按钮 */
 }
-.footer-actions {
+/* 绳子svg图层样式 */
+.rope-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+/* 卡片底部增加按钮样式 */
+.footer-container {
   margin-top: 20px;
   display: flex;
   justify-content: center;

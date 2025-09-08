@@ -3,7 +3,7 @@ export type CourseDataType<T extends keyof CourseTemplateMap> = {
   version: string
   meta: {author: string; createTime: string; updateTime: string}
   pages: {
-    uniqueId: number
+    uniqueId: string
     pageId: number
     templateType: string
     data: CourseTemplateMap[T]
