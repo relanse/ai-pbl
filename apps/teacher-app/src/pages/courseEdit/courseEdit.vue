@@ -125,6 +125,12 @@ import AddPageDialog from './AddPageDialog.vue'
 const ConnectionTemplate = defineAsyncComponent(
   () => import('@aipbl/common/components/CourseTemplate/ConnectionTemplate.vue')
 )
+const ChoicesTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/ChoicesTemplate.vue')
+)
+const DragTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/DragTemplate.vue')
+)
 
 //数据结构
 const courseData = ref<CourseDataType<any>>({
@@ -154,7 +160,9 @@ const addPageDialogVisible = ref(false)
 
 // --- 模板组件映射 ---
 const templateMap: {[key: string]: any} = {
-  connection: ConnectionTemplate
+  connection: ConnectionTemplate,
+  choices: ChoicesTemplate,
+  drag: DragTemplate
 }
 
 const selectedPage = computed(() => {
@@ -271,6 +279,8 @@ const getTemplateName = (type: string): string => {
   return (
     {
       connection: '连一连',
+      choices: '选一选',
+      drag: '拖一拖',
       memoryCards: '记忆卡片',
       definition: '定义'
     }[type] || '未知模板'

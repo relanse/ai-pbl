@@ -1,100 +1,112 @@
 <template>
-  <div class="choices-question-wrapper">
+  <div class="choices-wrapper">
     <!-- TODO:小机器人的组件，等sbj上传 -->
-    <div class="robot-prompt"><MyButton /></div>
-
+    <RobotPrompt v-model="data.prompt" />
     <!-- 主内容区 -->
-    <el-card class="choices-question-card" shadow="never">
-      <template #header>
+    <div class="template-card">
+      <div class="template-card-header">
         <EditableText
-          :is-editing="props.isEditing"
+          :is-editing="isEdit"
           v-model="data.title"
-          :text-style="{
-            fontSize: '24px',
-            fontWeight: 'bold',
-            color: '#333333'
-          }"
+          style="
+            position: absolute;
+            top: 5%;
+            color: #ffffff;
+            font-size: clamp(18px, 3vw, 28px);
+          "
         />
-      </template>
-      <!-- Display Mode -->
-      <ElRadioGroup
-        v-if="!props.isEditing"
-        v-model="userAnswer"
-        class="choices-option"
-      >
-        <ElRadio
-          class="choices-option-item"
-          v-for="option in data.options"
-          :key="option.id"
-          :label="option.id"
-        >
-          {{ option.id }}.{{ option.text }}
-        </ElRadio>
-      </ElRadioGroup>
-
-      <!-- Edit Mode -->
-      <div v-else class="edit-options-list">
-        <div
-          v-for="(option, index) in data.options"
-          :key="index"
-          class="edit-option-item"
-          :class="{'is-correct-answer': data.correctAnswer === option.id}"
-        >
-          <ElRadio v-model="data.correctAnswer" :label="option.id">{{
-            option.id
-          }}</ElRadio>
-          <ElInput v-model="option.text" placeholder="请输入选项内容" />
-          <MyButton @click="removeOption(index)">删除</MyButton>
-        </div>
-        <MyButton @click="addOption" v-if="data.options.length < 4"
-          >添加选项</MyButton
-        >
+        <img
+          :src="backgroundSun"
+          alt="Background Sun"
+          style="position: absolute; bottom: 10px; right: 10px; width: 100px"
+        />
       </div>
-    </el-card>
+      <div class="template-card-body">
+        <img :src="backgroundGirl" alt="Background Girl" />
+        <div class="template-card-options">
+          <!-- Display Mode -->
+          <ElRadioGroup
+            v-if="!isEdit"
+            v-model="userAnswer"
+            class="choices-options"
+          >
+            <ElRadio
+              class="choices-options-item"
+              v-for="option in data.options"
+              :key="option.id"
+              :label="option.id"
+            >
+              {{ option.id }}.{{ option.content }}
+            </ElRadio>
+          </ElRadioGroup>
+
+          <!-- Edit Mode -->
+          <div v-else class="choices-options">
+            <div
+              v-for="(option, index) in data.options"
+              :key="index"
+              class="choices-options-item"
+              :class="{'is-correct-answer': data.correctAnswer === option.id}"
+            >
+              <ElRadio v-model="data.correctAnswer" :label="option.id">{{
+                option.id
+              }}</ElRadio>
+              <ElInput v-model="option.content" placeholder="请输入选项内容" />
+              <MyButton
+                @click="removeOption(index)"
+                style="width: 80px; height: 40px; font-size: medium"
+                >删除</MyButton
+              >
+            </div>
+            <MyButton
+              @click="addOption"
+              v-if="data.options.length < 4"
+              style="width: 160px; height: 40px; font-size: medium"
+              >添加选项</MyButton
+            >
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- 提交按钮 -->
-    <div class="footer">
-      <MyButton v-if="!props.isEditing" class="submit-button"
-        >提交答案</MyButton
-      >
+    <div class="template-card-footer">
+      <MyButton v-if="!isEdit" class="submit-button">提交答案</MyButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, defineProps} from 'vue'
-import {ElInput, ElRadio, ElRadioGroup, ElMessage, ElCard} from 'element-plus'
+import {ref, inject, computed, onMounted, watch} from 'vue'
+import {ElInput, ElRadio, ElRadioGroup, ElMessage} from 'element-plus'
+import backgroundGirl from '../../assets/backgrounds/backgroundGirl.png'
+import backgroundSun from '../../assets/backgrounds/backgroundSun.png'
 import MyButton from '../../../student-app/src/components/common/MyButton.vue'
-import type {PropType} from 'vue'
-import EditableText from '../EditableText.vue'
-
-// Defines the structure for a question
-interface Question {
-  prompt: string
-  title: string
-  options: {id: string; text: string}[]
-  correctAnswer: string
-}
-
-// This allows the component to be used with v-model:data
-const props = defineProps({
-  isEditing: {
-    type: Boolean,
-    default: false
+import EditableText from './EditableText.vue'
+import RobotPrompt from './RobotPrompt.vue'
+import {
+  CourseTemplateProviderDefaultValue,
+  CourseTemplateProviderKey
+} from './provider'
+import {getTemplateDefaultData} from './templateDefaults'
+import {CourseChoicesType} from './type'
+import {v4 as uuidv4} from 'uuid'
+const {isEdit, courseData, selectedPageIndex} = inject(
+  CourseTemplateProviderKey,
+  CourseTemplateProviderDefaultValue
+)
+const data = computed({
+  get: () => {
+    if (selectedPageIndex.value !== null) {
+      return courseData.value.pages[selectedPageIndex.value]
+        .data as CourseChoicesType
+    }
+    return getTemplateDefaultData('choices') as CourseChoicesType
+  },
+  set: val => {
+    if (selectedPageIndex.value !== null) {
+      courseData.value.pages[selectedPageIndex.value].data = val
+    }
   }
-})
-
-const data = defineModel('data', {
-  type: Object as PropType<Question>,
-  default: () => ({
-    prompt: '请你仔细阅读题目，选出你认为最合适的答案。',
-    title: '下面哪个最准确地描述了人工智能？',
-    options: [
-      {id: 'A', text: '能够和人类一样思考和学习的计算机程序'},
-      {id: 'B', text: '只能执行预设指令的机器人'},
-      {id: 'C', text: '一种新型的手机应用程序'}
-    ],
-    correctAnswer: 'A'
-  })
 })
 
 const userAnswer = ref('')
@@ -105,7 +117,7 @@ const addOption = () => {
   const newOptionId = String.fromCharCode(65 + data.value.options.length)
   data.value.options.push({
     id: newOptionId,
-    text: ''
+    content: ''
   })
 }
 
@@ -124,31 +136,67 @@ const removeOption = (index: number) => {
 </script>
 
 <style scoped>
-.choices-question-wrapper {
+.choices-wrapper {
+  width: 100%;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  box-sizing: border-box; /* 保证padding不会影响总宽度 */
 }
-.choices-question-card {
+.template-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 95%;
   border-radius: 32px;
+  aspect-ratio: 3 / 2;
   border: 5px solid #649ffe;
+  overflow: hidden;
 }
-.choices-question-card :deep(.el-card__header) {
-  background-color: #649ffe;
-  border-bottom: none;
-}
-.editable-text-wrapper {
-  cursor: text;
+.template-card-header {
+  height: 25%;
   width: 100%;
-  height: 100%;
-  font-family: 'HuXiaoBo-NanShen';
-  font-size: 32px;
-  color: #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #649ffe;
+  box-sizing: border-box;
 }
-.footer {
+.template-card-body {
+  width: 100%;
+  height: 75%; /* 占据大部分高度 */
+  display: flex;
+  align-items: center;
+  justify-content: space-around; /* 优化布局 */
+}
+.template-card-body > img {
+  width: 35%; /* 图片宽度相对于父容器 */
+  height: auto; /* 高度自适应 */
+  padding: 16px;
+}
+.template-card-options {
+  background-color: #f4f8ff;
+  width: 55%; /* 选项区域宽度 */
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.choices-options {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.choices-options-item {
+  display: flex;
+  font-size: clamp(14px, 2vw, 20px);
+  color: #333333;
+}
+.template-card-footer {
   display: flex;
   justify-content: center;
   align-items: center;
