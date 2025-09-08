@@ -294,14 +294,14 @@ const submitCourse = () => {
   background: #c8ebfb;
 }
 .fade-move,
-.fade-enter-active,
-.fade-leave-active {
+.fade-enter-active {
   transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+.fade-leave-active {
   position: absolute;
 }
 .fade-enter-from {
   opacity: 0;
-  transform: scaleY(0.01) translate(-200px, 0);
 }
 .fade-leave-to {
   opacity: 0;

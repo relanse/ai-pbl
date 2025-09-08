@@ -15,6 +15,7 @@
         <!-- 左侧卡片 -->
         <div class="column">
           <div
+            ref="leftCardRefs"
             v-for="(card, index) in data.leftColumn.cards"
             :key="card.id"
             class="card card-left"
@@ -43,6 +44,7 @@
         <!-- 右侧卡片 -->
         <div class="column">
           <div
+            ref="rightCardRefs"
             v-for="card in data.rightColumn.cards"
             :key="card.id"
             class="card card-right"
@@ -61,9 +63,14 @@
         <!-- 编辑模式：渲染所有绳子 -->
         <template v-if="isEdit">
           <path
-            v-for="card in data.leftColumn.cards"
-            :key="card.id"
-            :d="getRopePath(card.id, card.id)"
+            v-for="lc in leftCardRefs"
+            :key="lc.getAttribute('data-leftid')!"
+            :d="
+              getRopePath(
+                lc.getAttribute('data-leftid')!,
+                lc.getAttribute('data-leftid')!
+              )
+            "
             stroke="#409eff"
             :stroke-width="4"
             fill="none"
@@ -130,14 +137,14 @@ const {isEdit, courseData, selectedPageIndex} = inject(
 )
 const data = computed({
   get: () => {
-    if (selectedPageIndex.value) {
+    if (selectedPageIndex.value !== null) {
       return courseData.value.pages[selectedPageIndex.value]
         .data as CourseConnectionType
     }
     return getTemplateDefaultData('connection') as CourseConnectionType
   },
   set: val => {
-    if (selectedPageIndex.value) {
+    if (selectedPageIndex.value !== null) {
       courseData.value.pages[selectedPageIndex.value].data = val
     }
   }
@@ -147,6 +154,8 @@ const data = computed({
 const cardColors = ['#a0c4ff', '#ffd6a0', '#b2f7b2', '#d8b4fe']
 // 绳子动画交互逻辑
 const fixedLines = ref<{leftId: string; rightId: string}[]>([])
+const leftCardRefs = ref<HTMLDivElement[]>()
+const rightCardRefs = ref<HTMLDivElement[]>()
 const dragging = ref(false)
 const dragStartLeftId = ref<string | null>(null)
 const mousePos = ref({x: 0, y: 0})
@@ -227,11 +236,11 @@ const addCard = () => {
     id: newId,
     content: '新答案'
   }
-  nextTick()
   data.value.leftColumn.cards.push(newLeftCard)
   data.value.rightColumn.cards.push(newRightCard)
-  fixedLines.value.push({leftId: newId, rightId: newId})
-  nextTick()
+  nextTick(() => {
+    fixedLines.value.push({leftId: newId, rightId: newId})
+  })
 }
 // 删除一组卡片
 const removeCard = (index: number, id: string) => {
