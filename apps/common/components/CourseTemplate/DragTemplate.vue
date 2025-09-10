@@ -27,38 +27,40 @@
               v-model="data.targetmean"
             ></EditableText
           ></VerticalButton>
-          <div
-            class="drag-target-targets-background"
-            v-for="target in data.targets"
-            :key="target.id"
-          >
-            <div class="drag-target-targets">
-              <span
-                style="
-                  font-family: Microsoft YaHei;
-                  font-weight: 700;
-                  font-style: Bold;
-                  font-size: 18px;
-                  line-height: 100%;
-                  letter-spacing: 0%;
-                  color: #316fef;
-                "
-                ><EditableText
-                  :is-editing="isEdit"
-                  v-model="target.title"
-                ></EditableText
-              ></span>
-              <span
-                style="
-                  font-family: Microsoft YaHei;
-                  font-weight: 400;
-                  font-size: 16px;
-                  line-height: 100%;
-                  letter-spacing: 0%;
-                  color: #7ea6f5;
-                "
-                ><EditableText>{{ target.subtitle }}</EditableText></span
-              >
+          <div class="drag-target-targets-container">
+            <div
+              class="drag-target-targets-background"
+              v-for="target in data.targets"
+              :key="target.id"
+            >
+              <div class="drag-target-targets">
+                <span
+                  style="
+                    font-family: Microsoft YaHei;
+                    font-weight: 700;
+                    font-style: Bold;
+                    font-size: 18px;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                    color: #316fef;
+                  "
+                  ><EditableText
+                    :is-editing="isEdit"
+                    v-model="target.title"
+                  ></EditableText
+                ></span>
+                <span
+                  style="
+                    font-family: Microsoft YaHei;
+                    font-weight: 400;
+                    font-size: 16px;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                    color: #7ea6f5;
+                  "
+                  ><EditableText>{{ target.subtitle }}</EditableText></span
+                >
+              </div>
             </div>
           </div>
         </div>
@@ -69,22 +71,17 @@
               v-model="data.itemmean"
             ></EditableText
           ></VerticalButton>
-          <draggable
-            class="drag-items"
-            v-model="data.items"
-            :disabled="isEdit"
-            group="items"
-          >
-            <template #item="{element}">
-              <div class="drag-items-item">
+          <div class="drag-item-items-container">
+            <div class="drag-items" v-for="item in data.items" :key="item.id">
+              <div class="drag-items-item-background"></div>
+              <div class="drag-items-item-text">
                 <EditableText
                   :is-editing="isEdit"
-                  v-model="element.title"
-                  :style="{backgroundColor: element.color}"
+                  v-model="item.title"
                 ></EditableText>
               </div>
-            </template>
-          </draggable>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -171,11 +168,18 @@ const data = computed({
   justify-content: space-around;
   border-bottom: 1px solid #ccc;
 }
+.drag-target-targets-container {
+  display: flex;
+  gap: 20px;
+  width: 70%;
+  justify-content: center;
+  overflow-x: auto;
+}
 .drag-target-targets-background {
   display: flex;
   background-color: #f3f7ff;
-  padding: 1vw 1vw;
-  border-radius: 20px;
+  padding: clamp(10px, 1vw, 16px) clamp(10px, 1vw, 16px);
+  border-radius: 29px;
 }
 .vertical-button :deep(.display-text) {
   padding: 16px 12px 16px 12px;
@@ -184,8 +188,8 @@ const data = computed({
   display: flex;
   flex-direction: column;
   background-color: #f3f7ff;
-  padding: 3vw 3vw;
-  border-radius: 20px;
+  padding: clamp(30px, 3vw, 48px) clamp(30px, 3vw, 48px);
+  border-radius: 29px;
   border: 2px dashed #b1cffe;
 }
 .drag-item {
