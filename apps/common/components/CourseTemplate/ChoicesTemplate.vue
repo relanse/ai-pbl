@@ -9,11 +9,8 @@
           :is-editing="isEdit"
           v-model="data.title"
           style="
-<<<<<<< HEAD
-=======
             height: 100px;
             width: 70%;
->>>>>>> origin/tenshi
             color: #ffffff;
             font-size: clamp(18px, 3vw, 28px);
             height: 100px;
@@ -153,13 +150,8 @@ const removeOption = (index: number) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-<<<<<<< HEAD
-  max-height: 600px;
-  width: 1000px;
-=======
   width: 95%;
   max-height: 600px;
->>>>>>> origin/tenshi
   border-radius: 32px;
   aspect-ratio: 3 / 2;
   border: 5px solid #649ffe;
