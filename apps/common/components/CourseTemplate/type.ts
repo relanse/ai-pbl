@@ -63,7 +63,7 @@ export type FindItemType = {
   y: number // y 坐标 (百分比)
   text: string // 物品名称
   img: string // 物品图标URL
-  found?: boolean // 在预览模式下是否已被发现
+  found: boolean // 在预览模式下是否已被发现
 }
 export type CourseFindType = {
   prompt: string

@@ -25,7 +25,7 @@
             :style="{backgroundColor: card.color}"
           >
             <EditableImage class="card-icon" v-model="card.img" />
-            <div class="card-text">
+            <div class="card-left-textbox">
               <EditableText class="card-title" v-model="card.content" />
               <EditableText class="card-tag" v-model="card.tag" />
             </div>
@@ -52,7 +52,7 @@
             @click="handelRightClick(card.id)"
             :class="{'card-error': errorRightId === card.id}"
           >
-            <EditableText class="card-title" v-model="card.content" />
+            <EditableText class="card-right-text" v-model="card.content" />
           </div>
         </div>
       </div>
@@ -302,6 +302,7 @@ const removeCard = (index: number, id: string) => {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
+  justify-content: center;
   position: relative; /* 为了删除按钮的绝对定位 */
   transition: all 0.2s ease-in-out;
 }
@@ -316,7 +317,7 @@ const removeCard = (index: number, id: string) => {
   width: 100px;
   height: 100%;
 }
-.card-text {
+.card-left-textbox {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -332,10 +333,13 @@ const removeCard = (index: number, id: string) => {
 }
 .card-right {
   background-color: #f0f7ff;
-  justify-content: center;
   font-weight: 500;
   height: 70px;
-  text-align: center;
+}
+.card-right-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 /* 卡片匹配错误样式 */
 .card-error {

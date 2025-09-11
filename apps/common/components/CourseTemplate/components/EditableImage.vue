@@ -5,6 +5,7 @@
       :src="imageUrl || defaultImage"
       alt="可编辑图片"
       class="image-display"
+      draggable="false"
     />
     <!-- v-if 会自动解包 isEditing 这个 ref -->
     <div v-if="isEdit" class="overlay">

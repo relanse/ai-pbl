@@ -12,6 +12,7 @@
         ref="wrapperRef"
         class="canvas-wrapper"
         :style="{top: `${wrapperState.y}px`, left: `${wrapperState.x}px`}"
+        @click="handlePreviewClick"
       >
         <img
           ref="backgroundImgRef"
@@ -25,18 +26,19 @@
           v-for="(item, index) in data.items"
           :key="item.id"
           class="draggable-items"
+          :class="{'is-hidden': !isEdit && !item.found}"
           :style="{top: `${item.y}px`, left: `${item.x}px`}"
           @mousedown.stop
         >
-          <div
-            class="drag-icon"
-            v-if="isEdit"
-            @mousedown.left.stop="itemDragStart($event, item.id)"
-          >
-            <el-icon><Rank /></el-icon>
-          </div>
           <div class="text-box">
             <EditableText class="item-text" v-model="item.text" />
+            <div
+              class="drag-icon"
+              v-if="isEdit"
+              @mousedown.left.stop="itemDragStart($event, item.id)"
+            >
+              <el-icon><Rank /></el-icon>
+            </div>
           </div>
           <div class="img-box">
             <EditableImage class="item-img" v-model="item.img" />
@@ -57,11 +59,11 @@
         新增新的场景物品
       </el-button>
     </div>
-    <div v-else>探索进度</div>
+    <div v-else>探索进度：{{ foundCount }} / {{ totalCount }}</div>
   </div>
 </template>
 <script setup lang="ts">
-import {computed, inject, onMounted, onUnmounted, ref} from 'vue'
+import {computed, inject, onMounted, onUnmounted, ref, watch} from 'vue'
 import {v4 as uuidv4} from 'uuid'
 import {ElIcon, ElButton} from 'element-plus'
 import {Rank, Delete} from '@element-plus/icons-vue'
@@ -93,6 +95,21 @@ const data = computed({
       courseData.value.pages[selectedPageIndex.value].data = val
     }
   }
+})
+watch(isEdit, () => {
+  //当isEdit 的值发生任何变化时,所有场景物品found状态重置
+  if (data.value && data.value.items) {
+    data.value.items.forEach(item => {
+      item.found = false
+    })
+  }
+})
+const foundCount = computed(() => {
+  return data.value.items.filter(item => item.found).length
+})
+
+const totalCount = computed(() => {
+  return data.value.items.length
 })
 
 const containerRef = ref<HTMLElement | null>(null)
@@ -143,12 +160,45 @@ const addNewItem = async () => {
     img: '',
     text: `物品 ${data.value.items.length + 1}`,
     x: initialX,
-    y: initialY
+    y: initialY,
+    found: false
   })
 }
 //删除场景物品
 const deleteItem = (index: number) => {
-  data.value.items.slice(index)
+  data.value.items.splice(index, 1)
+}
+//预览状态下的点击事件
+const handlePreviewClick = (event: MouseEvent) => {
+  // 如果是编辑模式，或者事件不是直接发生在 wrapper 上，则不处理
+  if (isEdit.value || event.target !== wrapperRef.value) {
+    return
+  }
+  // 获取相对于背景包裹层的点击坐标
+  const clickX = event.offsetX
+  const clickY = event.offsetY
+
+  // 遍历所有未找到的物品，进行碰撞检测
+  for (const item of data.value.items) {
+    if (!item.found) {
+      const itemLeft = item.x
+      const itemRight = item.x + ITEM__WIDTH
+      const itemTop = item.y
+      const itemBottom = item.y + ITEM__HEIGHT
+
+      // 判断点击坐标是否在物品的矩形区域内
+      if (
+        clickX >= itemLeft &&
+        clickX <= itemRight &&
+        clickY >= itemTop &&
+        clickY <= itemBottom
+      ) {
+        // 找到了！将物品状态设为 isFound，然后停止循环
+        item.found = true
+        break
+      }
+    }
+  }
 }
 //点击场景图片
 const backgroundDragStart = (event: MouseEvent) => {
@@ -274,7 +324,9 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: default;
+}
+.draggable-items.is-hidden {
+  display: none;
 }
 .text-box {
   position: relative;
@@ -282,14 +334,31 @@ onUnmounted(() => {
   background-color: #409eff;
   min-width: 30px;
   max-width: 80px;
-  color: white;
-  font-weight: 700;
   padding: 5px 16px; /* 稍微增加内边距，让气泡更饱满 */
   border-radius: 21px; /* 更圆的圆角 */
-  font-size: 16px;
   white-space: nowrap;
   margin-bottom: 5px;
-  flex-shrink: 0;
+}
+.item-text {
+  font-size: 16px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+.drag-icon {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 30px;
+  top: -30px;
+  width: 24px;
+  height: 24px;
+  background-color: #f56c6c;
+  color: white;
+  border-radius: 50%;
+  cursor: move;
+  z-index: 1;
 }
 .img-box {
   height: 100px;
@@ -306,17 +375,5 @@ onUnmounted(() => {
 .item-img {
   height: 100%;
   width: 100%;
-}
-.drag-icon {
-  width: 24px;
-  height: 24px;
-  background-color: #f56c6c;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: move;
-  z-index: 1;
 }
 </style>
