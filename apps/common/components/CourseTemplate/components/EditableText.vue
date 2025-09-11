@@ -74,14 +74,12 @@ const handleBlur = () => {
 .editable-text-wrapper.is-globally-editing {
   cursor: text;
 }
-
 .display-text {
-  padding: 10px; /* 增加一点内边距，让边框和文字有距离 */
+  text-align: center;
   border: 1px dashed transparent; /* 预留边框位置，防止悬浮时跳动 */
   border-radius: 4px;
   transition: border-color 0.2s; /* 添加过渡效果 */
 }
-
 /* 仅在全局可编辑时，鼠标悬浮时才显示蓝色虚线边框 */
 .editable-text-wrapper.is-globally-editing:hover .display-text {
   border-color: #409eff;

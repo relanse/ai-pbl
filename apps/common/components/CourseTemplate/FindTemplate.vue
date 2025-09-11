@@ -1,57 +1,81 @@
 <template>
-  <div class="wrapped">
+  <div class="findTemplate-container">
+    <!-- 机器人提示词 -->
     <RobotPrompt v-model="data.prompt" />
-    <div class="bg-container" ref="bgContainerRef">
-      <img
-        :src="data.backgroundImg"
-        alt="找一找背景图片"
-        @click="handleBackgroundClick($event)"
-      />
-      <FindItem
-        v-for="item in data.items"
-        :key="item.id"
-        :item="item"
-        :isEdit="isEdit"
-        @delete="handleItemDelete"
-      />
-    </div>
-    <!-- 预览模式下底部进度条 -->
-    <div v-if="!isEdit" class="preview-bottom-btn">
-      <div class="progress-text">
-        探索进度: {{ foundCount }}/{{ totalCount }}个已发现
+    <!-- 探索场景画布 -->
+    <div
+      ref="containerRef"
+      class="canvas-container"
+      @mousedown.left="backgroundDragStart"
+    >
+      <div
+        ref="wrapperRef"
+        class="canvas-wrapper"
+        :style="{top: `${wrapperState.y}px`, left: `${wrapperState.x}px`}"
+      >
+        <img
+          ref="backgroundImgRef"
+          :src="data.backgroundImg"
+          @load="updateDimensions"
+          alt="探索场景图片"
+          class="background-img"
+          draggable="false"
+        />
+        <div
+          v-for="(item, index) in data.items"
+          :key="item.id"
+          class="draggable-items"
+          :style="{top: `${item.y}px`, left: `${item.x}px`}"
+          @mousedown.stop
+        >
+          <div
+            class="drag-icon"
+            v-if="isEdit"
+            @mousedown.left.stop="itemDragStart($event, item.id)"
+          >
+            <el-icon><Rank /></el-icon>
+          </div>
+          <div class="text-box">
+            <EditableText class="item-text" v-model="item.text" />
+          </div>
+          <div class="img-box">
+            <EditableImage class="item-img" v-model="item.img" />
+          </div>
+          <ElButton
+            class="delete-btn"
+            v-if="isEdit"
+            type="danger"
+            :icon="Delete"
+            round
+            @click="deleteItem(index)"
+          />
+        </div>
       </div>
-      <el-button class="finish-btn" type="warning" round>我找好了</el-button>
     </div>
-    <!-- 添加/编辑物品的对话框 -->
-    <el-dialog v-model="dialogVisible" title="添加物品" width="30%">
-      <el-form v-model="newItemForm">
-        <el-form-item label="物品名称">
-          <el-input v-model="newItemForm.text" />
-        </el-form-item>
-        <el-form-item label="物品图标">
-          <EditableImage v-model="newItemForm.img" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleConfirmAddItem">确定</el-button>
-      </template>
-    </el-dialog>
+    <div class="controls" v-if="isEdit">
+      <el-button type="primary" @click="addNewItem">
+        新增新的场景物品
+      </el-button>
+    </div>
+    <div v-else>探索进度</div>
   </div>
 </template>
 <script setup lang="ts">
 import {computed, inject, onMounted, onUnmounted, ref} from 'vue'
-import RobotPrompt from './components/RobotPrompt.vue'
-import {CourseFindType, FindItemType} from './type'
-import {getTemplateDefaultData} from './templateDefaults'
-import {ElButton, ElDialog, ElForm, ElFormItem, ElInput} from 'element-plus'
-import EditableImage from './components/EditableImage.vue'
 import {v4 as uuidv4} from 'uuid'
-import FindItem from './components/FindItem.vue'
+import {ElIcon, ElButton} from 'element-plus'
+import {Rank, Delete} from '@element-plus/icons-vue'
+//自己的类型和数据
+import {CourseFindType} from './type'
+import {getTemplateDefaultData} from './templateDefaults'
 import {
   CourseTemplateProviderDefaultValue,
   CourseTemplateProviderKey
 } from './provider'
+//自己的组件
+import EditableImage from './components/EditableImage.vue'
+import EditableText from './components/EditableText.vue'
+import RobotPrompt from './components/RobotPrompt.vue'
 const {isEdit, courseData, selectedPageIndex} = inject(
   CourseTemplateProviderKey,
   CourseTemplateProviderDefaultValue
@@ -70,116 +94,229 @@ const data = computed({
     }
   }
 })
-const bgContainerRef = ref<HTMLElement | null>(null)
-// --- 对话框与表单状态 ---
-const dialogVisible = ref(false)
-const newItemForm = ref({
-  text: '',
-  img: '',
-  x: 0,
-  y: 0
+
+const containerRef = ref<HTMLElement | null>(null)
+const wrapperRef = ref<HTMLElement | null>(null)
+const backgroundImgRef = ref<HTMLElement | null>(null)
+
+const containerSize = ref({width: 0, height: 0})
+const wrapperState = ref({x: 0, y: 0})
+const backgroundImgSize = ref({width: 0, height: 0})
+const ITEM__WIDTH = 80
+const ITEM__HEIGHT = 180
+
+const dragState = ref({
+  isDragging: false,
+  isPanning: false,
+  targetId: '',
+  startX: 0,
+  startY: 0,
+  elementStartX: 0,
+  elementStartY: 0
+})
+const updateDimensions = () => {
+  if (containerRef.value) {
+    containerSize.value.width = containerRef.value.offsetWidth
+    containerSize.value.height = containerRef.value.offsetHeight
+  }
+  if (backgroundImgRef.value) {
+    backgroundImgSize.value.width = backgroundImgRef.value.offsetWidth
+    backgroundImgSize.value.height = backgroundImgRef.value.offsetHeight
+  }
+}
+
+//增加新的场景物品
+const addNewItem = async () => {
+  if (!containerRef.value) return
+  const newId = uuidv4()
+  // 计算可视区域的中心点
+  const containerRect = containerRef.value.getBoundingClientRect()
+  const centerX = containerRect.width / 2 - ITEM__WIDTH / 2
+  const centerY = containerRect.height / 2 - ITEM__HEIGHT / 2
+
+  // 将中心点坐标从容器坐标系转换到背景包裹层坐标系
+  const initialX = centerX - wrapperState.value.x
+  const initialY = centerY - wrapperState.value.y
+
+  data.value.items.push({
+    id: newId,
+    img: '',
+    text: `物品 ${data.value.items.length + 1}`,
+    x: initialX,
+    y: initialY
+  })
+}
+//删除场景物品
+const deleteItem = (index: number) => {
+  data.value.items.slice(index)
+}
+//点击场景图片
+const backgroundDragStart = (event: MouseEvent) => {
+  if ((event.target as HTMLElement).closest('.draggable-item')) {
+    return
+  }
+  dragState.value.isPanning = true
+  dragState.value.startX = event.clientX
+  dragState.value.startY = event.clientY
+  dragState.value.elementStartX = wrapperState.value.x
+  dragState.value.elementStartY = wrapperState.value.y
+
+  if (containerRef.value) {
+    containerRef.value.style.cursor = 'grabbing'
+  }
+}
+//点击场景物品拖拽图标
+const itemDragStart = (event: MouseEvent, itemId: string) => {
+  const item = data.value.items.find(c => c.id === itemId)
+  if (!item) return
+
+  dragState.value.isDragging = true
+  dragState.value.targetId = itemId
+  dragState.value.startX = event.clientX
+  dragState.value.startY = event.clientY
+  dragState.value.elementStartX = item.x
+  dragState.value.elementStartY = item.y
+}
+//处理鼠标移动事件
+const handleMouseMove = (event: MouseEvent) => {
+  //场景背景图片拖动限制
+  if (dragState.value.isPanning) {
+    const dx = event.clientX - dragState.value.startX
+    const dy = event.clientY - dragState.value.startY
+    let newX = dragState.value.elementStartX + dx
+    let newY = dragState.value.elementStartY + dy
+    // 计算背景平移的边界
+    const minX = Math.min(
+      0,
+      containerSize.value.width - backgroundImgSize.value.width
+    )
+    const minY = Math.min(
+      0,
+      containerSize.value.height - backgroundImgSize.value.height
+    )
+    // 应用边界限制
+    newX = Math.max(minX, Math.min(newX, 0))
+    newY = Math.max(minY, Math.min(newY, 0))
+    wrapperState.value.x = newX
+    wrapperState.value.y = newY
+  }
+
+  //组件拖拽限制
+  if (dragState.value.isDragging) {
+    const item = data.value.items.find(c => c.id === dragState.value.targetId)
+    if (!item || backgroundImgSize.value.width === 0) return
+
+    const dx = event.clientX - dragState.value.startX
+    const dy = event.clientY - dragState.value.startY
+    let newX = dragState.value.elementStartX + dx
+    let newY = dragState.value.elementStartY + dy
+
+    // 计算物品可移动的最大 X 和 Y 坐标
+    const maxX = backgroundImgSize.value.width - ITEM__WIDTH
+    const maxY = backgroundImgSize.value.height - ITEM__HEIGHT
+    newX = Math.max(0, Math.min(newX, maxX))
+    newY = Math.max(0, Math.min(newY, maxY))
+    item.x = newX
+    item.y = newY
+  }
+}
+const handleMouseUp = () => {
+  dragState.value.isDragging = false
+  dragState.value.isPanning = false
+  dragState.value.targetId = ''
+  if (containerRef.value) {
+    containerRef.value.style.cursor = 'grab'
+  }
+}
+onMounted(() => {
+  updateDimensions()
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', handleMouseUp)
+  window.addEventListener('resize', updateDimensions)
 })
 
-// --- 核心逻辑 ---
-
-// 1. 编辑模式：点击背景添加物品
-const handleBackgroundClick = (event: MouseEvent) => {
-  // 如果不是编辑模式，或者容器元素还未加载，则不执行任何操作
-  if (!isEdit.value || !bgContainerRef.value) return
-
-  // 从事件对象中直接获取相对于被点击元素（<img>）的坐标
-  const x = event.offsetX
-  const y = event.offsetY
-
-  // 获取容器的尺寸，用于计算百分比
-  const containerWidth = bgContainerRef.value.clientWidth
-  const containerHeight = bgContainerRef.value.clientHeight
-
-  // 将绝对坐标转换为百分比，以便在不同屏幕尺寸下保持相对位置
-  const xPercent = (x / containerWidth) * 100
-  const yPercent = (y / containerHeight) * 100
-
-  // 更新表单数据，并打开对话框
-  newItemForm.value = {
-    text: '新物品',
-    img: '',
-    x: xPercent,
-    y: yPercent
-  }
-  dialogVisible.value = true
-}
-
-// 2. 对话框确认：将物品数据添加到数组
-const handleConfirmAddItem = () => {
-  const newItem: FindItemType = {
-    id: uuidv4(),
-    text: newItemForm.value.text,
-    img: newItemForm.value.img,
-    x: newItemForm.value.x,
-    y: newItemForm.value.y,
-    found: false
-  }
-  data.value.items.push(newItem)
-  dialogVisible.value = false
-}
-
-// 4. 编辑模式：删除物品
-const handleItemDelete = (id: string) => {
-  data.value.items = data.value.items.filter(item => item.id !== id)
-}
-
-// 5. 预览模式：点击物品标记为已找到
-const handleItemClick = (item: FindItemType) => {
-  if (isEdit.value) return
-  item.found = true
-}
-
-// --- 预览模式下的计算属性 ---
-const foundCount = computed(() => data.value.items.filter(i => i.found).length)
-const totalCount = computed(() => data.value.items.length)
+onUnmounted(() => {
+  document.removeEventListener('mousemove', handleMouseMove)
+  document.removeEventListener('mouseup', handleMouseUp)
+  window.removeEventListener('resize', updateDimensions)
+})
 </script>
 
 <style scoped>
-.wrapped {
+.findTemplate-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
   gap: 20px;
 }
-.bg-container {
+.canvas-container {
   position: relative;
-  background-color: #6697ff;
+  width: 90vw;
+  max-width: 800px;
+  height: 70vh;
+  max-height: 500px;
+  border: 5px solid #409eff; /* 蓝色边框 */
   border-radius: 32px;
-  padding: 10px;
-  width: 900px;
-  max-width: 100%;
-  line-height: 0; /* 消除 img 底部白边 */
+  overflow: hidden; /* 隐藏超出部分 */
+  cursor: grab;
+  user-select: none;
 }
-.bg-container img {
-  width: 100%;
-  height: auto;
-  border-radius: inherit;
-  cursor: crosshair; /* 编辑模式下显示十字准星 */
+.canvas-wrapper {
+  position: absolute;
 }
-.preview-bottom-btn {
+.background-img {
+  display: block;
+  pointer-events: none; /* 让鼠标事件穿透图片到容器上 */
+}
+.draggable-items {
+  position: absolute;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  width: 900px;
-  max-width: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 10px 20px;
-  border-radius: 20px;
-  backdrop-filter: blur(5px);
+  cursor: default;
 }
-.progress-text {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-}
-.finish-btn {
+.text-box {
+  position: relative;
+  display: inline-block;
+  background-color: #409eff;
+  min-width: 30px;
+  max-width: 80px;
+  color: white;
+  font-weight: 700;
+  padding: 5px 16px; /* 稍微增加内边距，让气泡更饱满 */
+  border-radius: 21px; /* 更圆的圆角 */
   font-size: 16px;
-  padding: 18px 30px;
+  white-space: nowrap;
+  margin-bottom: 5px;
+  flex-shrink: 0;
+}
+.img-box {
+  height: 100px;
+  width: 80px;
+  background-color: #f99833;
+  border: 3px solid #fff;
+  border-radius: 21px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+.item-img {
+  height: 100%;
+  width: 100%;
+}
+.drag-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #f56c6c;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: move;
+  z-index: 1;
 }
 </style>

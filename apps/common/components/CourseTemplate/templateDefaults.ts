@@ -1,4 +1,4 @@
-import FindTemplateDefaultBg from '../../assets/backgrounds/findTemplate.png'
+import DefaultFindBackground from '../../assets/backgrounds/DefaultFindBackground.png'
 import {
   CourseConnectionType,
   CourseFindType,
@@ -73,7 +73,7 @@ export const getTemplateDefaultData = (templateType: string) => {
     case 'find':
       return <CourseFindType>{
         prompt: '找一找下面有什么用到ai的物品',
-        backgroundImg: FindTemplateDefaultBg,
+        backgroundImg: DefaultFindBackground,
         items: []
       }
     default:
