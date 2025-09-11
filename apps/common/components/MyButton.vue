@@ -8,8 +8,8 @@
   </button>
 </template>
 <script setup lang="ts">
-import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
-import {iconNamesType} from '@aipbl/common/components/MyIcon/iconPath'
+import MyIcon from '../components/MyIcon/index.vue'
+import {iconNamesType} from '../components/MyIcon/iconPath'
 defineProps({
   color: {
     type: String,

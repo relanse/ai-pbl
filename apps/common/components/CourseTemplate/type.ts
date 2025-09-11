@@ -40,7 +40,6 @@ export type CourseDragType = {
   itemmean: string
   items: {
     id: string
-    mean: string
     title: string
     color: string
   }[]

@@ -41,6 +41,22 @@
                 class="drag-target-targets"
                 :class="feedbackState[target.id]"
               >
+                <div v-if="isEdit" class="correct-items-editor">
+                  <label
+                    v-for="item in data.items"
+                    :key="item.id"
+                    class="editor-checkbox-label"
+                  >
+                    <input
+                      type="checkbox"
+                      :value="item.title"
+                      v-model="target.correctItems"
+                    />
+                    <span :style="{color: item.color, fontWeight: 'bold'}">{{
+                      item.title
+                    }}</span>
+                  </label>
+                </div>
                 <span
                   style="
                     font-family: Microsoft YaHei;
@@ -65,7 +81,11 @@
                     letter-spacing: 0%;
                     color: #7ea6f5;
                   "
-                  ><EditableText>{{ target.subtitle }}</EditableText></span
+                  ><EditableText
+                    :is-editing="isEdit"
+                    v-model="target.subtitle"
+                    >{{ target.subtitle }}</EditableText
+                  ></span
                 >
               </div>
               <!-- 显示已拖入的项 -->
@@ -76,16 +96,24 @@
                 :style="{
                   position: 'absolute',
                   backgroundColor: item.color,
-                  left: `calc(${20 + index * 80}px)`,
-                  top: `calc(30px + ${Math.floor(index / 3) * 30}px)`
+                  left: `calc(${20 + (index % 3) * 80}px)`,
+                  top: `calc(30px + ${Math.floor(index / 3) * 40}px)`
                 }"
               >
                 <EditableText
                   :is-editing="isEdit"
                   v-model="item.title"
+                  @focus="titleBeforeEdit = item.title"
+                  @blur="synchronizeTitleChange(item.title)"
                 ></EditableText>
               </div>
             </div>
+            <MyButton
+              v-if="isEdit"
+              @click="addTarget"
+              style="width: 80px; height: 40px; font-size: medium"
+              >添加</MyButton
+            >
           </div>
         </div>
         <div class="drag-item">
@@ -124,6 +152,27 @@
                 ></EditableText>
               </div>
             </div>
+            <div
+              style="position: relative"
+              @mouseenter="handlePaletteContainerEnter"
+              @mouseleave="handlePaletteContainerLeave"
+            >
+              <MyButton
+                v-if="isEdit && data.items.length < 6"
+                @click="addNewItem"
+                :color="selectedColor"
+                :style="{
+                  width: '80px',
+                  height: '40px',
+                  fontSize: 'medium'
+                }"
+                >添加</MyButton
+              >
+              <ColorPalette
+                v-if="showPalette"
+                @color-selected="handleColorSelected"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -134,11 +183,17 @@
       style="display: flex; width: 100px; height: 50px"
     >
       <MyButton
+        v-if="isEdit"
         @click="initializeState"
-        style="width: 100px; height: 40px; font-size: medium"
+        :style="{
+          width: '80px',
+          height: '40px',
+          fontSize: 'medium'
+        }"
         >重置</MyButton
       >
     </div>
+    ·
   </div>
 </template>
 
@@ -154,7 +209,9 @@ import {
 } from './provider'
 import {getTemplateDefaultData} from './templateDefaults'
 import {CourseDragType} from './type'
-import MyButton from '../../../student-app/src/components/common/MyButton.vue'
+import MyButton from '../MyButton.vue'
+import {v4 as uuidv4} from 'uuid'
+import ColorPalette from './ColorPalette.vue'
 
 const {isEdit, courseData, selectedPageIndex} = inject(
   CourseTemplateProviderKey,
@@ -175,8 +232,79 @@ const data = computed({
   }
 })
 
+const showPalette = ref(false)
+let paletteHideTimer: ReturnType<typeof setTimeout> | null = null
+
+function handlePaletteContainerEnter() {
+  // 如果存在隐藏的定时器，就清除它，防止调色盘消失
+  if (paletteHideTimer) {
+    clearTimeout(paletteHideTimer)
+    paletteHideTimer = null
+  }
+  // 立即显示调色盘
+  showPalette.value = true
+}
+
+function handlePaletteContainerLeave() {
+  // 启动一个定时器，300毫秒后隐藏调色盘
+  paletteHideTimer = setTimeout(() => {
+    showPalette.value = false
+  }, 300)
+}
+const selectedColor = ref('#649FFE') // 默认颜色
+// 处理从调色盘选择的颜色
+function handleColorSelected(color: string) {
+  selectedColor.value = color
+  showPalette.value = false // 选择后自动隐藏
+}
+
+// 添加一个新的可拖拽项 (Item)
+function addNewItem() {
+  const newItem = {
+    id: uuidv4(),
+    title: '新增项',
+    color: selectedColor.value // 使用当前选中的颜色
+  }
+  data.value.items.push(newItem)
+}
+// 添加一个新的放置区 (Target)
+function addTarget() {
+  if (data.value.targets.length >= 4) {
+    alert('目标数量已达上限（4个）')
+    return
+  }
+  const newTarget = {
+    id: uuidv4(),
+    title: '新增目标',
+    subtitle: '新副标题',
+    correctItems: []
+  }
+  data.value.targets.push(newTarget)
+}
+
+const titleBeforeEdit = ref('')
+
+function synchronizeTitleChange(newTitle: string) {
+  if (!titleBeforeEdit.value || titleBeforeEdit.value === newTitle) {
+    return // 如果标题没变，则不执行任何操作
+  }
+
+  // 遍历所有 targets
+  data.value.targets.forEach(target => {
+    // 找到旧标题在 correctItems 中的索引
+    const index = target.correctItems.indexOf(titleBeforeEdit.value)
+    if (index !== -1) {
+      // 如果找到了，就用新标题替换它
+      target.correctItems[index] = newTitle
+    }
+  })
+
+  titleBeforeEdit.value = '' // 清空
+}
+
 // 拖拽变量
 const draggedItem = ref<CourseDragType['items'][0] | null>(null)
+const dragGhostEl = ref<HTMLElement | null>(null)
 const targetsContainer = ref<
   Record<string, CourseDragType['items'][0][] | null>
 >({})
@@ -206,6 +334,11 @@ onMounted(() => {
   initializeState()
 })
 watch(() => data.value.title, initializeState)
+watch(isEdit, val => {
+  if (val) {
+    initializeState()
+  }
+})
 //开始拖拽
 function onDragStart(event: DragEvent, item: CourseDragType['items'][0]) {
   if (isEdit.value) return
@@ -213,6 +346,7 @@ function onDragStart(event: DragEvent, item: CourseDragType['items'][0]) {
   event.dataTransfer!.effectAllowed = 'move'
   const target = event.target as HTMLElement
   const clone = target.cloneNode(true) as HTMLElement
+  dragGhostEl.value = clone
   clone.classList.add('drag-ghost')
   document.body.appendChild(clone)
   event.dataTransfer!.setDragImage(
@@ -270,6 +404,11 @@ function onDragEnd(event: DragEvent) {
     el.classList.remove('dragging')
     draggedItem.value = null
   }
+  // 关键：检查并移除鬼影元素
+  if (dragGhostEl.value) {
+    document.body.removeChild(dragGhostEl.value)
+    dragGhostEl.value = null
+  }
 }
 </script>
 
@@ -292,11 +431,11 @@ function onDragEnd(event: DragEvent) {
   border-radius: 32px;
   aspect-ratio: 3 / 2;
   border: 5px solid #649ffe;
-  overflow: hidden;
 }
 .template-card-header {
   height: 25%;
   width: 100%;
+  border-radius: 16px 16px 0 0;
   position: relative;
   display: flex;
   align-items: center;
@@ -323,9 +462,9 @@ function onDragEnd(event: DragEvent) {
   display: flex;
   gap: 20px;
   width: 85%;
-  justify-content: center;
+  justify-content: space-around;
   overflow-x: auto;
-  flex-wrap: wrap;
+  align-items: center;
 }
 .drag-target-targets-dropzone {
   position: relative;
@@ -334,7 +473,6 @@ function onDragEnd(event: DragEvent) {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  min-height: 150px;
   background-color: #f3f7ff;
   padding: clamp(10px, 1vw, 16px);
   border-radius: 29px;
@@ -357,7 +495,8 @@ function onDragEnd(event: DragEvent) {
   justify-content: center;
   align-items: center;
   background-color: #f3f7ff;
-  padding: clamp(30px, 3vw, 48px);
+  flex: 1 1 200px;
+  aspect-ratio: 2 / 1;
   border-radius: 29px;
   border: 2px dashed #b1cffe;
   transition: border-color 0.3s ease;
@@ -379,8 +518,7 @@ function onDragEnd(event: DragEvent) {
   gap: 10px;
   width: 85%;
   justify-content: center;
-  overflow-x: auto;
-  flex-wrap: wrap;
+  align-items: center;
 }
 .drag-item {
   width: 100%;
