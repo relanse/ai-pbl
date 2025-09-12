@@ -68,34 +68,23 @@ import {v4 as uuidv4} from 'uuid'
 import {ElIcon, ElButton} from 'element-plus'
 import {Rank, Delete} from '@element-plus/icons-vue'
 //自己的类型和数据
-import {CourseFindType} from './type'
-import {getTemplateDefaultData} from './templateDefaults'
+import {FindTemplateType} from './type'
 import {
   CourseTemplateProviderDefaultValue,
   CourseTemplateProviderKey
 } from './provider'
+//导入自己的 Hook ---
+import {useCurrentPageData} from '../../composables/useCurrentPageData'
 //自己的组件
 import EditableImage from './components/EditableImage.vue'
 import EditableText from './components/EditableText.vue'
 import RobotPrompt from './components/RobotPrompt.vue'
-const {isEdit, courseData, selectedPageIndex} = inject(
+const {isEdit} = inject(
   CourseTemplateProviderKey,
   CourseTemplateProviderDefaultValue
 )
-const data = computed({
-  get: () => {
-    if (selectedPageIndex.value !== null) {
-      return courseData.value.pages[selectedPageIndex.value]
-        .data as CourseFindType
-    }
-    return getTemplateDefaultData('find') as CourseFindType
-  },
-  set: val => {
-    if (selectedPageIndex.value !== null) {
-      courseData.value.pages[selectedPageIndex.value].data = val
-    }
-  }
-})
+const {data} = useCurrentPageData<FindTemplateType>('find')
+
 watch(isEdit, () => {
   //当isEdit 的值发生任何变化时,所有场景物品found状态重置
   if (data.value && data.value.items) {

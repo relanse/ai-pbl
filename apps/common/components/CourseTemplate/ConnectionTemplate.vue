@@ -128,7 +128,7 @@ import {
   CourseTemplateProviderKey
 } from './provider'
 import {getTemplateDefaultData} from './templateDefaults'
-import {CourseConnectionType} from './type'
+import {ConnectionTemplateType} from './type'
 import {v4 as uuidv4} from 'uuid'
 const {isEdit, courseData, selectedPageIndex} = inject(
   CourseTemplateProviderKey,
@@ -138,9 +138,9 @@ const data = computed({
   get: () => {
     if (selectedPageIndex.value !== null) {
       return courseData.value.pages[selectedPageIndex.value]
-        .data as CourseConnectionType
+        .data as ConnectionTemplateType
     }
-    return getTemplateDefaultData('connection') as CourseConnectionType
+    return getTemplateDefaultData('connection') as ConnectionTemplateType
   },
   set: val => {
     if (selectedPageIndex.value !== null) {

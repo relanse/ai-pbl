@@ -1,9 +1,10 @@
 import DefaultFindBackground from '../../assets/backgrounds/DefaultFindBackground.png'
 import {
-  CourseConnectionType,
-  CourseFindType,
+  ConnectionTemplateType,
+  FindTemplateType,
   CourseChoicesType,
-  CourseDragType
+  CourseDragType,
+  MemoryTemplateType
 } from './type'
 import {v4 as uuidv4} from 'uuid'
 
@@ -11,7 +12,7 @@ export const getTemplateDefaultData = (templateType: string) => {
   const newId = uuidv4()
   switch (templateType) {
     case 'connection':
-      return <CourseConnectionType>{
+      return <ConnectionTemplateType>{
         prompt: '点击左右两边的卡片进行连线，思考AI应用模拟了人类的哪种能力',
         leftColumn: {
           title: 'AI应用实例',
@@ -71,10 +72,15 @@ export const getTemplateDefaultData = (templateType: string) => {
         ]
       }
     case 'find':
-      return <CourseFindType>{
+      return <FindTemplateType>{
         prompt: '找一找下面有什么用到ai的物品',
         backgroundImg: DefaultFindBackground,
         items: []
+      }
+    case 'memory':
+      return <MemoryTemplateType>{
+        prompt: '翻开卡片找到配对！',
+        cards: []
       }
     default:
       return {}

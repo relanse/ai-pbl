@@ -88,6 +88,11 @@ const router = createRouter({
       path: '/edit',
       name: 'edit',
       component: () => import('@/pages/courseEdit/courseEdit.vue')
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('@/pages/courseEdit/testPage.vue')
     }
   ]
 })

@@ -10,7 +10,7 @@ export type CourseDataType<T extends keyof CourseTemplateMap> = {
   }[]
 }
 //连一连json模板格式
-export type CourseConnectionType = {
+export type ConnectionTemplateType = {
   prompt: string
   leftColumn: {
     title: string
@@ -65,15 +65,27 @@ export type FindItemType = {
   img: string // 物品图标URL
   found: boolean // 在预览模式下是否已被发现
 }
-export type CourseFindType = {
+export type FindTemplateType = {
   prompt: string
   backgroundImg: string
   items: FindItemType[]
 }
+
+//记忆卡片模板
+export type MemoryTemplateType = {
+  prompt: string
+  cards: {
+    id: string
+    value: string
+    flipped: boolean
+    matched: boolean
+  }[]
+}
+
 //模板组件映射
 export type CourseTemplateMap = {
-  connection: CourseConnectionType
+  connection: ConnectionTemplateType
   choices: CourseChoicesType
   drag: CourseDragType
-  find: CourseFindType
+  find: FindTemplateType
 }
