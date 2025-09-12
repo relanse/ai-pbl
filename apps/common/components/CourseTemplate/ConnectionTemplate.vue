@@ -119,35 +119,22 @@
 <script setup lang="ts">
 import {ElButton} from 'element-plus'
 import {Plus} from '@element-plus/icons-vue'
-import {computed, inject, ref} from 'vue'
+import {inject, ref} from 'vue'
 import EditableText from './components/EditableText.vue'
 import EditableImage from './components/EditableImage.vue'
 import RobotPrompt from './components/RobotPrompt.vue'
+import {ConnectionTemplateType} from './type'
 import {
   CourseTemplateProviderDefaultValue,
   CourseTemplateProviderKey
 } from './provider'
-import {getTemplateDefaultData} from './templateDefaults'
-import {ConnectionTemplateType} from './type'
+import {useCurrentPageData} from '../../composables/useCurrentPageData'
 import {v4 as uuidv4} from 'uuid'
-const {isEdit, courseData, selectedPageIndex} = inject(
+const {isEdit} = inject(
   CourseTemplateProviderKey,
   CourseTemplateProviderDefaultValue
 )
-const data = computed({
-  get: () => {
-    if (selectedPageIndex.value !== null) {
-      return courseData.value.pages[selectedPageIndex.value]
-        .data as ConnectionTemplateType
-    }
-    return getTemplateDefaultData('connection') as ConnectionTemplateType
-  },
-  set: val => {
-    if (selectedPageIndex.value !== null) {
-      courseData.value.pages[selectedPageIndex.value].data = val
-    }
-  }
-})
+const {data} = useCurrentPageData<ConnectionTemplateType>('memory')
 
 // --- 颜色循环数组 ---
 const cardColors = ['#a0c4ff', '#ffd6a0', '#b2f7b2', '#d8b4fe']

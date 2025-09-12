@@ -1,6 +1,5 @@
 <template>
   <div class="choices-wrapper">
-    <!-- TODO:小机器人的组件，等sbj上传 -->
     <RobotPrompt v-model="data.prompt" />
     <!-- 主内容区 -->
     <div class="template-card">
@@ -13,8 +12,6 @@
             width: 70%;
             color: #ffffff;
             font-size: clamp(18px, 3vw, 28px);
-            height: 100px;
-            text-align: center;
           "
         />
         <img
@@ -78,40 +75,25 @@
 </template>
 
 <script setup lang="ts">
-import {ref, inject, computed} from 'vue'
+import {ref, inject} from 'vue'
 import {ElInput, ElRadio, ElRadioGroup, ElMessage} from 'element-plus'
 import backgroundGirl from '../../assets/backgrounds/backgroundGirl.png'
 import backgroundSun from '../../assets/backgrounds/backgroundSun.png'
-import MyButton from '../../../student-app/src/components/common/MyButton.vue'
+import MyButton from './components/MyButton.vue'
 import EditableText from './components/EditableText.vue'
 import RobotPrompt from './components/RobotPrompt.vue'
 import {
   CourseTemplateProviderDefaultValue,
   CourseTemplateProviderKey
 } from './provider'
-import {getTemplateDefaultData} from './templateDefaults'
-import {CourseChoicesType} from './type'
-const {isEdit, courseData, selectedPageIndex} = inject(
+const {isEdit} = inject(
   CourseTemplateProviderKey,
   CourseTemplateProviderDefaultValue
 )
-const data = computed({
-  get: () => {
-    if (selectedPageIndex.value !== null) {
-      return courseData.value.pages[selectedPageIndex.value]
-        .data as CourseChoicesType
-    }
-    return getTemplateDefaultData('choices') as CourseChoicesType
-  },
-  set: val => {
-    if (selectedPageIndex.value !== null) {
-      courseData.value.pages[selectedPageIndex.value].data = val
-    }
-  }
-})
-
+import {ChoiceTemplateType} from './type'
+import {useCurrentPageData} from '../../composables/useCurrentPageData'
+const {data} = useCurrentPageData<ChoiceTemplateType>('find')
 const userAnswer = ref('')
-
 // --- Edit Mode Functions (operate on data) ---
 const addOption = () => {
   if (!data.value) return
@@ -153,12 +135,12 @@ const removeOption = (index: number) => {
   width: 95%;
   max-height: 600px;
   border-radius: 32px;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 1.85/1;
   border: 5px solid #649ffe;
   overflow: hidden;
 }
 .template-card-header {
-  height: 20%;
+  height: 25%;
   width: 100%;
   position: relative;
   display: flex;

@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import MyIcon from '../MyIcon/index.vue'
+import MyIcon from '../../MyIcon/index.vue'
 </script>
 
 <style scoped>

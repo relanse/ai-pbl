@@ -129,21 +129,22 @@ const FindTemplate = defineAsyncComponent(
 const MemoryTemplate = defineAsyncComponent(
   () => import('@aipbl/common/components/CourseTemplate/MemoryTemplate.vue')
 )
-
+const DrawTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/DrawTemplate.vue')
+)
+const ExpressTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/ExpressTemplate.vue')
+)
 const templateMap: {[key: string]: any} = {
   connection: ConnectionTemplate,
   choices: ChoicesTemplate,
   drag: DragTemplate,
   find: FindTemplate,
-  memory: MemoryTemplate
+  memory: MemoryTemplate,
+  draw: DrawTemplate,
+  express: ExpressTemplate
 }
-const templateOpt = [
-  {value: 'connection', label: '连一连'},
-  {value: 'choices', label: '选一选'},
-  {value: 'drag', label: '拖一拖'},
-  {value: 'find', label: '找一找'},
-  {value: 'memory', label: '记忆卡片'}
-]
+
 //课程数据
 const courseData = ref<CourseDataType<any>>({
   courseName: 'AI 应用课',
@@ -176,10 +177,21 @@ const getTemplateName = (type: string): string => {
       drag: '拖一拖',
       memory: '记忆卡片',
       find: '找一找',
-      definition: '定义'
+      definition: '定义',
+      express: '表达',
+      draw: '画一画'
     }[type] || '未知模板'
   )
 }
+const templateOpt = [
+  {value: 'connection', label: '连一连'},
+  {value: 'choices', label: '选一选'},
+  {value: 'drag', label: '拖一拖'},
+  {value: 'express', label: '表达'},
+  {value: 'find', label: '找一找'},
+  {value: 'memory', label: '记忆卡片'},
+  {value: 'draw', label: '画一画'}
+]
 const addPageDialogVisible = ref(false)
 //编辑区选择页面操作
 const selectPage = (index: number) => {
