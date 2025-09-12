@@ -7,7 +7,7 @@
   >
     <el-radio-group v-model="selectedTemplate">
       <el-radio
-        v-for="item in templateOpt"
+        v-for="item in opt"
         :key="item.value"
         :value="item.value"
         :label="item.label"
@@ -25,10 +25,9 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import {ElDialog, ElRadioGroup, ElRadio, ElButton} from 'element-plus'
-import {templateOpt} from './courseTemplateOpt'
-
 defineProps<{
   modelValue: boolean // 用于 v-model
+  opt: {value: string; label: string}[]
 }>()
 
 const emit = defineEmits<{

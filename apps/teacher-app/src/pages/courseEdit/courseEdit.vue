@@ -45,12 +45,12 @@
       </el-aside>
       <!--顶部工具栏和编辑区-->
       <el-main>
-        <div v-if="selectedPage" class="main-editor-content">
+        <div v-if="currentPageData" class="main-editor-content">
           <!-- 顶部工具栏 -->
           <div class="toolbar">
             <el-form-item label="页面模板:" class="template-selector">
               <el-select
-                :model-value="selectedPage.templateType"
+                :model-value="currentPageData.templateType"
                 placeholder="切换页面模板"
                 @change="handleTemplateChange"
                 :disabled="!isEdit"
@@ -84,7 +84,11 @@
       </el-main>
     </el-container>
     <!--创建新页面el-dialog对话框-->
-    <AddPageDialog v-model="addPageDialogVisible" @confirm="confirmAddPage" />
+    <AddPageDialog
+      v-model="addPageDialogVisible"
+      :opt="templateOpt"
+      @confirm="confirmAddPage"
+    />
   </div>
 </template>
 
@@ -107,7 +111,6 @@ import {
 import {Delete, Plus} from '@element-plus/icons-vue'
 import {getTemplateDefaultData} from '@aipbl/common/components/CourseTemplate/templateDefaults' //导入编辑完成后给后端的json格式
 import {CourseDataType} from '@aipbl/common/components/CourseTemplate/type'
-import {templateOpt} from './courseTemplateOpt'
 import {v4 as uuidv4} from 'uuid'
 import AddPageDialog from './AddPageDialog.vue'
 // 异步加载模板组件，提高初始加载性能
@@ -134,8 +137,14 @@ const templateMap: {[key: string]: any} = {
   find: FindTemplate,
   memory: MemoryTemplate
 }
-
-//数据结构
+const templateOpt = [
+  {value: 'connection', label: '连一连'},
+  {value: 'choices', label: '选一选'},
+  {value: 'drag', label: '拖一拖'},
+  {value: 'find', label: '找一找'},
+  {value: 'memory', label: '记忆卡片'}
+]
+//课程数据
 const courseData = ref<CourseDataType<any>>({
   courseName: 'AI 应用课',
   version: '1.0.0',
@@ -146,24 +155,37 @@ const courseData = ref<CourseDataType<any>>({
   },
   pages: []
 })
-
+//当前选中页面index
 const selectedPageIndex = ref<number | null>(
   courseData.value.pages.length > 0 ? 0 : null
 )
-
+//编辑区状态
 const isEdit = ref(true) // 控制编辑/预览模式，true = 编辑
-
+//传入模板数据
 provide(CourseTemplateProviderKey, {
   isEdit,
   courseData,
   selectedPageIndex
 })
-
+//页面使用模板的名字
+const getTemplateName = (type: string): string => {
+  return (
+    {
+      connection: '连一连',
+      choices: '选一选',
+      drag: '拖一拖',
+      memory: '记忆卡片',
+      find: '找一找',
+      definition: '定义'
+    }[type] || '未知模板'
+  )
+}
 const addPageDialogVisible = ref(false)
-
-// --- 模板组件映射 ---
-
-const selectedPage = computed(() => {
+//编辑区选择页面操作
+const selectPage = (index: number) => {
+  selectedPageIndex.value = index
+}
+const currentPageData = computed(() => {
   const index = selectedPageIndex.value
   if (index !== null) {
     return courseData.value.pages[index]
@@ -171,14 +193,9 @@ const selectedPage = computed(() => {
   return null
 })
 const templateComponent = computed(() => {
-  if (!selectedPage.value) return null
-  return templateMap[selectedPage.value.templateType]
+  if (!currentPageData.value) return null
+  return templateMap[currentPageData.value.templateType]
 })
-
-const selectPage = (index: number) => {
-  console.log(selectedPageIndex.value)
-  selectedPageIndex.value = index
-}
 
 const onEnd = (event: any) => {
   selectedPageIndex.value = event.newIndex
@@ -214,16 +231,19 @@ const deletePage = (index: number) => {
 
 const handleTemplateChange = (newType: string) => {
   // 如果选择的新模板和当前模板相同，则不执行任何操作
-  if (!selectedPage.value || newType === selectedPage.value.templateType) {
+  if (
+    !currentPageData.value ||
+    newType === currentPageData.value.templateType
+  ) {
     return
   }
   ElMessageBox.confirm('切换模板将会丢失当前页面的所有内容，确定吗?', '警告', {
     type: 'warning'
   })
     .then(() => {
-      if (selectedPage.value) {
-        selectedPage.value.templateType = newType
-        selectedPage.value.data = getTemplateDefaultData(newType)
+      if (currentPageData.value) {
+        currentPageData.value.templateType = newType
+        currentPageData.value.data = getTemplateDefaultData(newType)
       }
     })
     .catch(() => {
@@ -233,7 +253,7 @@ const handleTemplateChange = (newType: string) => {
 
 const confirmAddPage = (templateType: string) => {
   const newPage = {
-    // 6. 创建时，uniqueId 用于内部追踪，pageId 用于排序
+    //创建时，uniqueId 用于内部追踪，pageId 用于排序
     uniqueId: uuidv4(),
     pageId: courseData.value.pages.length + 1, // 新页面的 pageId 就是当前长度+1
     templateType: templateType,
@@ -242,19 +262,6 @@ const confirmAddPage = (templateType: string) => {
   courseData.value.pages.push(newPage)
   selectPage(courseData.value.pages.length - 1)
   addPageDialogVisible.value = false
-}
-
-const getTemplateName = (type: string): string => {
-  return (
-    {
-      connection: '连一连',
-      choices: '选一选',
-      drag: '拖一拖',
-      memory: '记忆卡片',
-      find: '找一找',
-      definition: '定义'
-    }[type] || '未知模板'
-  )
 }
 
 const submitCourse = () => {
