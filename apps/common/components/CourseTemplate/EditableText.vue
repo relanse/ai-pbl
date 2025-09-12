@@ -65,7 +65,6 @@ const handleBlur = () => {
 /* 样式部分保持不变，因为 :class 绑定的变量名没变 */
 .editable-text-wrapper {
   width: 100%;
-  height: 100%;
   /* 默认情况下，是普通鼠标指针 */
   cursor: default;
 }

@@ -51,8 +51,36 @@ export type CourseDragType = {
     correctItems: string[] // array of item titles that belong to this target
   }[]
 }
+export type CourseExpressType = {
+  prompt: string
+  title: string
+  textareaExample: string
+  textareaInput: string
+  category: string
+  cards: {
+    id: string
+    name: string
+    icon: string
+  }[]
+}
+export type CourseDrawType = {
+  prompt: string
+  title: string
+  draw: string
+  colors: string[]
+  createModes: {
+    createType: string
+    subtitle: string
+  }[]
+  createIdea: {
+    title: string
+    ideas: string[]
+  }
+}
 export type CourseTemplateMap = {
   connection: CourseConnectionType
   choices: CourseChoicesType
   drag: CourseDragType
+  express: CourseExpressType
+  draw: CourseDrawType
 }

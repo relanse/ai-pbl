@@ -1,4 +1,5 @@
 import {ta} from 'element-plus/es/locales.mjs'
+import {text} from 'stream/consumers'
 import {v4 as uuidv4} from 'uuid'
 
 export const getTemplateDefaultData = (templateType: string) => {
@@ -63,6 +64,65 @@ export const getTemplateDefaultData = (templateType: string) => {
             correctItems: ['老鹰', '麻雀']
           }
         ]
+      }
+    case 'express':
+      return {
+        prompt: '想象一下：如果你有一个AI朋友，你希望它能帮你做什么?',
+        title: '发挥你的想象力，用文字描述你的创意想法~',
+        textareaExample:
+          '例如：我希望我的AI朋友能帮我做家庭作业，陪我聊天，甚至帮我画画！',
+        textareaInput: '',
+        category: '创意提示',
+        cards: [
+          {
+            id: uuidv4(),
+            name: '家庭生活助手',
+            icon: ''
+          },
+          {
+            id: uuidv4(),
+            name: '学习伙伴',
+            icon: ''
+          },
+          {
+            id: uuidv4(),
+            name: '创作助手',
+            icon: ''
+          }
+        ]
+      }
+    case 'draw':
+      return {
+        prompt: '画出你心中的AI，或者让AI帮你创作',
+        title: 'AI创作工坊',
+        draw: '',
+        colors: [
+          '#0078ff',
+          '#ffc52f',
+          '#ff5f5f',
+          '#00c851',
+          '#9c27b0',
+          '#ff6f00'
+        ],
+        createModes: [
+          {
+            createType: '自由创作',
+            subtitle: '发挥想象力创作！'
+          },
+          {
+            createType: 'AI协作',
+            subtitle: 'AI帮助完善作品'
+          }
+        ],
+        createIdea: {
+          title: '创作提示',
+          ideas: [
+            'AI机器人的外观',
+            '智能家居场景',
+            '未来交通工具',
+            'AI带来的变化'
+          ]
+        }
       }
     default:
       return {}

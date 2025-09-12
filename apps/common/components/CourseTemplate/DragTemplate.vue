@@ -429,7 +429,7 @@ function onDragEnd(event: DragEvent) {
   width: 95%;
   max-height: 600px;
   border-radius: 32px;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 1.85/1;
   border: 5px solid #649ffe;
 }
 .template-card-header {

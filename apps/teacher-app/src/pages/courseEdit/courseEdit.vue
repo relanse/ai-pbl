@@ -97,7 +97,6 @@
 <script setup lang="ts">
 import {
   ref,
-  reactive,
   computed,
   defineAsyncComponent,
   provide // 1. 导入 provide
@@ -131,6 +130,12 @@ const ChoicesTemplate = defineAsyncComponent(
 const DragTemplate = defineAsyncComponent(
   () => import('@aipbl/common/components/CourseTemplate/DragTemplate.vue')
 )
+const ExpressTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/ExpressTemplate.vue')
+)
+const DrawTemplate = defineAsyncComponent(
+  () => import('@aipbl/common/components/CourseTemplate/DrawTemplate.vue')
+)
 
 //数据结构
 const courseData = ref<CourseDataType<any>>({
@@ -162,7 +167,9 @@ const addPageDialogVisible = ref(false)
 const templateMap: {[key: string]: any} = {
   connection: ConnectionTemplate,
   choices: ChoicesTemplate,
-  drag: DragTemplate
+  drag: DragTemplate,
+  express: ExpressTemplate,
+  draw: DrawTemplate
 }
 
 const selectedPage = computed(() => {
@@ -281,6 +288,8 @@ const getTemplateName = (type: string): string => {
       connection: '连一连',
       choices: '选一选',
       drag: '拖一拖',
+      express: '来表达',
+      draw: '画一画',
       memoryCards: '记忆卡片',
       definition: '定义'
     }[type] || '未知模板'
