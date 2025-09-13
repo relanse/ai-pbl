@@ -2,3 +2,5 @@ node_modules
 dist
 .env
 apps/common/components/CourseTemplate/dragLogicSummary.md
+pnpm-lock.yaml
+.vscode/

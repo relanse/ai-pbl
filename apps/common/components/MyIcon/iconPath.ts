@@ -9,6 +9,7 @@ export const iconPath = {
   'courseLock': ()=>import('../../assets/icons/courseLock.svg'),
   'courseManage': ()=>import('../../assets/icons/courseManage.svg'),
   'courseManageActive': ()=>import('../../assets/icons/courseManageActive.svg'),
+  'DrawIcon': ()=>import('../../assets/icons/DrawIcon.svg'),
   'gender': ()=>import('../../assets/icons/gender.svg'),
   'grade': ()=>import('../../assets/icons/grade.svg'),
   'levelTest': ()=>import('../../assets/icons/levelTest.svg'),

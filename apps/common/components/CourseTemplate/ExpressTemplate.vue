@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, inject} from 'vue'
+import {ref, computed, inject} from 'vue'
 import RobotPrompt from './RobotPrompt.vue'
 import EditableText from './EditableText.vue'
 import MyButton from './../MyButton.vue'
@@ -111,6 +111,8 @@ import {CourseExpressType} from './type'
 import VerticalButton from './VerticalButton.vue'
 import EditableImage from './EditableImage.vue'
 import {v4 as uuidv4} from 'uuid'
+import {generateTextWithGeminiStream} from 'services/aiServices'
+
 const {isEdit, courseData, selectedPageIndex} = inject(
   CourseTemplateProviderKey,
   CourseTemplateProviderDefaultValue
@@ -129,6 +131,8 @@ const data = computed({
     }
   }
 })
+
+const isGenerating = ref(false)
 
 const addCard = () => {
   data.value.cards.push({
