@@ -115,6 +115,7 @@ const {isEdit} = inject(
 )
 import {ExpressTemplateType} from './type'
 import {useCurrentPageData} from '../../composables/useCurrentPageData'
+
 const {data} = useCurrentPageData<ExpressTemplateType>('express')
 const addCard = () => {
   data.value.cards.push({

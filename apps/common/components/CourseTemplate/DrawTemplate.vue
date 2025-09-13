@@ -21,11 +21,20 @@
           ref="drawCanvas"
           @mousedown="startDrawing"
           @mousemove="draw"
+          :style="{backgroundColor: data.draw ? '#ffffff' : '#f6faff'}"
         >
-          <div class="draw-area-background"></div>
+          <div class="draw-area-background" v-if="!data.draw">
+            <MyIcon name="DrawIcon"></MyIcon>
+          </div>
         </canvas>
       </div>
       <div class="draw-tool"></div>
+    </div>
+    <div class="card-footer">
+      <button type="button" round @click="data.draw = ''" class="reset-button">
+        重新创作
+      </button>
+      <MyButton style="width: 219px">保存作品</MyButton>
     </div>
   </div>
 </template>
@@ -34,6 +43,8 @@
 import {ref, inject, onMounted, onBeforeMount, watch} from 'vue'
 import RobotPrompt from './components/RobotPrompt.vue'
 import EditableText from './components/EditableText.vue'
+import MyButton from './components/MyButton.vue'
+import MyIcon from './../../components/MyIcon/index.vue'
 import {
   CourseTemplateProviderDefaultValue,
   CourseTemplateProviderKey
@@ -112,18 +123,30 @@ const stopDrawing = () => {
 watch(
   () => data.value.draw,
   newDrawData => {
-    if (newDrawData && ctx.value && drawCanvas.value) {
-      const image = new Image()
-      image.onload = () => {
-        ctx.value?.clearRect(
+    if (ctx.value && drawCanvas.value) {
+      // 如果有新的图像数据，则加载并绘制它
+      if (newDrawData) {
+        const image = new Image()
+        image.onload = () => {
+          // 在绘制新图前也先清空一次，确保没有重叠
+          ctx.value?.clearRect(
+            0,
+            0,
+            drawCanvas.value!.width,
+            drawCanvas.value!.height
+          )
+          ctx.value?.drawImage(image, 0, 0)
+        }
+        image.src = newDrawData
+      } else {
+        // --- 优化：如果图像数据变为空，也主动清空画布 ---
+        ctx.value.clearRect(
           0,
           0,
-          drawCanvas.value!.width,
-          drawCanvas.value!.height
+          drawCanvas.value.width,
+          drawCanvas.value.height
         )
-        ctx.value?.drawImage(image, 0, 0)
       }
-      image.src = newDrawData
     }
   },
   {immediate: true}
@@ -158,6 +181,7 @@ watch(
   align-items: center;
 }
 .draw-area {
+  position: relative;
   width: 100%;
   height: 80%;
   border: 2px solid #6697ff;
@@ -166,10 +190,40 @@ watch(
   background-color: #ffffff;
   cursor: crosshair;
 }
+.draw-area-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
 .draw-tool {
   width: 40%;
   height: 90%;
   display: flex;
   flex-direction: column;
+}
+.card-footer {
+  width: 95%;
+  display: flex;
+  flex: 1 1 90px;
+  justify-content: space-around;
+  align-items: center;
+}
+.reset-button {
+  width: 219px;
+  height: 51px;
+  border-radius: 27px;
+  border: 0.78px solid transparent;
+  background-image:
+    transparent, linear-gradient(92.56deg, #6696ff 1.43%, #63a2fd 93.64%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box; /* 4. 裁剪背景 */
+  font-family: Inter;
+  font-weight: 700;
+  color: #6699ff;
+  font-style: Bold;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
 }
 </style>
