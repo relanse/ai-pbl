@@ -91,6 +91,7 @@ export type ExpressTemplateType = {
     id: string
     name: string
     icon: string
+    prompt: string
   }[]
 }
 //绘画模板

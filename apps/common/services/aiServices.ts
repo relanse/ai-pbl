@@ -1,103 +1,111 @@
 import axios from 'axios'
 
-// --- 类型定义 ---
-// ComfyUI API
-interface ComfyUIPrompt {
-  [nodeId: string]: {
-    inputs: Record<string, any>
-    class_type: string
-  }
-}
+const OPENAI_COMPLETE_URL = 'https://api.kksj.org/v1/chat/completions'
 
-interface QueuePromptResponse {
-  prompt_id: string
-  number: number
-  node_errors: Record<string, any>
-}
-
-// Gemini API
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
-
-const GEMINI_API_URL = 'https://whatcanisay.zeabur.app/v1/chat/completions'
-
-//comfyui api
-const COMFYUI_BASE_URL = 'http://127.0.0.1:8188'
-
-const ComfyUIClient = axios.create({
-  baseURL: COMFYUI_BASE_URL
-})
+const OPENAI_COMPLETE_KEY = import.meta.env.VITE_OPENAI_API_KEY
 
 /**
- * 使用 Gemini API (OpenAI兼容格式) 流式生成文本内容
- * @param prompt 你的文本提示
- * @param onChunk 回调函数，用于处理每个接收到的文本块
- * @param onComplete 完成时的回调函数
+ * 非流式获取 AI 响应
+ * @param {string} userInput 用户输入的提示
+ * @param {string} systemPrompt 系统提示
+ * @returns {Promise<any>} 返回一个包含 AI 完整响应的 Promise
  */
-export async function generateTextWithGeminiStream(
-  prompt: string,
-  onChunk: (chunk: string) => void,
-  onComplete: () => void
-): Promise<void> {
-  try {
-    const response = await fetch(GEMINI_API_URL, {
-      // 移除 ?alt=sse
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-        // 如果需要，在这里添加 'Authorization': `Bearer ${GEMINI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'gemini-2.5-pro', // 指定一个模型，这通常是必需的
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        stream: true // 开启流式输出
-      })
-    })
-
-    if (!response.ok || !response.body) {
-      throw new Error(`API request failed with status ${response.status}`)
-    }
-
-    const reader = response.body.getReader()
-    const decoder = new TextDecoder()
-
-    while (true) {
-      const {value, done} = await reader.read()
-      if (done) {
-        onComplete()
-        break
-      }
-
-      const chunk = decoder.decode(value)
-      const lines = chunk.split('\n').filter(line => line.startsWith('data: '))
-
-      for (const line of lines) {
-        const jsonStr = line.replace(/^data: /, '')
-
-        // 检查流结束的标志
-        if (jsonStr.trim() === '[DONE]') {
-          onComplete()
-          return
-        }
-
-        try {
-          const parsed = JSON.parse(jsonStr)
-          // 从 OpenAI 兼容的 delta 中获取内容
-          const text = parsed.choices[0]?.delta?.content || ''
-          if (text) {
-            onChunk(text)
-          }
-        } catch (error) {
-          // 忽略JSON解析错误
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error calling streaming OpenAI-compatible API:', error)
-    throw new Error('调用流式 API 失败')
+export const getAiResponse = async ({userInput = '',systemPrompt = 'You are a helpful assistant.'}:
+   {userInput?: string
+    systemPrompt?: string
+   } = {}): Promise<any> => {
+  const headers = {
+    'Authorization': `Bearer ${OPENAI_COMPLETE_KEY}`,
+    'Content-Type': 'application/json'
   }
+
+  const data= {
+    model: 'gpt-5-chat',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userInput }
+    ],
+  }
+  try {
+    const response = await axios.post(OPENAI_COMPLETE_URL, data, { headers});
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching AI response:', error);
+    throw error;
+  }
+}
+
+/**
+ * 流式获取 AI 响应
+ * @param {string} userInput 用户输入的提示
+ * @param {string} systemPrompt 系统提示
+ * @param {function} onFinish 回调函数，用于处理完成
+ * @param {function} onContent 回调函数，用于处理每次接收到的内容
+ */
+export const getAiResponseStream = async (
+  {
+    userInput = '',
+    systemPrompt = 'You are a helpful assistant.',
+    onFinish = () => {},
+    onContent = (content: string) => {}
+  }: {
+    userInput?: string
+    systemPrompt?: string
+    onFinish?: () => void
+    onContent?: (content: string) => void
+  } = {}
+) => {
+  const headers = {
+    'Authorization': `Bearer ${OPENAI_COMPLETE_KEY}`,
+    'Content-Type': 'application/json'
+    }
+    const data= {
+      model: 'gpt-5-chat',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userInput }
+      ],
+      stream: true
+    };
+    try {
+      const response = await fetch(OPENAI_COMPLETE_URL, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data)
+      });
+      if (!response.body){
+        throw new Error('ReadableStream not supported in this environment.');
+      }
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+
+      while (true) {
+        const { done, value} = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter(line => line.trim() !== '')
+          for (const line of lines) {
+            if(line === 'data: [DONE]') {
+              onFinish();
+              return;
+            }
+            if (line.startsWith('data: ')) {
+                    const dataStr = line.substring(6);
+                    try {
+                        const dataJson = JSON.parse(dataStr);
+                        const content = dataJson.choices[0]?.delta?.content;
+                        if (content) {
+                            onContent(content);
+                        }
+                    } catch (e) {
+                        // 忽略无法解析的 JSON
+                    }
+                  }
+          }
+      }
+      onFinish();
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
+      throw error;
+    }
 }

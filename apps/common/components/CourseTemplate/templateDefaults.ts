@@ -57,17 +57,20 @@ export const getTemplateDefaultData = (templateType: string) => {
           {
             id: uuidv4(),
             name: '家庭生活助手',
-            icon: ''
+            icon: '',
+            prompt: '帮助家庭管理日常事务，比如购物清单、日程安排等。',
           },
           {
             id: uuidv4(),
             name: '学习伙伴',
-            icon: ''
+            icon: '',
+            prompt: '帮助学生进行学习规划和知识梳理。',
           },
           {
             id: uuidv4(),
             name: '创作助手',
-            icon: ''
+            icon: '',
+            prompt: '帮助用户进行创作灵感的激发和内容生成。',
           }
         ]
       }
