@@ -1,7 +1,7 @@
 <template>
   <div class="vertical-button">
     <MyIcon name="whiteRadius" class="vertical-button-radius"></MyIcon>
-    <span><slot></slot></span>
+    <span><slot class = "my-slot"></slot></span>
   </div>
 </template>
 

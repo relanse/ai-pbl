@@ -59,12 +59,14 @@
             gap: 16px;
             justify-content: space-around;
             align-items: center;
+            margin-left: 20px;
           "
         >
           <div
             class="express-ai-card"
             v-for="(item, index) in data.cards"
             :key="index"
+            @click="handleAiGeneration(data.textareaInput,item.prompt)"
           >
             <EditableImage
               v-model="item.icon"
@@ -97,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import {inject} from 'vue'
+import {ref,inject} from 'vue'
 import RobotPrompt from './components/RobotPrompt.vue'
 import EditableText from './components/EditableText.vue'
 import MyButton from './components/MyButton.vue'
@@ -115,14 +117,40 @@ const {isEdit} = inject(
 )
 import {ExpressTemplateType} from './type'
 import {useCurrentPageData} from '../../composables/useCurrentPageData'
+import { getAiResponseStream } from '../../services/aiServices'
+
+const isGenerating = ref(false)
 
 const {data} = useCurrentPageData<ExpressTemplateType>('express')
+
 const addCard = () => {
   data.value.cards.push({
     id: uuidv4(),
     icon: '',
-    name: 'AI工具'
+    name: '新建智能体',
+    prompt: ''
   })
+}
+
+const handleAiGeneration = async (userInput:string,systemPrompt:string) => {
+  if (isEdit.value) return
+  if (isGenerating.value) return
+  
+  isGenerating.value = true
+  data.value.textareaInput = '';
+  const onFinish = () => {
+    // console.log('AI stream finished.')
+  } 
+  const onContent = (content:string )=>{
+    data.value.textareaInput += content
+  }
+  try {
+    await getAiResponseStream({ userInput, systemPrompt, onContent, onFinish })
+  } catch (error) {
+    console.error('Error during AI generation:', error)
+  } finally {
+    isGenerating.value = false
+  }
 }
 </script>
 
@@ -170,6 +198,9 @@ const addCard = () => {
   flex: auto;
   padding: 20px;
 }
+.vertical-button :deep(.display-text) {
+    padding: 16px 12px 16px 12px;
+}
 .express-ai-card {
   display: flex;
   flex-direction: column;
@@ -179,6 +210,13 @@ const addCard = () => {
   align-items: center;
   justify-content: center;
   background-color: #e7f0ff;
+}
+.express-ai-card:hover {
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+
 }
 .express-ai-card :deep(.display-text) {
   margin-bottom: -5px;

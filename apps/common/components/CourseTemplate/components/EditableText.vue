@@ -58,7 +58,6 @@ const handleBlur = () => {
 <style scoped>
 .editable-text-wrapper {
   width: 100%;
-  height: 100%;
   /* 默认情况下，是普通鼠标指针 */
   cursor: default;
 }
