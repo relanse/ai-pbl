@@ -128,7 +128,7 @@ export const getTemplateDefaultData = (templateType: string) => {
         ],
         createModes: [
           {
-            createType: '自由创作',
+            createType: '自由绘画',
             subtitle: '发挥想象力创作！'
           },
           {

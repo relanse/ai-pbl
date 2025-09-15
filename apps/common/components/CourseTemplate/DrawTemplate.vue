@@ -21,14 +21,29 @@
           ref="drawCanvas"
           @mousedown="startDrawing"
           @mousemove="draw"
-          :style="{backgroundColor: data.draw ? '#ffffff' : '#f6faff'}"
+          :style="{backgroundColor: !(!isDrawing && !data.draw) ? '#ffffff' : '#f6faff'}"
         >
-          <div class="draw-area-background" v-if="!data.draw">
+        </canvas>
+        <div class="draw-area-background" v-if="!isDrawing && !data.draw">
             <MyIcon name="DrawIcon"></MyIcon>
           </div>
-        </canvas>
       </div>
-      <div class="draw-tool"></div>
+      <div class="draw-tool">
+        <span
+            style="
+              font-family: Microsoft YaHei;
+              font-weight: 700;
+              font-style: Bold;
+              font-size: 24px;
+              line-height: 100%;
+              letter-spacing: 0%;
+            "
+            >创作模式</span
+          >
+          <div class="draw-modes" v-for="mode in data.createModes" :key="mode.createType">
+            <div class="draw-mode">{{ mode.createType }}</div>
+          </div>
+      </div>
     </div>
     <div class="card-footer">
       <button type="button" round @click="data.draw = ''" class="reset-button">
@@ -92,7 +107,9 @@ const resizeCanvas = () => {
   // 4. 重绘图像
   const image = new Image()
   image.onload = () => {
-    ctx.value?.drawImage(image, 0, 0)
+    if (drawCanvas.value) {
+            ctx.value?.drawImage(image, 0, 0, drawCanvas.value.width, drawCanvas.value.height)
+          }
   }
   image.src = imageData
 }
@@ -173,7 +190,9 @@ watch(
       if (newDrawData) {
         const image = new Image()
         image.onload = () => {
-          ctx.value?.drawImage(image, 0, 0)
+          if (drawCanvas.value) {
+            ctx.value?.drawImage(image, 0, 0, drawCanvas.value.width, drawCanvas.value.height)
+          }
         }
         image.src = newDrawData
       }
@@ -213,7 +232,7 @@ watch(
 .draw-area {
   position: relative;
   width: 100%;
-  height: 80%;
+  flex: 1 1 auto;
   border: 2px solid #6697ff;
   border-radius: 20px;
   margin-top: 10px;
@@ -221,15 +240,37 @@ watch(
   cursor: crosshair;
 }
 .draw-area-background {
+  display: flex;
+  flex-direction: column;
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  z-index: 1;
+  pointer-events: none; /* 关键：确保背景不会捕获鼠标事件 */
 }
 .draw-tool {
   width: 40%;
   height: 90%;
   display: flex;
   flex-direction: column;
+}
+.draw-modes{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+  height: 20%;
+}
+.draw-mode{
+  width: 100%;
+  background-color: #E7F0FF;
+  border-radius: 22px;
+  flex: 1 1 auto;
+  display: flex;
+  font-family: Microsoft YaHei;
+  font-weight: 500;
+  font-size: 18px;
+  color: #333333;
+  cursor: pointer;
 }
 .card-footer {
   width: 95%;
