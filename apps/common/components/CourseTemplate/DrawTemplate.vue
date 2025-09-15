@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, inject, onMounted, onBeforeMount, watch} from 'vue'
+import {ref, inject, onMounted, onBeforeUnmount, watch} from 'vue'
 import RobotPrompt from './components/RobotPrompt.vue'
 import EditableText from './components/EditableText.vue'
 import MyButton from './components/MyButton.vue'
@@ -60,25 +60,42 @@ const {data} = useCurrentPageData<DrawTemplateType>('draw')
 const drawCanvas = ref<HTMLCanvasElement | null>(null)
 const ctx = ref<CanvasRenderingContext2D | null>(null)
 const isDrawing = ref(false)
+// 用于监听尺寸变化
+let resizeObserver: ResizeObserver | null = null
 
-onMounted(() => {
-  if (drawCanvas.value) {
-    const canvas = drawCanvas.value
-    ctx.value = canvas.getContext('2d')
-    canvas.width = canvas.clientWidth
-    canvas.height = canvas.clientHeight
-    if (ctx.value) {
-      ctx.value.lineJoin = 'round'
-      ctx.value.lineCap = 'round'
-      ctx.value.lineWidth = 5
-      ctx.value.strokeStyle = '#000000'
-    }
+// --- 封装的函数 ---
+
+// 设置画笔样式（因为画布尺寸改变会重置样式）
+const setContextStyle = () => {
+  if (ctx.value) {
+    ctx.value.lineJoin = 'round'
+    ctx.value.lineCap = 'round'
+    ctx.value.lineWidth = 5
+    ctx.value.strokeStyle = '#000000'
   }
-})
+}
 
-onBeforeMount(() => {
-  window.removeEventListener('mouseup', stopDrawing)
-})
+// 重新设置画布尺寸并重绘内容
+const resizeCanvas = () => {
+  if (!drawCanvas.value || !ctx.value) return
+
+  // 1. 保存当前图像
+  const imageData = drawCanvas.value.toDataURL()
+
+  // 2. 更新画布的绘图表面尺寸以匹配其显示尺寸
+  drawCanvas.value.width = drawCanvas.value.clientWidth
+  drawCanvas.value.height = drawCanvas.value.clientHeight
+
+  // 3. 恢复上下文样式
+  setContextStyle()
+
+  // 4. 重绘图像
+  const image = new Image()
+  image.onload = () => {
+    ctx.value?.drawImage(image, 0, 0)
+  }
+  image.src = imageData
+}
 
 const getMousePos = (canvas: HTMLCanvasElement, evt: MouseEvent) => {
   const rect = canvas.getBoundingClientRect()
@@ -95,7 +112,7 @@ const startDrawing = (event: MouseEvent) => {
   ctx.value!.beginPath()
   ctx.value!.moveTo(x, y)
   // 在 window 上添加 mouseup 监听器
-  window.addEventListener('mouseup', stopDrawing)
+  window.addEventListener('mouseup', stopDrawing, { once: true })
 }
 
 const draw = (event: MouseEvent) => {
@@ -111,6 +128,9 @@ const draw = (event: MouseEvent) => {
 }
 
 const stopDrawing = () => {
+  if (!isDrawing.value) return
+  isDrawing.value = false
+  ctx.value?.closePath()
   if (!ctx.value || !isDrawing.value || !drawCanvas.value) return
   isDrawing.value = false
   ctx.value.closePath()
@@ -120,32 +140,43 @@ const stopDrawing = () => {
   data.value = updatedData
 }
 
+onMounted(() => {
+  if (drawCanvas.value) {
+    const canvas = drawCanvas.value
+    ctx.value = canvas.getContext('2d')
+    canvas.width = canvas.clientWidth
+    canvas.height = canvas.clientHeight
+    setContextStyle()// --- 新增：启动 ResizeObserver 来监听画布尺寸变化 ---
+    resizeObserver = new ResizeObserver(resizeCanvas)
+    resizeObserver.observe(drawCanvas.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (resizeObserver && drawCanvas.value) {
+    resizeObserver.unobserve(drawCanvas.value)
+  }
+  // 确保移除所有可能的事件监听器
+  window.removeEventListener('mouseup', stopDrawing)
+})
+
 watch(
   () => data.value.draw,
   newDrawData => {
     if (ctx.value && drawCanvas.value) {
-      // 如果有新的图像数据，则加载并绘制它
+      // --- 修改：简化逻辑，只在有新数据时绘制，否则清空 ---
+      ctx.value.clearRect(
+        0,
+        0,
+        drawCanvas.value.width,
+        drawCanvas.value.height
+      )
       if (newDrawData) {
         const image = new Image()
         image.onload = () => {
-          // 在绘制新图前也先清空一次，确保没有重叠
-          ctx.value?.clearRect(
-            0,
-            0,
-            drawCanvas.value!.width,
-            drawCanvas.value!.height
-          )
           ctx.value?.drawImage(image, 0, 0)
         }
         image.src = newDrawData
-      } else {
-        // --- 优化：如果图像数据变为空，也主动清空画布 ---
-        ctx.value.clearRect(
-          0,
-          0,
-          drawCanvas.value.width,
-          drawCanvas.value.height
-        )
       }
     }
   },
