@@ -112,7 +112,7 @@ import {
 import {ArrowDown, ArrowRight} from '@element-plus/icons-vue'
 import {computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import LogoImg from '@aipbl/common/assets/logo.png'
+import LogoImg from '@aipbl/common/assets/Logo.png'
 import MyIcon from '@aipbl/common/components/MyIcon/index.vue'
 defineOptions({
   name: 'layoutPages'

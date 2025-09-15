@@ -70,7 +70,7 @@ const questionType = computed({
   }
 })
 
-const currentComponent = computed(() => COMPONENT_MAP[questionType.value])
+const currentComponent = computed(() => COMPONENT_MAP[questionType.value as keyof typeof COMPONENT_MAP])
 </script>
 
 <style scoped>

@@ -113,7 +113,7 @@ const addCardPair = () => {
 const setupGame = () => {
   score.value = 0
   flippedCards.value = []
-  let gameCards = JSON.parse(JSON.stringify(data.value.cards))
+  const gameCards = JSON.parse(JSON.stringify(data.value.cards))
   // Fisher-Yates 洗牌算法
   if (!isEdit.value) {
     // Fisher-Yates 洗牌算法
@@ -191,7 +191,7 @@ watch(
 onMounted(() => {
   // 如果是编辑模式且没有任何卡片，则默认创建一对
   if (isEdit.value && data.value.cards.length === 0) {
-    addCardPair(0)
+    addCardPair()
   } else {
     setupGame()
   }

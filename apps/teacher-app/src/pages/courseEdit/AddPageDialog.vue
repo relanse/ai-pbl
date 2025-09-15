@@ -4,9 +4,7 @@
     title="选择新页面的模板"
     width="30%"
     @update:model-value="emit('update:modelValue', $event)"
-  >  nvm install 22
-  nvm use 22
-  node -v   # 应显示 v22.x.x
+  > 
     <el-radio-group v-model="selectedTemplate">
       <el-radio
         v-for="item in opt"

@@ -12,7 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@aipbl/common': path.resolve(__dirname, '../../common'),
+      
     }
   },
   server: {
