@@ -1,6 +1,5 @@
 node_modules
 dist
-.env
 apps/common/components/CourseTemplate/dragLogicSummary.md
 .idea
 pnpm-lock.yaml

@@ -11,7 +11,9 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.30",
     "@element-plus/icons-vue": "^2.3.2",
+    "ai": "^5.0.44",
     "axios": "^1.11.0",
     "element-plus": "^2.10.7",
     "uuid": "^12.0.0",
