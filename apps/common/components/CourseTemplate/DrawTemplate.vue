@@ -131,13 +131,12 @@ const stopDrawing = () => {
   if (!isDrawing.value) return
   isDrawing.value = false
   ctx.value?.closePath()
-  if (!ctx.value || !isDrawing.value || !drawCanvas.value) return
-  isDrawing.value = false
-  ctx.value.closePath()
-  const updatedData = {...data.value}
-  updatedData.draw = drawCanvas.value.toDataURL()
-  drawCanvas.value.toDataURL('image/png')
-  data.value = updatedData
+  if (drawCanvas.value) {
+    // 使用扩展运算符创建一个新对象来触发 Vue 的响应式更新
+    const updatedData = { ...data.value }
+    updatedData.draw = drawCanvas.value.toDataURL()
+    data.value = updatedData
+  }
 }
 
 onMounted(() => {
@@ -251,10 +250,8 @@ watch(
   font-family: Inter;
   font-weight: 700;
   color: #6699ff;
-  font-style: Bold;
   font-size: 20px;
   line-height: 100%;
-  letter-spacing: 0%;
   text-align: center;
 }
 </style>

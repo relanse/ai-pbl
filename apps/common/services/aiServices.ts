@@ -97,7 +97,8 @@ export const getAiResponseStream = async (
                         if (content) {
                             onContent(content);
                         }
-                    } catch (e) {
+                    } catch (error) {
+                      console.warn('Failed to parse JSON:', error);
                         // 忽略无法解析的 JSON
                     }
                   }
