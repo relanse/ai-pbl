@@ -69,16 +69,18 @@ export type FindTemplateType = {
   backgroundImg: string
   items: FindItemType[]
 }
-
+export interface Card {
+  id: string
+  pairId: string
+  text?: string
+  image?: string
+  flipped: boolean
+  matched: boolean
+}
 //记忆卡片模板
 export type MemoryTemplateType = {
   prompt: string
-  cards: {
-    id: string
-    value: string
-    flipped: boolean
-    matched: boolean
-  }[]
+  cards: Card[]
 }
 //表达模板
 export type ExpressTemplateType = {
