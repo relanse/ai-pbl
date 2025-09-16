@@ -26,6 +26,21 @@ const router = createRouter({
           path: 'course/detail/:id',
           name: 'course-detail',
           component: () => import('@/pages/course/courseDetail.vue')
+        },
+        {
+          path: 'certificate',
+          name: 'certificate',
+          component: () => import('@/pages/certificate/certificate.vue')
+        },
+        {
+          path: 'levelTest',
+          name: 'levelTest',
+          component: () => import('@/pages/levelTest/levelTest.vue')
+        },
+        {
+          path: 'course/:id/exercise',
+          name: 'exercise',
+          component: () => import('@/pages/course/exercise.vue')
         }
       ],
       redirect: '/course'

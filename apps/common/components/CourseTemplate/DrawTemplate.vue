@@ -21,28 +21,34 @@
           ref="drawCanvas"
           @mousedown="startDrawing"
           @mousemove="draw"
-          :style="{backgroundColor: !(!isDrawing && !data.draw) ? '#ffffff' : '#f6faff'}"
+          :style="{
+            backgroundColor: !(!isDrawing && !data.draw) ? '#ffffff' : '#f6faff'
+          }"
         >
         </canvas>
         <div class="draw-area-background" v-if="!isDrawing && !data.draw">
-            <MyIcon name="DrawIcon"></MyIcon>
-          </div>
+          <MyIcon name="DrawIcon"></MyIcon>
+        </div>
       </div>
       <div class="draw-tool">
         <span
-            style="
-              font-family: Microsoft YaHei;
-              font-weight: 700;
-              font-style: Bold;
-              font-size: 24px;
-              line-height: 100%;
-              letter-spacing: 0%;
-            "
-            >创作模式</span
-          >
-          <div class="draw-modes" v-for="mode in data.createModes" :key="mode.createType">
-            <div class="draw-mode">{{ mode.createType }}</div>
-          </div>
+          style="
+            font-family: Microsoft YaHei;
+            font-weight: 700;
+            font-style: Bold;
+            font-size: 24px;
+            line-height: 100%;
+            letter-spacing: 0%;
+          "
+          >创作模式</span
+        >
+        <div
+          class="draw-modes"
+          v-for="mode in data.createModes"
+          :key="mode.createType"
+        >
+          <div class="draw-mode">{{ mode.createType }}</div>
+        </div>
       </div>
     </div>
     <div class="card-footer">
@@ -108,8 +114,14 @@ const resizeCanvas = () => {
   const image = new Image()
   image.onload = () => {
     if (drawCanvas.value) {
-            ctx.value?.drawImage(image, 0, 0, drawCanvas.value.width, drawCanvas.value.height)
-          }
+      ctx.value?.drawImage(
+        image,
+        0,
+        0,
+        drawCanvas.value.width,
+        drawCanvas.value.height
+      )
+    }
   }
   image.src = imageData
 }
@@ -129,7 +141,7 @@ const startDrawing = (event: MouseEvent) => {
   ctx.value!.beginPath()
   ctx.value!.moveTo(x, y)
   // 在 window 上添加 mouseup 监听器
-  window.addEventListener('mouseup', stopDrawing, { once: true })
+  window.addEventListener('mouseup', stopDrawing, {once: true})
 }
 
 const draw = (event: MouseEvent) => {
@@ -150,7 +162,7 @@ const stopDrawing = () => {
   ctx.value?.closePath()
   if (drawCanvas.value) {
     // 使用扩展运算符创建一个新对象来触发 Vue 的响应式更新
-    const updatedData = { ...data.value }
+    const updatedData = {...data.value}
     updatedData.draw = drawCanvas.value.toDataURL()
     data.value = updatedData
   }
@@ -162,7 +174,7 @@ onMounted(() => {
     ctx.value = canvas.getContext('2d')
     canvas.width = canvas.clientWidth
     canvas.height = canvas.clientHeight
-    setContextStyle()// --- 新增：启动 ResizeObserver 来监听画布尺寸变化 ---
+    setContextStyle() // --- 新增：启动 ResizeObserver 来监听画布尺寸变化 ---
     resizeObserver = new ResizeObserver(resizeCanvas)
     resizeObserver.observe(drawCanvas.value)
   }
@@ -181,17 +193,18 @@ watch(
   newDrawData => {
     if (ctx.value && drawCanvas.value) {
       // --- 修改：简化逻辑，只在有新数据时绘制，否则清空 ---
-      ctx.value.clearRect(
-        0,
-        0,
-        drawCanvas.value.width,
-        drawCanvas.value.height
-      )
+      ctx.value.clearRect(0, 0, drawCanvas.value.width, drawCanvas.value.height)
       if (newDrawData) {
         const image = new Image()
         image.onload = () => {
           if (drawCanvas.value) {
-            ctx.value?.drawImage(image, 0, 0, drawCanvas.value.width, drawCanvas.value.height)
+            ctx.value?.drawImage(
+              image,
+              0,
+              0,
+              drawCanvas.value.width,
+              drawCanvas.value.height
+            )
           }
         }
         image.src = newDrawData
@@ -253,16 +266,16 @@ watch(
   display: flex;
   flex-direction: column;
 }
-.draw-modes{
+.draw-modes {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-top: 10px;
   height: 20%;
 }
-.draw-mode{
+.draw-mode {
   width: 100%;
-  background-color: #E7F0FF;
+  background-color: #e7f0ff;
   border-radius: 22px;
   flex: 1 1 auto;
   display: flex;

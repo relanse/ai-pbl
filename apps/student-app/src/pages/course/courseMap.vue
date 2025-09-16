@@ -1,7 +1,10 @@
 <template>
   <div class="course-map-wrapper">
-    <CommonAside class="sidebar" />
-    <div class="course-map-maintainer">
+    <CommonAside ref="sidebarRef" class="sidebar" />
+    <div
+      class="course-map-maintainer"
+      :class="{'sidebar-collapsed': sidebarRef?.isCollapsed}"
+    >
       <span>我的课程</span>
       <el-card
         shadow="never"
@@ -41,63 +44,45 @@
 // 依赖导入区
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {ElCard, ElMenu, ElMenuItem} from 'element-plus'
+import {ElCard} from 'element-plus'
 import MyButton from '@/components/common/MyButton.vue'
 import CommonAside from '@/components/common/CommonAside.vue'
-import type {iconNamesType} from '@aipbl/common/components/MyIcon/iconPath'
-interface SidebarButton {
-  id: iconNamesType
-  label: string
-  path: string
-}
+
 // 变量声明区
 const router = useRouter()
+const sidebarRef = ref()
 const courseList = ref([
   {
     id: 1,
-    title: 'L1.认知基础',
+    title: '第一级：认知基础',
     description:
-      '欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打开你的新旅程吧~欢迎来到新手的世界打~',
+      '本课程为初学者设计，将带您进入编程的奇妙世界。您将学习基本的编程概念，掌握核心术语，并熟悉常用的开发工具。这是您开启编程旅程的第一步，为未来的学习打下坚实的基础。',
     image:
       'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
   },
   {
     id: 2,
-    title: 'L2.专项训练',
-    description: '欢迎来到新手的世界打开你的新旅程吧~',
+    title: '第二级：专项训练',
+    description:
+      '在掌握了基础知识后，本课程将带您进行专项技能的深入训练。我们将通过一系列有针对性的练习和项目，帮助您巩固和扩展您的编程能力，让您在特定的技术领域变得更加专业。',
     image:
       'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
   },
   {
     id: 3,
-    title: 'L3.综合应用',
-    description: '欢迎来到新手的世界打开你的新旅程吧~',
+    title: '第三级：综合应用',
+    description:
+      '本课程旨在培养您综合运用多种技术解决实际问题的能力。您将参与到更复杂的项目中，学习如何将不同的知识点融会贯通，构建出功能完善的应用程序。',
     image:
       'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
   },
   {
     id: 4,
-    title: 'L4.进阶挑战',
-    description: '欢迎来到新手的世界打开你的新旅程吧~',
+    title: '第四级：进阶挑战',
+    description:
+      '准备好迎接挑战了吗？本课程将引导您探索编程领域的高级主题，挑战真实世界中的复杂项目。完成本课程后，您将具备解决高难度技术问题的能力，为您的职业生涯铺平道路。',
     image:
       'https://www.figma.com/file/WOOlfcXFrCQmt5TEUv3pMM/image/8e18003b6b0fc52c83b44e4f9bac94d08a3c6861'
-  }
-])
-const sidebarButtons = ref<SidebarButton[]>([
-  {
-    id: 'course',
-    label: '我的课程',
-    path: '/course' // 添加 path 属性
-  },
-  {
-    id: 'certificate',
-    label: '我的证书',
-    path: '/certificate' //TODO: 示例路径，您需要创建对应路由
-  },
-  {
-    id: 'levelTest',
-    label: '等级考试',
-    path: '/levelTest' //TODO: 示例路径，您需要创建对应路由
   }
 ])
 // 逻辑处理区
@@ -121,6 +106,11 @@ const goToCourseMainPage = (id: number) => {
   background-color: #ffffff;
   overflow-y: auto;
   margin: 20px 0 0 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.course-map-maintainer.sidebar-collapsed {
+  margin-left: 10px; /* 当侧边栏折叠时减少左边距 */
 }
 .course-map-maintainer > span {
   padding-top: 32px;

@@ -1,0 +1,99 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font: bold 24px sans-serif; fill: #333; text-anchor: middle; }
+      .subtitle { font: 16px sans-serif; fill: #666; text-anchor: middle; }
+      .box-text { font: 14px sans-serif; fill: #333; text-anchor: middle; }
+      .small-text { font: 12px sans-serif; fill: #555; text-anchor: middle; }
+      .layer-title { font: bold 16px sans-serif; fill: #fff; text-anchor: middle; }
+    </style>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4285f4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a73e8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34a853;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#137333;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ea4335;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c5221f;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad4" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbc04;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f29900;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="800" height="600" fill="#f8f9fa" stroke="#e8eaed" stroke-width="2"/>
+  
+  <!-- 标题 -->
+  <text x="400" y="40" class="title">人工智能系统架构图</text>
+  <text x="400" y="65" class="subtitle">AI System Architecture</text>
+  
+  <!-- 表示层 -->
+  <rect x="50" y="100" width="700" height="80" rx="8" fill="url(#grad1)" stroke="#1a73e8" stroke-width="2"/>
+  <text x="400" y="130" class="layer-title">表示层 (Presentation Layer)</text>
+  <text x="400" y="155" class="small-text" fill="#fff">用户界面 | Web应用 | 移动应用 | API接口</text>
+  
+  <!-- 业务逻辑层 -->
+  <rect x="50" y="210" width="700" height="120" rx="8" fill="url(#grad2)" stroke="#137333" stroke-width="2"/>
+  <text x="400" y="240" class="layer-title">业务逻辑层 (Business Logic Layer)</text>
+  
+  <!-- 业务逻辑层子模块 -->
+  <rect x="70" y="260" width="150" height="50" rx="4" fill="#fff" stroke="#137333" stroke-width="1"/>
+  <text x="145" y="280" class="box-text">自然语言处理</text>
+  <text x="145" y="295" class="small-text">NLP Engine</text>
+  
+  <rect x="240" y="260" width="150" height="50" rx="4" fill="#fff" stroke="#137333" stroke-width="1"/>
+  <text x="315" y="280" class="box-text">机器学习模型</text>
+  <text x="315" y="295" class="small-text">ML Models</text>
+  
+  <rect x="410" y="260" width="150" height="50" rx="4" fill="#fff" stroke="#137333" stroke-width="1"/>
+  <text x="485" y="280" class="box-text">深度学习网络</text>
+  <text x="485" y="295" class="small-text">Deep Learning</text>
+  
+  <rect x="580" y="260" width="150" height="50" rx="4" fill="#fff" stroke="#137333" stroke-width="1"/>
+  <text x="655" y="280" class="box-text">决策引擎</text>
+  <text x="655" y="295" class="small-text">Decision Engine</text>
+  
+  <!-- 数据处理层 -->
+  <rect x="50" y="360" width="700" height="100" rx="8" fill="url(#grad3)" stroke="#c5221f" stroke-width="2"/>
+  <text x="400" y="390" class="layer-title">数据处理层 (Data Processing Layer)</text>
+  
+  <!-- 数据处理层子模块 -->
+  <rect x="70" y="410" width="160" height="35" rx="4" fill="#fff" stroke="#c5221f" stroke-width="1"/>
+  <text x="150" y="432" class="box-text">数据预处理</text>
+  
+  <rect x="250" y="410" width="160" height="35" rx="4" fill="#fff" stroke="#c5221f" stroke-width="1"/>
+  <text x="330" y="432" class="box-text">特征工程</text>
+  
+  <rect x="430" y="410" width="160" height="35" rx="4" fill="#fff" stroke="#c5221f" stroke-width="1"/>
+  <text x="510" y="432" class="box-text">数据清洗</text>
+  
+  <rect x="610" y="410" width="120" height="35" rx="4" fill="#fff" stroke="#c5221f" stroke-width="1"/>
+  <text x="670" y="432" class="box-text">数据验证</text>
+  
+  <!-- 数据存储层 -->
+  <rect x="50" y="490" width="700" height="80" rx="8" fill="url(#grad4)" stroke="#f29900" stroke-width="2"/>
+  <text x="400" y="520" class="layer-title">数据存储层 (Data Storage Layer)</text>
+  <text x="400" y="545" class="small-text" fill="#333">关系数据库 | NoSQL数据库 | 向量数据库 | 文件存储系统</text>
+  
+  <!-- 连接箭头 -->
+  <!-- 表示层到业务逻辑层 -->
+  <path d="M 400 180 L 400 210" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- 业务逻辑层到数据处理层 -->
+  <path d="M 400 330 L 400 360" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- 数据处理层到数据存储层 -->
+  <path d="M 400 460 L 400 490" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- 箭头标记定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+  </defs>
+</svg>
