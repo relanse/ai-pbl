@@ -124,34 +124,38 @@
             ></EditableText
           ></VerticalButton>
           <div class="drag-item-items-container">
-            <div
-              class="drag-items"
-              v-for="item in availableItems"
-              :key="item.id"
-            >
-              <div
-                class="drag-items-item-background"
-                :draggable="!isEdit ? true : false"
-                :style="{backgroundColor: item.color}"
-                @dragstart="onDragStart($event, item)"
-                @dragend="onDragEnd"
-              ></div>
-              <div
-                style="
-                  font-family: Microsoft YaHei;
-                  font-weight: 700;
-                  font-style: Bold;
-                  font-size: 18px;
-                  line-height: 100%;
-                  letter-spacing: 0%;
-                "
-              >
-                <EditableText
-                  :is-editing="isEdit"
-                  v-model="item.title"
-                ></EditableText>
-              </div>
-            </div>
+            <template v-for="item in availableItems"
+              :key="item.id">
+                <div
+                  class="drag-items"
+                  
+                >
+                  <div
+                    :class="['drag-items-item-background',draggedItem?.id === item.id && 'dragging-item']"
+                    :draggable="!isEdit ? true : false"
+                    :style="{backgroundColor: item.color }"
+                    @dragstart="onDragStart($event, item)"
+                    @dragend="onDragEnd"
+                    @touchstart="onDragStart($event, item)"
+                    @touchend="onDragEnd"
+                  ></div>
+                  <div
+                    style="
+                      font-family: Microsoft YaHei;
+                      font-weight: 700;
+                      font-style: Bold;
+                      font-size: 18px;
+                      line-height: 100%;
+                      letter-spacing: 0%;
+                    "
+                  >
+                    <EditableText
+                      :is-editing="isEdit"
+                      v-model="item.title"
+                    ></EditableText>
+                  </div>
+                </div>
+            </template>
             <div
               style="position: relative"
               @mouseenter="handlePaletteContainerEnter"
@@ -291,6 +295,9 @@ function synchronizeTitleChange(newTitle: string) {
 
 // 拖拽变量
 const draggedItem = ref<DragTemplateType['items'][0] | null>(null)
+const draggedElement = ref<{element:HTMLElement|undefined,x:number,y:number}>({
+  element: undefined,x:0,y:0
+});
 const dragGhostEl = ref<HTMLElement | null>(null)
 const targetsContainer = ref<
   Record<string, DragTemplateType['items'][0][] | null>
@@ -327,35 +334,48 @@ watch(isEdit, val => {
   }
 })
 //开始拖拽
-function onDragStart(event: DragEvent, item: DragTemplateType['items'][0]) {
+function onDragStart(event: DragEvent | TouchEvent, item: DragTemplateType['items'][0]) {
   if (isEdit.value) return
+  console.log(event,'dragstart')
+  const element = event.target as HTMLElement;
+
   draggedItem.value = item
-  event.dataTransfer!.effectAllowed = 'move'
-  const target = event.target as HTMLElement
-  const clone = target.cloneNode(true) as HTMLElement
-  dragGhostEl.value = clone
-  clone.classList.add('drag-ghost')
-  document.body.appendChild(clone)
-  event.dataTransfer!.setDragImage(
-    clone,
-    clone.offsetWidth / 2,
-    clone.offsetHeight / 2
-  )
-  setTimeout(() => {
-    ;(event.target as HTMLElement).classList.add('dragging')
-  }, 0)
+  draggedElement.value = {element,x:element.getBoundingClientRect().x,y:element.getBoundingClientRect().y};
+
+  // // event.dataTransfer!.effectAllowed = 'move'
+  // const target = event.target as HTMLElement
+  // const clone = target.cloneNode(true) as HTMLElement
+  // dragGhostEl.value = clone
+  // clone.classList.add('drag-ghost')
+  // document.body.appendChild(clone)
+  // // event.dataTransfer!.setDragImage(
+  // //   clone,
+  // //   clone.offsetWidth / 2,
+  // //   clone.offsetHeight / 2
+  // // )
+  // setTimeout(() => {
+  //   ;(event.target as HTMLElement).classList.add('dragging')
+  // }, 0)
+}
+const onDragging =(event:DragEvent)=>{
+  draggedElement.value.x = event.x;
+  draggedElement.value.y = event.y;
 }
 //拖拽over
 function onDragOver(event: DragEvent, target: DragTemplateType['targets'][0]) {
   if (isEdit.value) return
   event.preventDefault() // Important!
-  feedbackState.value[target.id] = 'over'
+  // feedbackState.value[target.id] = 'over'
+  draggedElement.value.element = undefined;
+  draggedItem.value = null;
+
 }
 
 function onDragLeave(target: DragTemplateType['targets'][0]) {
-  if (feedbackState.value[target.id] === 'over') {
-    feedbackState.value[target.id] = ''
-  }
+  // if (feedbackState.value[target.id] === 'over') {
+  //   feedbackState.value[target.id] = ''
+  // }
+
 }
 //扔下
 function onDrop(event: DragEvent, target: DragTemplateType['targets'][0]) {
@@ -385,7 +405,7 @@ function onDrop(event: DragEvent, target: DragTemplateType['targets'][0]) {
   }, 1000)
 }
 //结束拖拽
-function onDragEnd(event: DragEvent) {
+function onDragEnd(event: DragEvent | TouchEvent) {
   const el = event.target as HTMLElement
   if (el.classList.contains('dragging')) {
     el.classList.remove('dragging')
@@ -550,6 +570,9 @@ function onDragEnd(event: DragEvent) {
   border-radius: 50%;
   top: clamp(-30px, -3vw, -45px);
   left: clamp(40px, 4vw, 60px);
+}
+.dragging-item{
+  position: fixed;
 }
 drag-ghost {
   position: absolute;
