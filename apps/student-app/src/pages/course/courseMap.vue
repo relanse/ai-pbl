@@ -1,6 +1,8 @@
 <template>
   <div class="course-map-wrapper">
-    <CommonAside class="sidebar" />
+    <div class="sidebar-wrapper">
+        <CommonAside/>
+    </div>
     <div class="course-map-maintainer">
       <span>我的课程</span>
       <el-card
@@ -113,6 +115,7 @@ const goToCourseMainPage = (id: number) => {
   height: 100%;
   background-color: #f6f6f6;
 }
+
 .course-map-maintainer {
   display: flex;
   flex-direction: column;

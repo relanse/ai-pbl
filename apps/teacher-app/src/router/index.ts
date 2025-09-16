@@ -15,66 +15,77 @@ const router = createRouter({
           meta: {
             title: '学生管理'
           },
-          component: () => import('@/pages/studentManage/studentManage.vue')
+          component: () => import('@/pages/studentManage/index.vue')
         },
-        //课程管理
+        // 学生详情
         {
-          path: 'course-manage',
-          name: 'course',
-          meta: {
-            title: '课程管理'
-          },
-          component: () => import('@/pages/courseManage/courseManage.vue')
-        },
-        //课程管理->创建课程
-        {
-          path: 'course-manage/create',
-          name: 'course-create',
-          meta: {
-            title: '新建课程',
-            activeMenu: '/course-manage'
-          },
-          component: () => import('@/pages/courseManage/courseCreate.vue')
-        },
-        //项目管理
-        {
-          path: 'project-manage',
-          name: 'project',
-          meta: {
-            title: '项目管理'
-          },
-          component: () => import('@/pages/projectManage/projectManage.vue')
-        },
-        //项目管理->查看学生项目情况
-        {
-          path: 'project/student-details',
+          path: 'student-details',
           name: 'student-details',
-          component: () => import('@/pages/projectManage/studentDetails.vue'),
-          meta: {
-            title: '学生项目情况',
-            activeMenu: '/project-manage'
-          }
+          meta: {title: '个人详情', activeMenu: '/student-manage'},
+          component: () => import('@/pages/studentManage/StudentDetail.vue')
         },
-        //项目管理->查看学生项目情况->项目详情
+        //等级课程管理
         {
-          path: 'project/student-details/project-details',
-          name: 'project-details',
-          component: () => import('@/pages/projectManage/projectDetails.vue'),
-          meta: {
-            title: '项目详情',
-            activeMenu: '/project-manage',
-            parentTitle: '学生项目情况',
-            parentPath: '/project/student-details'
-          }
+          path: 'course-level-manage',
+          name: 'course-level-manage',
+          meta: {title: '等级课程管理'},
+          component: () => import('@/pages/courseManage/index.vue')
         },
+        // 课程管理 -> 课程子列表
         {
-          path: 'project/create',
-          name: 'create-project',
-          component: () => import('@/pages/projectManage/createNewProject.vue'),
-          meta: {
-            title: '新建项目',
-            activeMenu: '/project-manage'
-          }
+          path: 'course-level-manage/:courseId',
+          name: 'course-sub-list',
+          meta: {title: '课程管理', activeMenu: '/course-level-manage'},
+          component: () => import('@/pages/courseManage/courseSubList.vue')
+        },
+        // 新建课程
+        {
+          path: 'course-level-manage/:courseId/lesson/create',
+          name: 'course-lesson-create',
+          meta: {title: '新课程', activeMenu: '/course-level-manage'},
+          component: () => import('@/pages/courseManage/courseLessonEdit.vue')
+        },
+        // 编辑课程
+        {
+          path: 'course-level-manage/:courseId/lesson/:lessonId/edit',
+          name: 'course-lesson-edit',
+          meta: {title: '编辑课程', activeMenu: '/course-level-manage'},
+          component: () => import('@/pages/courseManage/courseLessonEdit.vue')
+        },
+        // 课程详情
+        {
+          path: 'course-level-manage/:courseId/lesson/:lessonId/detail',
+          name: 'course-lesson-detail',
+          meta: {title: '课程详情', activeMenu: '/course-level-manage'},
+          component: () => import('@/pages/courseManage/courseLessonEdit.vue')
+        },
+        //题目管理
+        {
+          path: 'question-manage',
+          name: 'question',
+          meta: {title: '题目管理'},
+          component: () => import('@/pages/questionManage/index.vue')
+        },
+        //证书管理
+        {
+          path: 'certificate-manage',
+          name: 'certificate',
+          meta: {title: '证书管理'},
+          component: () => import('@/pages/certificateManage/index.vue')
+        },
+        //通知公告
+        {
+          path: 'notice',
+          name: 'notice',
+          meta: {title: '通知公告'},
+          component: () => import('@/pages/notice/index.vue')
+        },
+        //个人中心
+        {
+          path: 'profile',
+          name: 'profile',
+          meta: {title: '个人中心'},
+          component: () => import('@/pages/profile/index.vue')
         }
       ],
       redirect: 'student-manage'
@@ -88,11 +99,6 @@ const router = createRouter({
       path: '/edit',
       name: 'edit',
       component: () => import('@/pages/courseEdit/courseEdit.vue')
-    },
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import('@/pages/courseEdit/testPage.vue')
     }
   ]
 })

@@ -87,6 +87,7 @@ const jumpToUserInfo = () => {
   background-color: rgb(246, 246, 246);
   height: calc(100vh - 80px);
   --el-main-padding: 0px;
+  overflow: hidden;
 }
 .return-button {
   border: #6696ff solid 0.5px;
