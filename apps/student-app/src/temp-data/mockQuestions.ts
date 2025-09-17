@@ -7,6 +7,16 @@ export interface QuestionData {
 }
 
 export const mockQuestions: QuestionData[] = [
+  {
+    id: 0,
+    type: 'intro',
+    data: {
+      title: '欢迎来到AI课程',
+      prompt:
+        '这是一个关于人工智能的课程，我们将学习人工智能的基本概念、原理和应用。',
+      img: '/src/assets/backgrounds/backgroundGirl.png'
+    }
+  },
   // 选择题模板数据
   {
     id: 1,
