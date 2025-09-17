@@ -7,9 +7,8 @@
       class="image-display"
       draggable="false"
     />
-    <!-- v-if 会自动解包 isEditing 这个 ref -->
     <div v-if="isEdit" class="overlay">
-      <span>点击更换</span>
+      <span>编辑图片</span>
     </div>
     <input
       type="file"
@@ -27,7 +26,7 @@ import {
   CourseTemplateProviderKey,
   CourseTemplateProviderDefaultValue
 } from '../provider'
-
+import defaultImage from '../../../assets/uploadImg.png'
 // 2. 移除 props 定义
 // const props = defineProps<{
 //   isEditing: boolean
@@ -42,7 +41,6 @@ const {isEdit} = inject(
 const imageUrl = defineModel<string>() // v-model
 
 const fileInput = ref<HTMLInputElement | null>(null)
-const defaultImage = 'https://via.placeholder.com/100' // 默认占位图
 
 const triggerUpload = () => {
   // 4. 使用注入的 isEditing.value

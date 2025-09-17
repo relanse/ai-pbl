@@ -6,6 +6,7 @@ export type CourseDataType<T extends keyof CourseTemplateMap> = {
     uniqueId: string
     pageId: number
     templateType: string
+    title?: string
     data: CourseTemplateMap[T]
   }[]
 }

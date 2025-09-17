@@ -66,9 +66,13 @@
         </el-table-column>
         <el-table-column label="操作" width="140" fixed="right">
           <template #default="{row}">
-            <el-link type="primary" :underline="false">查看详细</el-link>
+            <el-link type="primary" :underline="false" @click="goDetail(row)"
+              >查看详细</el-link
+            >
             <span class="sep">/</span>
-            <el-link type="danger" :underline="false">编辑题目</el-link>
+            <el-link type="danger" :underline="false" @click="editLesson()"
+              >编辑题目</el-link
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -78,7 +82,7 @@
 
 <script setup lang="ts">
 import {ref, computed, watchEffect} from 'vue'
-import {ElButton, ElTable, ElTableColumn, ElLink, ElMessage} from 'element-plus'
+import {ElButton, ElTable, ElTableColumn, ElLink} from 'element-plus'
 import {useCourseStore} from '@/stores/courseStore'
 import {useRouter} from 'vue-router'
 
@@ -164,22 +168,18 @@ const tableData = computed(() => {
   return rows
 })
 
-const editLesson = (row: Row) => {
-  router.push({
-    name: 'course-lesson-edit',
-    params: {courseId: row.courseId, lessonId: row.id},
-    query: {name: courses.value.find(c => c.id === row.courseId)?.name}
-  })
-}
-const togglePublish = (row: Row) => {
-  const nowPublished = row.publishStatusText === '已发布'
-  store.setLessonStatus(row.id, nowPublished ? 'draft' : 'published')
-  ElMessage.success(nowPublished ? '已取消发布' : '已发布')
-}
-
 const refresh = () => {
   // 触发依赖更新
   sortState.value = {prop: '', order: null}
+}
+const goDetail = (row: Row) => {
+  router.push({
+    name: 'course-lesson-detail',
+    params: {courseId: row.courseId, lessonId: row.id}
+  })
+}
+const editLesson = () => {
+  router.push('/edit')
 }
 </script>
 

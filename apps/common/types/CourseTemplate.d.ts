@@ -6,6 +6,7 @@ declare interface ICourseData<T extends keyof CourseTemplateMap> {
     uniqueId: string
     pageId: number
     templateType: string
+    title?: string
     data: CourseTemplateMap[T]
   }[]
 }
