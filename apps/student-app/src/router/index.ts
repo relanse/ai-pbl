@@ -5,12 +5,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'layout',
-      component: () => import('@/pages/Layout.vue'),
+      component: () => import('@/pages/layout.vue'),
       children: [
         {
           path: 'user',
           name: 'user',
-          component: () => import('@/pages/User/UserInfo.vue')
+          component: () => import('@/pages/user/userInfo.vue')
         },
         {
           path: 'course',
