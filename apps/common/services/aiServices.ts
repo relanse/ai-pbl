@@ -2,8 +2,8 @@ import {createOpenAI} from '@ai-sdk/openai'
 import {generateText, streamText} from 'ai'
 
 const openai = createOpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  baseURL: import.meta.env.VITE_OPENAI_API_BASE_URL
+  apiKey: 'sk-9xjwqqzFmvKWYYBEYFYuvFk9t13Yfh2uNNXY5PCOS4cEV5Sj',
+  baseURL: 'https://api.kksj.org/v1'
 })
 
 const model = openai('gpt-5-chat')
