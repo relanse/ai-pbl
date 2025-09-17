@@ -4,7 +4,7 @@
     {
       "label": "Auto Git Fetch on Open",
       "type": "shell",
-      "command": "git fetch",
+      "command": "git fetch upstream/main; git merge upstream/main",
       "runOptions": {
         "runOn": "folderOpen"
       },
