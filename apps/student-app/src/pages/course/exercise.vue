@@ -148,12 +148,19 @@ onMounted(() => {
           <!-- 进度条的内容部分 -->
           <div
             class="progress-bar-content"
-            :style="{width: `${currentQuestionIndex * 100 / questions.length}%`}"
+            :style="{
+              width: `${(currentQuestionIndex * 100) / questions.length}%`
+            }"
           ></div>
+
+          <!-- 进度条的当前题数部分 -->
+          <div class="progress-bar-counter" v-show="!!currentQuestionIndex">
+            {{ currentQuestionIndex }}
+          </div>
         </div>
 
         <div class="question-counter">
-          题目 {{ currentQuestionIndex }}/{{ questions.length - 1 }}
+          {{ questions.length - 1 }}
         </div>
       </div>
 
@@ -257,7 +264,7 @@ onMounted(() => {
 
   .top-navigation {
     display: flex;
-    gap: 40px;
+    gap: 50px;
     justify-content: space-between;
     align-items: center;
     padding: 8px 30px;
@@ -273,24 +280,42 @@ onMounted(() => {
       background-color: #d5e1f4;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: flex-start;
 
       &-content {
-        border-radius: 5px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
         height: 10px;
-        position: absolute;
-        right: 0;
+        left: 0;
         width: 25%;
         background-color: #659bff;
+      }
+
+      &-counter {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+        box-sizing: border-box;
+        border: solid 2px #64a1fd;
+        border-radius: 15px;
+        color: #659bff;
+        font-weight: bold;
       }
     }
 
     .question-counter {
       font-size: 16px;
       font-weight: 600;
-      color: #026bff;
-      background-color: #e7f0ff;
-      padding: 8px 16px;
+      color: #ffffff;
+      background-color: #c2ccdb;
+      width: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 30px;
       border-radius: 20px;
     }
   }
