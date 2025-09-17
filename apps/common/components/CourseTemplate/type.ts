@@ -33,6 +33,7 @@ export type ConnectionTemplateType = {
 export type ChoiceTemplateType = {
   prompt: string
   title: string
+  img: string
   options: {id: string; content: string}[]
   correctAnswer: string
 }

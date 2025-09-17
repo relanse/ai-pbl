@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Auto Git Pull on Open",
+      "label": "Auto Git Fetch on Open",
       "type": "shell",
-      "command": "git pull main",
+      "command": "git fetch",
       "runOptions": {
         "runOn": "folderOpen"
       },

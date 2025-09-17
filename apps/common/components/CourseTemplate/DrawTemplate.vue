@@ -21,14 +21,35 @@
           ref="drawCanvas"
           @mousedown="startDrawing"
           @mousemove="draw"
-          :style="{backgroundColor: data.draw ? '#ffffff' : '#f6faff'}"
+          :style="{
+            backgroundColor: !(!isDrawing && !data.draw) ? '#ffffff' : '#f6faff'
+          }"
         >
-          <div class="draw-area-background" v-if="!data.draw">
-            <MyIcon name="DrawIcon"></MyIcon>
-          </div>
         </canvas>
+        <div class="draw-area-background" v-if="!isDrawing && !data.draw">
+          <MyIcon name="DrawIcon"></MyIcon>
+        </div>
       </div>
-      <div class="draw-tool"></div>
+      <div class="draw-tool">
+        <span
+          style="
+            font-family: Microsoft YaHei;
+            font-weight: 700;
+            font-style: Bold;
+            font-size: 24px;
+            line-height: 100%;
+            letter-spacing: 0%;
+          "
+          >创作模式</span
+        >
+        <div
+          class="draw-modes"
+          v-for="mode in data.createModes"
+          :key="mode.createType"
+        >
+          <div class="draw-mode">{{ mode.createType }}</div>
+        </div>
+      </div>
     </div>
     <div class="card-footer">
       <button type="button" round @click="data.draw = ''" class="reset-button">
@@ -92,7 +113,15 @@ const resizeCanvas = () => {
   // 4. 重绘图像
   const image = new Image()
   image.onload = () => {
-    ctx.value?.drawImage(image, 0, 0)
+    if (drawCanvas.value) {
+      ctx.value?.drawImage(
+        image,
+        0,
+        0,
+        drawCanvas.value.width,
+        drawCanvas.value.height
+      )
+    }
   }
   image.src = imageData
 }
@@ -112,7 +141,7 @@ const startDrawing = (event: MouseEvent) => {
   ctx.value!.beginPath()
   ctx.value!.moveTo(x, y)
   // 在 window 上添加 mouseup 监听器
-  window.addEventListener('mouseup', stopDrawing, { once: true })
+  window.addEventListener('mouseup', stopDrawing, {once: true})
 }
 
 const draw = (event: MouseEvent) => {
@@ -133,7 +162,7 @@ const stopDrawing = () => {
   ctx.value?.closePath()
   if (drawCanvas.value) {
     // 使用扩展运算符创建一个新对象来触发 Vue 的响应式更新
-    const updatedData = { ...data.value }
+    const updatedData = {...data.value}
     updatedData.draw = drawCanvas.value.toDataURL()
     data.value = updatedData
   }
@@ -145,7 +174,7 @@ onMounted(() => {
     ctx.value = canvas.getContext('2d')
     canvas.width = canvas.clientWidth
     canvas.height = canvas.clientHeight
-    setContextStyle()// --- 新增：启动 ResizeObserver 来监听画布尺寸变化 ---
+    setContextStyle() // --- 新增：启动 ResizeObserver 来监听画布尺寸变化 ---
     resizeObserver = new ResizeObserver(resizeCanvas)
     resizeObserver.observe(drawCanvas.value)
   }
@@ -164,16 +193,19 @@ watch(
   newDrawData => {
     if (ctx.value && drawCanvas.value) {
       // --- 修改：简化逻辑，只在有新数据时绘制，否则清空 ---
-      ctx.value.clearRect(
-        0,
-        0,
-        drawCanvas.value.width,
-        drawCanvas.value.height
-      )
+      ctx.value.clearRect(0, 0, drawCanvas.value.width, drawCanvas.value.height)
       if (newDrawData) {
         const image = new Image()
         image.onload = () => {
-          ctx.value?.drawImage(image, 0, 0)
+          if (drawCanvas.value) {
+            ctx.value?.drawImage(
+              image,
+              0,
+              0,
+              drawCanvas.value.width,
+              drawCanvas.value.height
+            )
+          }
         }
         image.src = newDrawData
       }
@@ -213,7 +245,7 @@ watch(
 .draw-area {
   position: relative;
   width: 100%;
-  height: 80%;
+  flex: 1 1 auto;
   border: 2px solid #6697ff;
   border-radius: 20px;
   margin-top: 10px;
@@ -221,15 +253,37 @@ watch(
   cursor: crosshair;
 }
 .draw-area-background {
+  display: flex;
+  flex-direction: column;
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  z-index: 1;
+  pointer-events: none; /* 关键：确保背景不会捕获鼠标事件 */
 }
 .draw-tool {
   width: 40%;
   height: 90%;
   display: flex;
   flex-direction: column;
+}
+.draw-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+  height: 20%;
+}
+.draw-mode {
+  width: 100%;
+  background-color: #e7f0ff;
+  border-radius: 22px;
+  flex: 1 1 auto;
+  display: flex;
+  font-family: Microsoft YaHei;
+  font-weight: 500;
+  font-size: 18px;
+  color: #333333;
+  cursor: pointer;
 }
 .card-footer {
   width: 95%;

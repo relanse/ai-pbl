@@ -5,12 +5,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'layout',
-      component: () => import('@/pages/layout.vue'),
+      component: () => import('@/pages/Layout.vue'),
       children: [
         {
           path: 'user',
           name: 'user',
-          component: () => import('@/pages/user/userInfo.vue')
+          component: () => import('@/pages/User/UserInfo.vue')
         },
         {
           path: 'course',
@@ -26,6 +26,21 @@ const router = createRouter({
           path: 'course/detail/:id',
           name: 'course-detail',
           component: () => import('@/pages/course/courseDetail.vue')
+        },
+        {
+          path: 'certificate',
+          name: 'certificate',
+          component: () => import('@/pages/certificate/certificate.vue')
+        },
+        {
+          path: 'levelTest',
+          name: 'levelTest',
+          component: () => import('@/pages/levelTest/levelTest.vue')
+        },
+        {
+          path: 'course/:id/exercise',
+          name: 'exercise',
+          component: () => import('@/pages/course/exercise.vue')
         }
       ],
       redirect: '/course'
@@ -33,22 +48,22 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/pages/login/login.vue')
+      component: () => import('@/pages/Login/Login.vue')
     },
     {
       path: '/password-find',
       name: 'password-find',
-      component: () => import('@/pages/login/codeVerification.vue')
+      component: () => import('@/pages/Login/CodeVerification.vue')
     },
     {
       path: '/password-find/rest',
       name: 'password-rest',
-      component: () => import('@/pages/login/resetPassword.vue')
+      component: () => import('@/pages/Login/ResetPassword.vue')
     },
     {
       path: '/register/userInfo',
       name: 'userInfo',
-      component: () => import('@/pages/login/fillUserInfo.vue')
+      component: () => import('@/pages/Login/FillUserInfo.vue')
     }
   ]
 })

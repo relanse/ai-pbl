@@ -1,4 +1,5 @@
 import DefaultFindBackground from '../../assets/backgrounds/DefaultFindBackground.png'
+import BackgroundGirl from '../../assets/backgrounds/BackgroundGirl.png'
 import {
   ConnectionTemplateType,
   FindTemplateType,
@@ -38,6 +39,7 @@ export const getTemplateDefaultData = (templateType: string) => {
       return <ChoiceTemplateType>{
         prompt: '小测试来了！',
         title: '下面哪个最准确地描述了人工智能?',
+        img: BackgroundGirl,
         options: [
           {id: 'A', content: '只能执行固定程序的机器'},
           {id: 'B', content: '能够像人类一样学习和思考的技术'},
@@ -58,19 +60,19 @@ export const getTemplateDefaultData = (templateType: string) => {
             id: uuidv4(),
             name: '家庭生活助手',
             icon: '',
-            prompt: '帮助家庭管理日常事务，比如购物清单、日程安排等。',
+            prompt: '帮助家庭管理日常事务，比如购物清单、日程安排等。'
           },
           {
             id: uuidv4(),
             name: '学习伙伴',
             icon: '',
-            prompt: '帮助学生进行学习规划和知识梳理。',
+            prompt: '帮助学生进行学习规划和知识梳理。'
           },
           {
             id: uuidv4(),
             name: '创作助手',
             icon: '',
-            prompt: '帮助用户进行创作灵感的激发和内容生成。',
+            prompt: '帮助用户进行创作灵感的激发和内容生成。'
           }
         ]
       }
@@ -128,7 +130,7 @@ export const getTemplateDefaultData = (templateType: string) => {
         ],
         createModes: [
           {
-            createType: '自由创作',
+            createType: '自由绘画',
             subtitle: '发挥想象力创作！'
           },
           {
