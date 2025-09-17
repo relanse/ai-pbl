@@ -42,12 +42,6 @@ const router = createRouter({
           name: 'exercise',
           component: () => import('@/pages/course/exercise.vue')
         },
-        {
-          path: 'test',
-          name: 'test',
-          component: () =>
-            import('@aipbl/common/components/CourseDisplay/testPage.vue')
-        }
       ],
       redirect: '/course'
     },
