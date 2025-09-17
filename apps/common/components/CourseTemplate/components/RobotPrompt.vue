@@ -10,12 +10,18 @@
 </template>
 
 <script setup lang="ts">
-import {defineModel} from 'vue'
+import {defineModel, onMounted} from 'vue'
 import EditableText from './EditableText.vue'
 import RobotImg from '../../../assets/robot.png'
 
 // 使用 defineModel 来接收父组件的 v-model
 const promptText = defineModel<string>()
+
+onMounted(() => {
+  const synth = window.speechSynthesis
+  const utterance = new SpeechSynthesisUtterance(promptText.value)
+  synth.speak(utterance)
+})
 </script>
 
 <style scoped>
