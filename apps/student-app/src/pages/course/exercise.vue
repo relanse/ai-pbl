@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, computed, onMounted, onUnmounted, provide} from 'vue'
+import {ref, computed, onMounted, onUnmounted, provide, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {ElMessage} from 'element-plus'
 import BackButton from '@/components/common/BackButton.vue'
@@ -26,11 +26,6 @@ defineOptions({
 const route = useRoute()
 const router = useRouter()
 const courseId = route.params.id as string
-
-// 课程信息
-const courseTitle = ref('AI基础认知课程')
-const totalSteps = ref(12)
-const currentStep = ref(3) // 当前进度步骤
 
 // 题目相关数据
 const currentQuestionIndex = ref(0)
@@ -110,7 +105,6 @@ const nextQuestion = () => {
     currentQuestionIndex.value++
     selectedPageIndex.value = currentQuestionIndex.value // 同步页面索引
     currentQuestionAnswered.value = false
-    updateMobileProgressDot()
   }
 }
 
@@ -119,7 +113,6 @@ const previousQuestion = () => {
     currentQuestionIndex.value--
     selectedPageIndex.value = currentQuestionIndex.value // 同步页面索引
     currentQuestionAnswered.value = false
-    updateMobileProgressDot()
   }
 }
 
@@ -139,25 +132,7 @@ onMounted(() => {
 
   // 确保初始状态同步
   selectedPageIndex.value = currentQuestionIndex.value
-
-  updateMobileProgressDot()
-  window.addEventListener('resize', updateMobileProgressDot)
 })
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateMobileProgressDot)
-})
-
-// 更新移动端进度点位置
-const updateMobileProgressDot = () => {
-  if (window.innerWidth <= 768) {
-    const progressLeft = questionProgressPercentage.value
-    document.documentElement.style.setProperty(
-      '--progress-left',
-      `${progressLeft}%`
-    )
-  }
-}
 </script>
 
 <template>
@@ -167,8 +142,18 @@ const updateMobileProgressDot = () => {
       <!-- 顶部导航 -->
       <div class="top-navigation">
         <BackButton :to="`/course/detail/${courseId}`" />
+
+        <!--中间的进度条-->
+        <div class="progress-bar">
+          <!-- 进度条的内容部分 -->
+          <div
+            class="progress-bar-content"
+            :style="{width: `${currentQuestionIndex * 100 / questions.length}%`}"
+          ></div>
+        </div>
+
         <div class="question-counter">
-          题目 {{ currentQuestionIndex + 1 }}/{{ questions.length }}
+          题目 {{ currentQuestionIndex }}/{{ questions.length - 1 }}
         </div>
       </div>
 
@@ -221,7 +206,7 @@ const updateMobileProgressDot = () => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .exercise-wrapper {
   display: flex;
   width: 100vw;
@@ -248,34 +233,6 @@ const updateMobileProgressDot = () => {
   }
 }
 
-.question-marker.completed .marker-circle {
-  background: linear-gradient(135deg, #4caf50, #45a049);
-  color: white;
-  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
-}
-
-.question-marker.current .marker-circle {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-  color: white;
-  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
-  animation: currentMarkerPulse 2s infinite;
-}
-
-.question-marker.upcoming .marker-circle {
-  background-color: #f0f0f0;
-  color: #999;
-  border: 2px solid #e0e0e0;
-}
-
-.question-marker.completed .marker-label {
-  color: #4caf50;
-}
-
-.question-marker.current .marker-label {
-  color: #ff9800;
-  font-weight: 600;
-}
-
 @keyframes currentMarkerPulse {
   0% {
     box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
@@ -290,81 +247,102 @@ const updateMobileProgressDot = () => {
   }
 }
 
-/* 右侧主内容区样式 */
+/* 主内容区样式 */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
   overflow-y: auto;
-}
 
-.top-navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 30px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e6ed;
-  flex-shrink: 0;
-}
+  .top-navigation {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 30px;
+    background-color: #f8fbff;
+    border-bottom: 1px solid #e0e6ed;
+    flex-shrink: 0;
 
-.question-counter {
-  font-size: 16px;
-  font-weight: 600;
-  color: #026bff;
-  background-color: #e7f0ff;
-  padding: 8px 16px;
-  border-radius: 20px;
-}
+    .progress-bar {
+      position: relative;
+      height: 10px;
+      border-radius: 5px;
+      flex: 1;
+      background-color: #d5e1f4;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
 
-.question-content {
-  flex: 1;
-  padding: 20px 30px;
-  overflow-y: auto;
-  min-height: 0;
-}
+      &-content {
+        border-radius: 5px;
+        height: 10px;
+        position: absolute;
+        right: 0;
+        width: 25%;
+        background-color: #659bff;
+      }
+    }
 
-.bottom-navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 30px;
-  background-color: #ffffff;
-  border-top: 1px solid #e0e6ed;
-  flex-shrink: 0;
-}
+    .question-counter {
+      font-size: 16px;
+      font-weight: 600;
+      color: #026bff;
+      background-color: #e7f0ff;
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
+  }
 
-.nav-spacer {
-  flex: 1;
-}
+  .question-content {
+    flex: 1;
+    padding: 20px 30px;
+    overflow-y: auto;
+    min-height: 0;
+  }
 
-.nav-button {
-  display: flex;
-  align-items: center;
-  min-width: 120px;
-  justify-content: center;
-}
+  .bottom-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e6ed;
+    flex-shrink: 0;
 
-.nav-button.secondary {
-  background: transparent;
-  border: 1px solid #026bff;
-  color: #026bff;
-}
+    .nav-spacer {
+      flex: 1;
+    }
 
-.nav-button.secondary:hover {
-  background-color: #e7f0ff;
-}
+    .nav-button {
+      display: flex;
+      align-items: center;
+      min-width: 120px;
+      justify-content: center;
+    }
 
-.nav-button.primary {
-  background: linear-gradient(135deg, #026bff, #4a90e2);
-  border: none;
-  color: white;
-}
+    .nav-button.secondary {
+      background: transparent;
+      border: 1px solid #026bff;
+      color: #026bff;
+    }
 
-.nav-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    .nav-button.secondary:hover {
+      background-color: #e7f0ff;
+    }
+
+    .nav-button.primary {
+      background: linear-gradient(135deg, #026bff, #4a90e2);
+      border: none;
+      color: white;
+    }
+
+    .nav-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -376,7 +354,6 @@ const updateMobileProgressDot = () => {
     flex: 1;
   }
 
-  .top-navigation,
   .bottom-navigation {
     padding: 15px 20px;
   }
