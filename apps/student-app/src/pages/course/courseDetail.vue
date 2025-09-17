@@ -2,7 +2,7 @@
   <div class="course-detail-wrapper">
     <div class="page-content-container">
       <div class="top-area">
-        <BackButton />
+        <BackButton :to="`/course/all/${courseId}`" />
       </div>
 
       <div v-if="loadingError" class="error-message">
@@ -142,18 +142,7 @@
                   >点击这里下载</a
                 >
               </iframe>
-
-              <!-- 备用：vue-pdf-embed（如果iframe不工作） -->
-              <!-- 
-              <vue-pdf-embed
-                :source="fileToPreview.url"
-                class="preview-pdf"
-                @loading-failed="(error) => { previewError = 'PDF加载失败: ' + error.message }"
-                @loaded="() => { previewError = null }"
-              />
-              -->
             </div>
-            <!-- 文本预览 -->
             <pre
               v-else-if="fileToPreview.type === 'txt'"
               class="preview-text"
@@ -407,6 +396,7 @@ const askAI = async () => {
   padding: 20px;
   min-height: 100vh;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .page-content-container {

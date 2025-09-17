@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 // 依赖导入区
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElCard} from 'element-plus'
 import MyButton from '@/components/common/MyButton.vue'
@@ -89,6 +89,12 @@ const courseList = ref([
 const goToCourseMainPage = (id: number) => {
   router.push(`/course/all/${id}`)
 }
+
+onMounted(() => {
+  console.log('课程页面已加载')
+  console.log('课程列表:', courseList.value)
+  console.log('课程数量:', courseList.value.length)
+})
 </script>
 
 <style scoped>

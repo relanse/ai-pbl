@@ -3,7 +3,10 @@
     <RobotPrompt v-model="data.prompt" />
     <!-- 主内容区 -->
     <div class="template-card">
-      <div class="template-card-header">
+      <div
+        class="template-card-header"
+        :style="{backgroundImage: `url(${backgroundTemplate})`}"
+      >
         <EditableText
           :is-editing="isEdit"
           v-model="data.title"
@@ -14,14 +17,15 @@
             font-size: clamp(18px, 3vw, 28px);
           "
         />
-        <img
-          :src="backgroundSun"
-          alt="Background Sun"
-          style="position: absolute; bottom: 10px; right: 10px; width: 100px"
-        />
       </div>
       <div class="template-card-body">
-        <img :src="backgroundGirl" alt="Background Girl" />
+        <EditableImage
+          v-model="data.img"
+          style="
+            width: clamp(20px, 15vw, 300px);
+            height: clamp(20px, 15vw, 300px);
+          "
+        />
         <div class="template-card-options">
           <!-- Display Mode -->
           <ElRadioGroup
@@ -59,7 +63,7 @@
             </div>
             <MyButton
               @click="addOption"
-              v-if="data.options.length < 4"
+              v-if="data.options.length < 6"
               style="width: 160px; height: 40px; font-size: medium"
               >添加选项</MyButton
             >
@@ -68,8 +72,13 @@
       </div>
     </div>
     <!-- 提交按钮 -->
-    <div class="template-card-footer">
-      <MyButton v-if="!isEdit" class="submit-button">提交答案</MyButton>
+    <div
+      class="template-card-footer"
+      :style="{backgroundImage: `url(${backgroundFooter})`}"
+    >
+      <MyButton v-if="!isEdit" @click="checkAnswer" class="submit-button"
+        >提交答案</MyButton
+      >
     </div>
   </div>
 </template>
@@ -77,8 +86,8 @@
 <script setup lang="ts">
 import {ref, inject} from 'vue'
 import {ElInput, ElRadio, ElRadioGroup, ElMessage} from 'element-plus'
-import backgroundGirl from '../../assets/backgrounds/backgroundGirl.png'
-import backgroundSun from '../../assets/backgrounds/backgroundSun.png'
+import backgroundFooter from '../../assets/backgrounds/backgroundFooter.png'
+import backgroundTemplate from '../../assets/backgrounds/backgroundTemplate.svg'
 import MyButton from './components/MyButton.vue'
 import EditableText from './components/EditableText.vue'
 import RobotPrompt from './components/RobotPrompt.vue'
@@ -92,8 +101,18 @@ const {isEdit} = inject(
 )
 import {ChoiceTemplateType} from './type'
 import {useCurrentPageData} from '../../composables/useCurrentPageData'
+import EditableImage from './components/EditableImage.vue'
 const {data} = useCurrentPageData<ChoiceTemplateType>('find')
 const userAnswer = ref('')
+
+// 定义事件
+const emit = defineEmits<{
+  answer: [
+    answer: {userAnswer: string; isCorrect: boolean; correctAnswer: string}
+  ]
+  next: []
+}>()
+
 // --- Edit Mode Functions (operate on data) ---
 const addOption = () => {
   if (!data.value) return
@@ -116,27 +135,52 @@ const removeOption = (index: number) => {
     option.id = String.fromCharCode(65 + i)
   })
 }
+const checkAnswer = () => {
+  if (!data.value) return
+  if (userAnswer.value === '') {
+    ElMessage.warning('请选择一个答案')
+    return
+  }
+
+  const isCorrect = userAnswer.value === data.value.correctAnswer
+
+  // 触发答案事件，传递答案信息给父组件
+  emit('answer', {
+    userAnswer: userAnswer.value,
+    isCorrect: isCorrect,
+    correctAnswer: data.value.correctAnswer
+  })
+
+  if (isCorrect) {
+    ElMessage.success('回答正确！')
+    // 延迟1.5秒后自动跳转到下一题
+    setTimeout(() => {
+      emit('next')
+    }, 1500)
+  } else {
+    ElMessage.error('回答错误，正确答案是: ' + data.value.correctAnswer)
+  }
+}
 </script>
 
 <style scoped>
 .choices-wrapper {
-  width: 100%;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  box-sizing: border-box; /* 保证padding不会影响总宽度 */
+  height: 100%;
 }
 .template-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 95%;
-  max-height: 600px;
   border-radius: 32px;
-  aspect-ratio: 1.85/1;
-  border: 5px solid #649ffe;
+  flex: 1 1 400px;
+  border: 5px solid transparent;
+  background-origin: padding-box, border-box;
+  background-image: linear-gradient(180deg, #6697ff 0%, #64a3fe 100%);
   overflow: hidden;
 }
 .template-card-header {
@@ -145,25 +189,34 @@ const removeOption = (index: number) => {
   position: relative;
   display: flex;
   align-items: center;
-  background-color: #649ffe;
   box-sizing: border-box;
   justify-content: space-around;
+  background-size: cover; /* 让背景图等比缩放，完全覆盖容器 */
+  background-position: right; /* 将背景图居中显示 */
+  background-repeat: no-repeat;
 }
 .template-card-body {
   width: 100%;
   height: 75%; /* 占据大部分高度 */
+  background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-around; /* 优化布局 */
 }
-.template-card-body > img {
-  width: 25%; /* 图片宽度相对于父容器 */
-  height: auto; /* 高度自适应 */
-  padding: 16px;
+.template-card-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 96%;
+  border-radius: 32px;
+  background-size: 100% 100%; /* 完全拉伸背景图 */
+  background-repeat: no-repeat;
+  height: 90px;
+  border: 1px solid #ffffff;
+  background-color: #e7f0ff;
 }
 .template-card-options {
   background-color: #f4f8ff;
-  width: 55%; /* 选项区域宽度 */
   border-radius: 20px;
   display: flex;
   justify-content: center;
@@ -174,18 +227,19 @@ const removeOption = (index: number) => {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 15px;
 }
 .choices-options-item {
   display: flex;
-  font-size: clamp(14px, 2vw, 20px);
+  align-items: center;
   color: #333333;
 }
-.template-card-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 10px;
+.choices-options-item :deep(.el-radio) {
+  margin-right: 10px;
+}
+.choices-options-item :deep(.el-radio-label) {
+  font-size: clamp(14px, 2vw, 20px);
 }
 .submit-button {
   width: 150px;
