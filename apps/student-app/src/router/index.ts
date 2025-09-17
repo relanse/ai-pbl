@@ -41,6 +41,12 @@ const router = createRouter({
           path: 'course/:id/exercise',
           name: 'exercise',
           component: () => import('@/pages/course/exercise.vue')
+        },
+        {
+          path: 'test',
+          name: 'test',
+          component: () =>
+            import('@aipbl/common/components/CourseDisplay/testPage.vue')
         }
       ],
       redirect: '/course'
@@ -48,22 +54,22 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/pages/Login/Login.vue')
+      component: () => import('@/pages/login/login.vue')
     },
     {
       path: '/password-find',
       name: 'password-find',
-      component: () => import('@/pages/Login/CodeVerification.vue')
+      component: () => import('@/pages/login/codeVerification.vue')
     },
     {
       path: '/password-find/rest',
       name: 'password-rest',
-      component: () => import('@/pages/Login/ResetPassword.vue')
+      component: () => import('@/pages/login/resetPassword.vue')
     },
     {
       path: '/register/userInfo',
       name: 'userInfo',
-      component: () => import('@/pages/Login/FillUserInfo.vue')
+      component: () => import('@/pages/login/fillUserInfo.vue')
     }
   ]
 })
